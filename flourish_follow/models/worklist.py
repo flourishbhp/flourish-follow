@@ -2,6 +2,7 @@ from django.db import models
 
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators.date import datetime_not_future
+from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_search.model_mixins import SearchSlugModelMixin, SearchSlugManager
 
 
@@ -15,7 +16,7 @@ class WorklistManager(BaseWorkManager, SearchSlugManager):
     pass
 
 
-class WorkList(SearchSlugModelMixin, BaseUuidModel):
+class WorkList(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
 
     """A model linked to the subject consent to record corrections.
     """

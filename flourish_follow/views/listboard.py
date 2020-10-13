@@ -15,7 +15,7 @@ from ..model_wrappers import WorkListModelWrapper
 class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
                     ListboardFilterViewMixin, SearchFormViewMixin, ListboardView):
 
-    istboard_template = 'flourish_follow_listboard_template'
+    listboard_template = 'flourish_follow_listboard_template'
     listboard_url = 'flourish_follow_listboard_url'
     listboard_panel_style = 'info'
     listboard_fa_icon = "fa-user-plus"

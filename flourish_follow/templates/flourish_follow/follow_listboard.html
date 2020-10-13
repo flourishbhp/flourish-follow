@@ -1,9 +1,10 @@
-{% extends base_template_name %}
+{% extends "edc_dashboard/listboard.html" %}
+{% load admin_urls %}
+{% load edc_base_extras %}
 
 {% load tz %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
-{% load edc_base_extras %}
 
 
 {% block alert %}
