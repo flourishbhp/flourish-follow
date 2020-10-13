@@ -1,0 +1,14 @@
+
+<!-- begin results body -->
+
+{% for result in results %}
+    <tr> 
+    <td>{{ forloop.counter }}</td>
+
+    {% include 'flourish_follow/listboard/results_body/columns.html' %}
+
+    </tr>                       
+
+{% endfor %}
+
+<!-- begin results body -->

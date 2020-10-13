@@ -1,21 +1,24 @@
-"""flourish_follow URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
 from django.urls import path
 
+from edc_dashboard import UrlConfig
+from .admin_site import flourish_follow_admin
+from .views import ListboardView
+
+
+app_name = 'flourish_follow'
+
+subject_identifier = '066\-[0-9\-]+'
+screening_identifier = '[A-Z0-9]{8}'
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(r'^admin/', flourish_follow_admin.urls),
 ]
+
+flourish_follow_listboard_url_config = UrlConfig(
+    url_name='flourish_follow_listboard_url',
+    view_class=ListboardView,
+    label='flourish_follow_listboard',
+    identifier_label='subject_identifier',
+    identifier_pattern=screening_identifier)
+
+urlpatterns += flourish_follow_listboard_url_config.listboard_urls
