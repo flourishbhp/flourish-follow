@@ -27,7 +27,7 @@ class WorkList(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
         unique=True)
 
     report_datetime = models.DateTimeField(
-        verbose_name="Correction report date ad time",
+        verbose_name="Report date ad time",
         null=True,
         validators=[
             datetime_not_future],

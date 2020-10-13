@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic.base import RedirectView
 
 from edc_dashboard import UrlConfig
 from .admin_site import flourish_follow_admin
@@ -11,7 +12,8 @@ subject_identifier = '066\-[0-9\-]+'
 screening_identifier = '[A-Z0-9]{8}'
 
 urlpatterns = [
-    path(r'^admin/', flourish_follow_admin.urls),
+    path('admin/', flourish_follow_admin.urls),
+    path('', RedirectView.as_view(url='admin/'), name='home_url'),
 ]
 
 flourish_follow_listboard_url_config = UrlConfig(

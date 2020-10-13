@@ -14,8 +14,8 @@
   	{% if result.log_entries %}
 	  	{% for log_entry in result.log_entries %}
 	    <li>
-	    	<a href="{% url 'edc_call_manager_admin:edc_call_manager_logentry_change' log_entry.id %}?log={{ log_entry.log.id}}&next={% url 'flourish_follow:listboard_url' %}&subject_identifier{{ result.subject_identifier }}">
-	    	{{ log_entry.call_datetime }}
+	    	<!-- <a href="{% url 'edc_call_manager_admin:edc_call_manager_logentry_change' log_entry.id %}?log={{ log_entry.log.id}}&next={% url 'flourish_follow:flourish_follow_listboard_url' %}&subject_identifier{{ result.subject_identifier }}">
+	    	 -->{{ log_entry.call_datetime }}
 	    	</a>
 	    </li>
 	    {% endfor %}

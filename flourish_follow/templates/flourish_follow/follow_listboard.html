@@ -48,7 +48,7 @@
                 <div class="panel-heading">
 				<span class="pull-right">{% include 'edc_dashboard/search_form.html' %}</span>
                     {% block panel_action_form %}
-						<form action="{% if form_action_url %}{{ form_action_url }}{% else %}{% url listboard_url_name %}{% endif %}" method="post" name="{{ form_action_name }}" id="{{ form_action_name }}">
+						<form action="" method="post" name="{{ form_action_name }}" id="{{ form_action_name }}">
 						 {% csrf_token %}
 						 <div class="form-inline">
 						
@@ -84,7 +84,7 @@
                     </table>
                     <!-- end spacer rows -->
                 </div>
-                {% include 'edc_dashboard/paginator.html' %}
+                
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def subject_locator(self):
-        SubjectLocator = django_apps.get_model('flourish_maternal.subjectlocator')
+        SubjectLocator = django_apps.get_model('flourish_maternal.maternallocator')
         try:
             return SubjectLocator.objects.get(
                 subject_identifier=self.object.subject_identifier)
@@ -60,11 +60,15 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def first_name(self):
-        return self.subject_consent.first_name
+        if self.subject_consent:
+            return self.subject_consent.first_name
+        return None
 
     @property
     def last_name(self):
-        return self.subject_consent.last_name
+        if self.subject_consent:
+            return self.subject_consent.last_name
+        return None
 
     @property
     def contacts(self):
