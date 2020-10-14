@@ -3,7 +3,7 @@
 
 <div class="btn-group">
   <a title="add call log entry"
-	href="{% url 'edc_call_manager_admin:edc_call_manager_logentry_add' %}?log={{ result.call_log}}&next={{listboard_url_name}}&subject_identifier={{ result.subject_identifier }}">
+	href="">
 	  <button type="button" {% if result.log_entries %} class="btn btn-default" {% else %} class="btn btn-warning" {%endif%} btn-sm>
 	  	 Add Call Log Enrty</button>
   </a>
