@@ -24,6 +24,12 @@ class WorkList(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",
         max_length=50,
+        null=True,
+        blank=True)
+
+    study_maternal_identifier = models.CharField(
+        verbose_name="Study maternal Subject Identifier",
+        max_length=50,
         unique=True)
 
     report_datetime = models.DateTimeField(
@@ -45,7 +51,7 @@ class WorkList(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
     objects = WorklistManager()
 
     def __str__(self):
-        return str(self.subject_identifier,)
+        return f'{self.subject_identifier} {self.study_maternal_identifier}'
 
     def natural_key(self):
         return (self.subject_identifier, )
@@ -53,6 +59,11 @@ class WorkList(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
     def get_search_slug_fields(self):
         fields = ['subject_identifier']
         return fields
+
+    def save(self, *args, **kwargs):
+        if not self.subject_identifier:
+            self.subject_identifier = self.study_maternal_identifier
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'flourish_follow'

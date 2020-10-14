@@ -8,19 +8,29 @@ class WorkListModelWrapper(ModelWrapper):
 
 
     model = 'flourish_follow.worklist'
-    querystring_attrs = ['subject_identifier']
-    next_url_attrs = ['subject_identifier']
+    querystring_attrs = ['subject_identifier', 'study_maternal_identifier']
+    next_url_attrs = ['subject_identifier', 'study_maternal_identifier']
     next_url_name = settings.DASHBOARD_URL_NAMES.get('flourish_follow_listboard_url')
     
 
     @property
     def subject_locator(self):
         SubjectLocator = django_apps.get_model('flourish_maternal.maternallocator')
-        try:
-            return SubjectLocator.objects.get(
-                subject_identifier=self.object.subject_identifier)
-        except SubjectLocator.DoesNotExist:
-            return None
+        if self.object.subject_identifier:
+            try:
+                locator = SubjectLocator.objects.get(
+                    subject_identifier=self.object.subject_identifier)
+            except SubjectLocator.DoesNotExist:
+                try:
+                    locator = SubjectLocator.objects.get(
+                        study_maternal_identifier=self.object.study_maternal_identifier)
+                except SubjectLocator.DoesNotExist:
+                    return None
+                else:
+                    return locator
+            else:
+                return locator
+        return None
 
     @property
     def call_datetime(self):
@@ -82,4 +92,4 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def survey_schedule(self):
-        return (self.subject_consent.household_member.survey_schedule)
+        return None

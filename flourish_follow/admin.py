@@ -38,6 +38,7 @@ class WorkListAdmin(ModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': (
                 'subject_identifier',
+                'study_maternal_identifier',
                 'report_datetime',
                 'prev_study',
                 'is_called',
