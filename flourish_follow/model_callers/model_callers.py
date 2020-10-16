@@ -1,7 +1,7 @@
 from edc_call_manager.model_caller import ModelCaller, DAILY
 from edc_call_manager.decorators import register
-from flourish_maternal.models import MaternalLocator
 from edc_call_manager.models import Call, Log, LogEntry
+from flourish_maternal.models import MaternalLocator
 
 from ..models import WorkList
 

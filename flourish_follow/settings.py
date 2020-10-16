@@ -15,6 +15,13 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SITE_ID = 40
+
+REVIEWER_SITE_ID = 1
+
+APP_NAME = 'flourish_follow'
+
+LOGIN_REDIRECT_URL = 'home_url'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -35,8 +42,24 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_js_reverse',
+    'simple_history',
+    'django_crypto_fields.apps.AppConfig',
+    'django_revision.apps.AppConfig',
+    'edc_base.apps.AppConfig',
+    'edc_device.apps.AppConfig',
+    'edc_identifier.apps.AppConfig',
+    'edc_registration.apps.AppConfig',
+    'edc_call_manager.apps.AppConfig',
+    'flourish_follow.apps.EdcAppointmentAppConfig',
+    'flourish_follow.apps.EdcProtocolAppConfig',
+    'flourish_follow.apps.EdcTimepointAppConfig',
+    'flourish_follow.apps.EdcVisitTrackingAppConfig',
+    'flourish_maternal.apps.AppConfig',
+    'flourish_follow.apps.AppConfig'
 ]
 
 MIDDLEWARE = [
@@ -45,8 +68,11 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'edc_dashboard.middleware.DashboardMiddleware',
+    'edc_subject_dashboard.middleware.DashboardMiddleware',
 ]
 
 ROOT_URLCONF = 'flourish_follow.urls'
@@ -99,6 +125,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+DASHBOARD_URL_NAMES = {
+    'flourish_follow_listboard_url': 'flourish_follow:flourish_follow_listboard_url',
+
+}
+
+DASHBOARD_BASE_TEMPLATES = {
+    'listboard_base_template': 'flourish/base.html',
+    'dashboard_base_template': 'flourish/base.html',
+    'flourish_follow_listboard_template': 'flourish_follow/follow_listboard.html',
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

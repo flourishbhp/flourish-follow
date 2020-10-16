@@ -51,6 +51,7 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def log_entries(self):
+        print(self.object.subject_identifier, '****************8')
         call = Call.objects.filter(
             subject_identifier=self.object.subject_identifier).order_by('scheduled').last()
         return LogEntry.objects.filter(
@@ -63,9 +64,9 @@ class WorkListModelWrapper(ModelWrapper):
             subject_identifier=self.object.subject_identifier).last()
 
     @property
-    def may_follow_up(self):
+    def may_visit_home(self):
         if self.subject_locator:
-            return self.subject_locator.may_follow_up
+            return self.subject_locator.may_visit_home
         return None
 
     @property
