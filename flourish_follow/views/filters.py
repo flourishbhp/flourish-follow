@@ -14,6 +14,6 @@ class ListboardViewFilters(ListboardViewFilters):
         lookup={'is_called': True})
 
     visited = ListboardFilter(
-        label='Called',
+        label='Visited',
         position=11,
-        lookup={'visited': False})
+        lookup={'visited': True})
