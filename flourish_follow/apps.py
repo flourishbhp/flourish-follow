@@ -25,7 +25,7 @@ if settings.APP_NAME == 'flourish_follow':
         configurations = [
             AppointmentConfig(
                 model='edc_appointment.appointment',
-                related_visit_model='flourish_maternal.maternalvisit',
+                related_visit_model='flourish_caregiver.maternalvisit',
                 appt_type='clinic')]
 
     class EdcProtocolAppConfig(BaseEdcProtocolAppConfigs):
@@ -57,7 +57,7 @@ if settings.APP_NAME == 'flourish_follow':
 
     class EdcVisitTrackingAppConfig(BaseEdcVisitTrackingAppConfig):
         visit_models = {
-            'flourish_maternal': (
-                'maternal_visit', 'flourish_maternal.maternalvisit'),
+            'flourish_caregiver': (
+                'maternal_visit', 'flourish_caregiver.maternalvisit'),
             'flourish_child': (
                 'child_visit', 'flourish_child.childvisit'), }

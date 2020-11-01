@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'flourish_follow.apps.EdcProtocolAppConfig',
     'flourish_follow.apps.EdcTimepointAppConfig',
     'flourish_follow.apps.EdcVisitTrackingAppConfig',
-    'flourish_maternal.apps.AppConfig',
+    'flourish_caregiver.apps.AppConfig',
     'flourish_follow.apps.AppConfig'
 ]
 

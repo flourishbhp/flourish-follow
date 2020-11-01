@@ -15,7 +15,7 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def subject_locator(self):
-        SubjectLocator = django_apps.get_model('flourish_maternal.maternallocator')
+        SubjectLocator = django_apps.get_model('flourish_caregiver.maternallocator')
         if self.object.subject_identifier:
             try:
                 locator = SubjectLocator.objects.get(
@@ -51,7 +51,6 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def log_entries(self):
-        print(self.object.subject_identifier, '****************8')
         call = Call.objects.filter(
             subject_identifier=self.object.subject_identifier).order_by('scheduled').last()
         return LogEntry.objects.filter(
@@ -60,7 +59,7 @@ class WorkListModelWrapper(ModelWrapper):
     @property
     def subject_consent(self):
         return django_apps.get_model(
-            'flourish_maternal.subjectconsent').objects.filter(
+            'flourish_caregiver.subjectconsent').objects.filter(
             subject_identifier=self.object.subject_identifier).last()
 
     @property
