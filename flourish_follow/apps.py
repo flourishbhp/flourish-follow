@@ -6,11 +6,15 @@ class AppConfig(DjangoAppConfig):
     name = 'flourish_follow'
     verbose_name = 'Flourish Follow'
     admin_site_name = 'flourish_follow_admin'
+    extra_assignee_choices = ()
+    assignable_users_group = 'assignable users'
+
 
 if settings.APP_NAME == 'flourish_follow':
+
     from datetime import datetime
     from dateutil.tz import gettz
-    
+
     from edc_appointment.appointment_config import AppointmentConfig
     from edc_appointment.apps import AppConfig as BaseEdcAppointmentAppConfig
     from edc_appointment.constants import COMPLETE_APPT
@@ -18,8 +22,8 @@ if settings.APP_NAME == 'flourish_follow':
     from edc_timepoint.apps import AppConfig as BaseEdcTimepointAppConfig
     from edc_timepoint.timepoint import Timepoint
     from edc_timepoint.timepoint_collection import TimepointCollection
-    from edc_visit_tracking.apps import AppConfig as BaseEdcVisitTrackingAppConfig
-
+    from edc_visit_tracking.apps import (
+        AppConfig as BaseEdcVisitTrackingAppConfig)
 
     class EdcAppointmentAppConfig(BaseEdcAppointmentAppConfig):
         configurations = [
@@ -37,8 +41,7 @@ if settings.APP_NAME == 'flourish_follow':
             2016, 4, 1, 0, 0, 0, tzinfo=gettz('UTC'))
         study_close_datetime = datetime(
             2020, 12, 1, 0, 0, 0, tzinfo=gettz('UTC'))
-    
-    
+
     class EdcTimepointAppConfig(BaseEdcTimepointAppConfig):
         timepoints = TimepointCollection(
             timepoints=[
@@ -53,7 +56,6 @@ if settings.APP_NAME == 'flourish_follow':
                     status_field='appt_status',
                     closed_status=COMPLETE_APPT),
             ])
-
 
     class EdcVisitTrackingAppConfig(BaseEdcVisitTrackingAppConfig):
         visit_models = {

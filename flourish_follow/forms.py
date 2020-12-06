@@ -1,4 +1,7 @@
 from django import forms
+from django.apps import apps as django_apps
+from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
@@ -6,11 +9,6 @@ from crispy_forms.layout import Layout, Submit
 from edc_base.sites import SiteModelFormMixin
 
 from .models import WorkList
-
-USERS = (
-    ('nicholas', 'Nicholas'),
-    ('sammmuel_kgole', 'Sammuel Kgole'),
-)
 
 
 class WorkListForm(SiteModelFormMixin, forms.ModelForm):
@@ -23,13 +21,15 @@ class WorkListForm(SiteModelFormMixin, forms.ModelForm):
 class AssignParticipantForm(forms.Form):
 
     username = forms.ChoiceField(
-        choices=USERS, required=True, label='Username')
+        required=True, label='Username',
+        widget=forms.Select())
 
     participants = forms.IntegerField(
         required=True, label='Request participants')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['username'].choices = self.assign_users
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.form_id = 'assign_participant'
@@ -42,6 +42,39 @@ class AssignParticipantForm(forms.Form):
             'participants',  # field1 will appear first in HTML
             Submit('submit', u'Assign', css_class="btn btn-sm btn-default"),
         )
+
+    @property
+    def assign_users(self):
+        """Reurn a list of users that can be assigned an issue.
+        """
+        assignable_users_choices = ()
+        user = django_apps.get_model('auth.user')
+        app_config = django_apps.get_app_config('edc_data_manager')
+        assignable_users_group = app_config.assignable_users_group
+        try:
+            Group.objects.get(name=assignable_users_group)
+        except Group.DoesNotExist:
+            Group.objects.create(name=assignable_users_group)
+        assignable_users = user.objects.filter(
+            groups__name=assignable_users_group)
+        extra_choices = ()
+        if app_config.extra_assignee_choices:
+            for _, value in app_config.extra_assignee_choices.items():
+                extra_choices += (value[0],)
+        for assignable_user in assignable_users:
+            username = assignable_user.username
+            if not assignable_user.first_name:
+                raise ValidationError(
+                    f"The user {username} needs to set their first name.")
+            if not assignable_user.last_name:
+                raise ValidationError(
+                    f"The user {username} needs to set their last name.")
+            full_name = (f'{assignable_user.first_name} '
+                         f'{assignable_user.last_name}')
+            assignable_users_choices += ((username, full_name),)
+        if extra_choices:
+            assignable_users_choices += extra_choices
+        return assignable_users_choices
 
 
 class ParticipantsNumberForm(forms.Form):
