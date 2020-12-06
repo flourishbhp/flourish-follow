@@ -21,6 +21,8 @@
 	    <td>
 	    	 {% include 'flourish_follow/listboard/results_body/add_call_log_entry.html' %}
 	    </td>
+	    <td>{{ result.assigned }}</td>
+	    <td>{{ result.date_assigned }}</td>
 	    <td>{% if result.call_datetime %} {{ result.call_datetime }} {% endif %}</td>
 	    <td>
 		    {% if result.is_called %}

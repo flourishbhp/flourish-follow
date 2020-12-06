@@ -47,17 +47,18 @@
             <div class="panel panel-info">
                 <div class="panel-heading">
 				<span class="pull-right">{% include 'edc_dashboard/search_form.html' %}</span>
+				<span class="pull-right">{% include 'flourish_follow/forms.html' %}</span>
                     {% block panel_action_form %}
-						<form action="" method="post" name="{{ form_action_name }}" id="{{ form_action_name }}">
-						 {% csrf_token %}
 						 <div class="form-inline">
 						
 						   <!-- begin panel_action_buttons -->
 					        <span class="glyphicon glyphicon-phone-alt"></span> Called <span class="badge">{{called_subject}}</span> / <span class="badge">{{total_results}}</span>
 					        <span class="glyphicon glyphicon-home"></span> Visited <span class="badge">{{visited_subjects}}</span> / <span class="badge">{{total_results}}</span>
+					        &nbsp;&nbsp;
+					        <span class="glyphicon glyphicon-user"></span> Total available for randomization <span class="badge">{{total_available}}</span>
 					       <!-- end panel_action_buttons -->
+					       
 						</div>
-						</form>
 					{% endblock panel_action_form %}
 				</div>
                 </div>

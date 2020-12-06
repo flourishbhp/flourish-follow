@@ -1,0 +1,36 @@
+{% load crispy_forms_tags %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+    Assign participants
+    <span class="pull-right">
+    	<button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#myModal">Reset assignments</button>
+    </span>
+    </div>
+    <div class="panel-body">
+			{% csrf_token %}
+			{% crispy form %}
+	</div>
+</div>
+
+ <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Reset work list participants assignments</h4>
+        </div>
+        <div class="modal-body">
+          <p>Would you like to reset all assignments.</p>
+        </div>
+        <div class="modal-footer">
+        
+          <a href="{% url 'flourish_follow:home_url' %}?reset=yes" onclick="$('#myModal').modal('hide')" class="btn btn-sm btn-danger">Reset</a>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>

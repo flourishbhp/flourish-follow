@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.model_mixins import BaseUuidModel
-from edc_base.model_validators.date import datetime_not_future
+from edc_base.model_validators.date import datetime_not_future, date_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_search.model_mixins import SearchSlugModelMixin, SearchSlugManager
 
@@ -37,6 +37,18 @@ class WorkList(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
         null=True,
         validators=[
             datetime_not_future],
+    )
+
+    assigned = models.CharField(
+        verbose_name='User assigned',
+        max_length=250,
+        null=True)
+
+    date_assigned = models.DateField(
+        verbose_name="Date assigned",
+        null=True,
+        validators=[
+            date_not_future],
     )
 
     prev_study = models.CharField(

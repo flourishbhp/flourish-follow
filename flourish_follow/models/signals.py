@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from edc_call_manager.models import LogEntry
-from flourish_caregiver.models.maternal_visit import MaternalVisit
+from flourish_caregiver.models import MaternalVisit
 
 from ..models.worklist import WorkList
 

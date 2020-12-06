@@ -6,16 +6,16 @@ from edc_call_manager.models import Call, Log, LogEntry
 
 class WorkListModelWrapper(ModelWrapper):
 
-
     model = 'flourish_follow.worklist'
     querystring_attrs = ['subject_identifier', 'study_maternal_identifier']
     next_url_attrs = ['subject_identifier', 'study_maternal_identifier']
-    next_url_name = settings.DASHBOARD_URL_NAMES.get('flourish_follow_listboard_url')
-    
+    next_url_name = settings.DASHBOARD_URL_NAMES.get(
+        'flourish_follow_listboard_url')
 
     @property
     def subject_locator(self):
-        SubjectLocator = django_apps.get_model('flourish_caregiver.maternallocator')
+        SubjectLocator = django_apps.get_model(
+            'flourish_caregiver.caregiverlocator')
         if self.object.subject_identifier:
             try:
                 locator = SubjectLocator.objects.get(
