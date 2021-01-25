@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.apps import apps as django_apps
 from edc_model_wrapper import ModelWrapper
-from edc_call_manager.models import Call, Log, LogEntry
+from ..models import Call, Log, LogEntry
 
 
 class WorkListModelWrapper(ModelWrapper):
