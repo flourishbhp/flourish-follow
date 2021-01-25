@@ -9,10 +9,13 @@ from edc_model_admin import (
     ModelAdminReadOnlyMixin, ModelAdminInstitutionMixin,
     ModelAdminRedirectOnDeleteMixin)
 from edc_model_admin import audit_fieldset_tuple
+from edc_model_admin import ModelAdminBasicMixin
+from edc_call_manager.constants import NEW_CALL, OPEN_CALL
+from edc_model_admin.changelist_buttons import ModelAdminChangelistModelButtonMixin
 
 from .admin_site import flourish_follow_admin
 from .forms import WorkListForm, LogEntryForm
-from .models import WorkList, LogEntry
+from .models import Call, WorkList, Log, LogEntry
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
@@ -46,6 +49,69 @@ class WorkListAdmin(ModelAdminMixin, admin.ModelAdmin):
         audit_fieldset_tuple)
 
     instructions = ['Complete this form once per day.']
+    
+
+class ModelAdminCallMixin(ModelAdminChangelistModelButtonMixin, ModelAdminBasicMixin):
+
+    date_hierarchy = 'modified'
+
+    mixin_fields = (
+        'call_attempts',
+        'call_status',
+        'call_outcome',
+    )
+
+    mixin_radio_fields = {'call_status': admin.VERTICAL}
+
+    list_display_pos = None
+    mixin_list_display = (
+        'subject_identifier',
+        'call_button',
+        'call_attempts',
+        'call_outcome',
+        'scheduled',
+        'label',
+        'first_name',
+        'initials',
+        'user_created',
+    )
+
+    mixin_list_filter = (
+        'call_status',
+        'call_attempts',
+        'modified',
+        'hostname_created',
+        'user_created',
+    )
+
+    mixin_readonly_fields = (
+        'call_attempts',
+    )
+
+    mixin_search_fields = ('subject_identifier', 'initials', 'label')
+
+    def call_button(self, obj):
+        Log = django_apps.get_model('edc_call_manager', 'log')
+        log = Log.objects.get(call=obj)
+        args = (log.call.label, str(log.pk))
+        if obj.call_status == NEW_CALL:
+            change_label = 'New&nbsp;Call'.format(obj.call_attempts)
+        elif obj.call_status == OPEN_CALL:
+            change_label = 'Open&nbsp;Call'.format(obj.call_attempts)
+        else:
+            change_label = 'Closed&nbsp;Call'
+        return self.change_button(
+            'call-subject-add', args, label=change_label, namespace='edc_call_manager')
+    call_button.short_description = 'call'
+
+
+@admin.register(Call, site=flourish_follow_admin)
+class CallAdmin(ModelAdminMixin, ModelAdminCallMixin, admin.ModelAdmin):
+    pass
+
+@admin.register(Log, site=flourish_follow_admin)
+class LogAdmin(ModelAdminMixin, admin.ModelAdmin):
+    pass
 
 
 @admin.register(LogEntry, site=flourish_follow_admin)

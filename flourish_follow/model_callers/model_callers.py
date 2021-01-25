@@ -3,9 +3,7 @@ from edc_call_manager.decorators import register
 
 from flourish_caregiver.models import CaregiverLocator
 
-from ..models import Call, Log, LogEntry
-
-from ..models import WorkList
+from ..models import Call, Log, LogEntry, WorkList 
 
 
 @register(WorkList)
