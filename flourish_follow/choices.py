@@ -32,7 +32,19 @@ CONTACT_FAIL_REASON = (
     (NOT_APPLICABLE, 'Not Applicable'),
 )
 
+LOCATION_FOR_CONTACT = (
+    ('physical_address', 'Physical Address with detailed description'),
+    ('workplace_location', 'Name and location of workplace'),
+    ('contact_person', 'Full physical address '),
+)
+
 MAY_CALL = (
     (YES, 'Yes, we may continue to contact the participant.'),
     (NO, 'No, participant has asked NOT to be contacted again.'),
+)
+
+UNSUCCESSFUL_VISIT = (
+    ('no_one_was_home', 'No one was home'),
+    ('location_no_longer_used', 'Previous BHP participant no longer uses this location'),
+    (OTHER, 'Other'),
 )

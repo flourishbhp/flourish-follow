@@ -3,7 +3,7 @@
 
 <div class="btn-group">
   <a title="add call log entry"
-	href="{% url 'flourish_follow_admin:flourish_follow_logentry_add' %}?log={{ result.call_log}}&study_maternal_identifier={{result.study_maternal_identifier}}&next={{listboard_url_name}}&subject_identifier={{ result.subject_identifier }}		">
+	href="{% url 'flourish_follow_admin:flourish_follow_logentry_add' %}?log={{ result.call_log}}&study_maternal_identifier={{result.study_maternal_identifier}}&next={{listboard_url_name}}&subject_identifier={{ result.subject_identifier }}">
 	  <button type="button" {% if result.log_entries %} class="btn btn-default" {% else %} class="btn btn-warning" {%endif%} btn-sm>
 	  	 Add Call Log Enrty</button>
   </a>

@@ -3,6 +3,7 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_is_future
+from edc_base.utils import get_utcnow
 from edc_constants.choices import ALIVE_DEAD_UNKNOWN, YES_NO
 from edc_constants.constants import ALIVE, YES, NO, DEAD
 
@@ -44,7 +45,8 @@ class LogEntry(BaseUuidModel):
         verbose_name='Previous Study Name',
         max_length=100,)
 
-    contact_date = models.DateField(
+    call_datetime = models.DateTimeField(
+        default=get_utcnow,
         verbose_name='Date of contact attempt')
 
     phone_num_type = models.CharField(
@@ -199,7 +201,7 @@ class LogEntry(BaseUuidModel):
     def save(self, *args, **kwargs):
         if self.survival_status == DEAD:
             self.may_call = NO
-        super(LogEntryModelMixin, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @property
     def outcome(self):
@@ -215,6 +217,6 @@ class LogEntry(BaseUuidModel):
     def log_entries(self):
         return self.__class__.objects.filter(log=self.log)
 
-    class Meta(LogEntryModelMixin.Meta):
-        unique_together = ('contact_date', 'log')
+    class Meta:
+        unique_together = ('call_datetime', 'log')
         app_label = 'flourish_follow'

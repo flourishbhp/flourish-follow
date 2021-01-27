@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.deletion import PROTECT
 
 from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
@@ -6,18 +7,9 @@ from edc_base.sites import SiteModelMixin
 
 from ..choices import LOCATION_FOR_CONTACT, UNSUCCESSFUL_VISIT
 
-from django.db import models
-from django.db.models.deletion import PROTECT
-from django.utils import timezone
 
-from django_crypto_fields.fields import EncryptedTextField
 from edc_base.model_managers import HistoricalRecords
-from edc_base.model_mixins import BaseUuidModel
-from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
-
-from .maternal_dataset import MaternalDataset
-from ..choices import LOCATOR_LOG_STATUS
 
 
 class InPersonLog(BaseUuidModel):
@@ -39,9 +31,11 @@ class InPersonLog(BaseUuidModel):
     def __str__(self):
         return self.maternal_dataset.study_maternal_identifier
 
+    class Meta:
+        app_label = 'flourish_follow'
 
 
-class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
+class InPersonContactAttempt(BaseUuidModel):
 
     in_person_log = models.ForeignKey(
         InPersonLog,
@@ -110,6 +104,6 @@ class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
         null=True)
 
     class Meta:
-        app_label = 'flourish_caregiver'
+        app_label = 'flourish_follow'
         verbose_name = 'In Person Contact Attempt'
         verbose_name_plural = 'In Person Contact Attempt'

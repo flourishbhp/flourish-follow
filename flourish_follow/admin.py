@@ -14,8 +14,8 @@ from edc_call_manager.constants import NEW_CALL, OPEN_CALL
 from edc_model_admin.changelist_buttons import ModelAdminChangelistModelButtonMixin
 
 from .admin_site import flourish_follow_admin
-from .forms import WorkListForm, LogEntryForm
-from .models import Call, WorkList, Log, LogEntry
+from .forms import WorkListForm, LogEntryForm, InPersonContactAttemptForm
+from .models import Call, WorkList, Log, LogEntry, InPersonContactAttempt
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
@@ -49,7 +49,7 @@ class WorkListAdmin(ModelAdminMixin, admin.ModelAdmin):
         audit_fieldset_tuple)
 
     instructions = ['Complete this form once per day.']
-    
+
 
 class ModelAdminCallMixin(ModelAdminChangelistModelButtonMixin, ModelAdminBasicMixin):
 
@@ -109,6 +109,7 @@ class ModelAdminCallMixin(ModelAdminChangelistModelButtonMixin, ModelAdminBasicM
 class CallAdmin(ModelAdminMixin, ModelAdminCallMixin, admin.ModelAdmin):
     pass
 
+
 @admin.register(Log, site=flourish_follow_admin)
 class LogAdmin(ModelAdminMixin, admin.ModelAdmin):
     pass
@@ -125,7 +126,7 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': ('study_maternal_identifier',
                        'prev_study',
-                       'contact_date',
+                       'call_datetime',
                        'phone_num_type',
                        'phone_num_success',
                        'cell_contact_fail',
@@ -145,7 +146,7 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                        'appt_grading',
                        'appt_location',
                        'appt_location_other',
-                       'may_call' )},
+                       'may_call')},
          ),
         audit_fieldset_tuple
     )
@@ -167,13 +168,13 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'tel_resp_person_fail': admin.VERTICAL}
 
     list_display = (
-        'study_maternal_identifier', 'prev_study', 'contact_date', )
+        'study_maternal_identifier', 'prev_study', 'call_datetime', )
 
     def get_form(self, request, obj=None, *args, **kwargs):
         form = super().get_form(request, *args, **kwargs)
         custom_choices = []
 
-        study_maternal_identifier = kwargs.get('study_maternal_identifier', 'B003611-4')
+        study_maternal_identifier = kwargs.get('study_maternal_identifier', '')
 
         fields = self.get_all_fields(form)
 
@@ -187,7 +188,8 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         return form
 
     def custom_field_label(self, study_identifier, field):
-        caregiver_locator_cls = django_apps.get_model('flourish_caregiver.caregiverlocator')
+        caregiver_locator_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverlocator')
         fields_dict = {
             'cell_contact_fail': 'subject_cell',
             'alt_cell_contact_fail': 'subject_cell_alt',
@@ -216,6 +218,85 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         :arg instance: Form instance
         :returns list of field names
         :rtype: list
+        """
+
+        fields = list(instance.base_fields)
+
+        for field in list(instance.declared_fields):
+            if field not in fields:
+                fields.append(field)
+        return fields
+
+
+@admin.register(InPersonContactAttempt, site=flourish_follow_admin)
+class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
+
+    form = InPersonContactAttemptForm
+
+    search_fields = ['study_maternal_identifier']
+
+    fieldsets = (
+        (None, {
+            'fields': ('study_maternal_identifier',
+                       'prev_study',
+                       'contact_date',
+                       'contact_location',
+                       'successful_location',
+                       'phy_addr_unsuc',
+                       'phy_addr_unsuc_other',
+                       'workplace_unsuc',
+                       'workplace_unsuc_other',
+                       'contact_person_unsuc',
+                       'contact_person_unsuc_other', )},
+         ),
+        audit_fieldset_tuple
+    )
+
+    radio_fields = {'phy_addr_unsuc': admin.VERTICAL,
+                    'workplace_unsuc': admin.VERTICAL,
+                    'contact_person_unsuc': admin.VERTICAL}
+
+    list_display = (
+        'study_maternal_identifier', 'prev_study', 'contact_date', )
+
+    def get_form(self, request, obj=None, *args, **kwargs):
+        form = super().get_form(request, *args, **kwargs)
+
+        study_maternal_identifier = kwargs.get('study_maternal_identifier', '')
+
+        fields = self.get_all_fields(form)
+
+        for field in fields:
+            custom_value = self.custom_field_label(study_maternal_identifier,
+                                                   field)
+
+            if custom_value:
+                form.base_fields[
+                    field].label = f'Why was the in-person visit to {custom_value} unsuccessful?'
+
+        return form
+
+    def custom_field_label(self, study_identifier, field):
+        caregiver_locator_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverlocator')
+        fields_dict = {
+            'phy_addr_unsuc': 'physical_address',
+            'workplace_unsuc': 'subject_work_place',
+            'contact_person_unsuc': 'indirect_contact_physical_address'}
+
+        try:
+            locator_obj = caregiver_locator_cls.objects.get(
+                study_maternal_identifier=study_identifier)
+        except caregiver_locator_cls.DoesNotExist:
+            pass
+        else:
+            attr_name = fields_dict.get(field, None)
+            if attr_name:
+                return getattr(locator_obj, attr_name, '')
+
+    def get_all_fields(self, instance):
+        """"
+        Return names of all available fields from given Form instance.
         """
 
         fields = list(instance.base_fields)

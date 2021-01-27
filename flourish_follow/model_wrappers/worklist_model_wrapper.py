@@ -54,7 +54,7 @@ class WorkListModelWrapper(ModelWrapper):
         call = Call.objects.filter(
             subject_identifier=self.object.subject_identifier).order_by('scheduled').last()
         return LogEntry.objects.filter(
-            log__call__subject_identifier=call.subject_identifier).order_by('contact_date')[:3]
+            log__call__subject_identifier=call.subject_identifier).order_by('call_datetime')[:3]
 
     @property
     def subject_consent(self):
