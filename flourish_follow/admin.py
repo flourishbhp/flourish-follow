@@ -174,7 +174,10 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         form = super().get_form(request, *args, **kwargs)
         custom_choices = []
 
-        study_maternal_identifier = kwargs.get('study_maternal_identifier', '')
+        if obj:
+            study_maternal_identifier = getattr(obj, 'study_maternal_identifier', '')
+        else:
+            study_maternal_identifier = request.GET.get('study_maternal_identifier')
 
         fields = self.get_all_fields(form)
 
