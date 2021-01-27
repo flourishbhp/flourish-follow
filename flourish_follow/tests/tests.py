@@ -1,13 +1,6 @@
-from django.apps import apps as django_apps
 from django.test.testcases import TestCase
 
-from edc_call_manager.caller_site import site_model_callers
-
-from ..models.worklist import WorkList
-
-Call = django_apps.get_model('edc_call_manager', 'call')
-Log = django_apps.get_model('edc_call_manager', 'log')
-LogEntry = django_apps.get_model('edc_call_manager', 'logentry')
+from ..models import Call, WorkList
 
 
 class TestCallManager(TestCase):

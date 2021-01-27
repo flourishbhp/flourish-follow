@@ -1,3 +1,4 @@
+git+https://github.com/botswana-harvard/edc-action-item.git@develop#egg=edc_action_item
 git+https://github.com/botswana-harvard/edc-dashboard.git@develop#egg=edc_dashboard
 git+https://github.com/botswana-harvard/edc-model-wrapper.git@develop#egg=edc_model_wrapper
 git+https://github.com/botswana-harvard/edc-navbar.git@develop#egg=edc_navbar
@@ -23,7 +24,9 @@ git+https://github.com/botswana-harvard/edc-metadata.git@develop#egg=edc_metadat
 git+https://github.com/botswana-harvard/edc-reference.git@develop#egg=edc_reference
 git+https://github.com/botswana-harvard/edc-lab.git@develop#egg=edc_lab
 git+https://github.com/botswana-harvard/edc-label.git@develop#egg=edc_label
+git+https://github.com/botswana-harvard/edc-prn.git@develop#egg=edc_prn
 git+https://github.com/botswana-harvard/edc-metadata-rules.git@develop#egg=edc_metadata_rules
+git+https://github.com/botswana-harvard/edc-subject-dashboard.git@0.1.11#egg=edc-subject-dashboard
 git+https://github.com/botswana-harvard/edc-timepoint.git@develop#egg=edc_timepoint
 git+https://github.com/botswana-harvard/edc-form-validators.git@develop#egg=edc_form_validators
-git+https://github.com/botswana-harvard/edc-fieldsets.git@develop#egg=edc_fieldsetss	
+git+https://github.com/botswana-harvard/edc-fieldsets.git@develop#egg=edc_fieldsetss

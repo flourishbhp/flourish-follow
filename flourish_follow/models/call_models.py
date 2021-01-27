@@ -31,6 +31,10 @@ class LogEntry(BaseUuidModel):
 
     log = models.ForeignKey(Log, on_delete=models.PROTECT)
 
+    subject_identifier = models.CharField(
+        max_length=50,
+        blank=True,)
+
     study_maternal_identifier = models.CharField(
         verbose_name='Study maternal Subject Identifier',
         max_length=50,

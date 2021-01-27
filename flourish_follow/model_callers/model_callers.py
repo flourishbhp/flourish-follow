@@ -8,7 +8,9 @@ from ..models import Call, Log, LogEntry, WorkList
 
 @register(WorkList)
 class WorkListFollowUpModelCaller(ModelCaller):
-    call_model = (Call)
+    call_model = Call
+    log_model = Log
+    log_entry_model = LogEntry
     locator_model = (CaregiverLocator, 'subject_identifier')
 #     consent_model = (SubjectConsent, 'subject_identifier')
     alternative_locator_filter = 'study_maternal_identifier'
