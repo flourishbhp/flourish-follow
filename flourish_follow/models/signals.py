@@ -12,14 +12,14 @@ def cal_log_entry_on_post_save(sender, instance, using, raw, **kwargs):
     if not raw:
         try:
             work_list = WorkList.objects.get(
-                study_maternal_identifier=instance.study_maternal_identifier,
-                phone_num_success__isnull=False)
+                study_maternal_identifier=instance.study_maternal_identifier)
         except WorkList.DoesNotExist:
             pass
         else:
-            work_list.is_called = True
-            work_list.called_datetime = instance.call_datetime
-            work_list.save()
+            if instance.phone_num_success:
+                work_list.is_called = True
+                work_list.called_datetime = instance.call_datetime
+                work_list.save()
 
 
 @receiver(post_save, weak=False, sender=WorkList,
@@ -30,7 +30,6 @@ def worklist_on_post_save(sender, instance, using, raw, **kwargs):
             InPersonLog.objects.get(
                 study_maternal_identifier=instance.study_maternal_identifier)
         except InPersonLog.DoesNotExist:
-            print('Testnig, **********************8')
             InPersonLog.objects.create(
                 worklist=instance,
                 study_maternal_identifier=instance.study_maternal_identifier)
