@@ -2,8 +2,13 @@ from django.conf import settings
 from django.apps import apps as django_apps
 from edc_model_wrapper import ModelWrapper
 
+<<<<<<< HEAD
 from ..model_wrappers import InPersonContactAttemptModelWrapper
 from ..models import Call, Log, LogEntry, InPersonContactAttempt
+=======
+from ..models import Call, Log, LogEntry
+from .log_entry_model_wrapper import LogEntryModelWrapper
+>>>>>>> 77e0672d0c8321f7f3db98b1f829e7df30549455
 
 
 class WorkListModelWrapper(ModelWrapper):
@@ -79,6 +84,13 @@ class WorkListModelWrapper(ModelWrapper):
     @property
     def home_visit_required(self):
         return True
+
+    def log_entry(self):
+        log = Log.objects.get(id=self.call_log)
+        logentry = LogEntry(
+            log=log,
+            study_maternal_identifier=self.study_maternal_identifier)
+        return LogEntryModelWrapper(logentry)
 
     @property
     def subject_consent(self):

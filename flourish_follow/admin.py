@@ -90,7 +90,6 @@ class ModelAdminCallMixin(ModelAdminChangelistModelButtonMixin, ModelAdminBasicM
     mixin_search_fields = ('subject_identifier', 'initials', 'label')
 
 
-
 @admin.register(Call, site=flourish_follow_admin)
 class CallAdmin(ModelAdminMixin, ModelAdminCallMixin, admin.ModelAdmin):
     pass
@@ -111,7 +110,7 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('log',
-                        'study_maternal_identifier',
+                       'study_maternal_identifier',
                        'prev_study',
                        'call_datetime',
                        'phone_num_type',
