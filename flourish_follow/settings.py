@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_js_reverse',
     'simple_history',
+    'multiselectfield',
     'django_crypto_fields.apps.AppConfig',
     'django_revision.apps.AppConfig',
     'edc_action_item.apps.AppConfig',

@@ -1,4 +1,6 @@
+from django.apps import apps as django_apps
 from django.db import models
+from multiselectfield import MultiSelectField
 
 from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
@@ -10,8 +12,9 @@ from edc_constants.constants import ALIVE, YES, NO, DEAD
 from edc_call_manager.model_mixins import (
     CallModelMixin, LogModelMixin)
 
-from ..choices import APPT_GRADING, APPT_LOCATIONS
-from ..choices import APPT_REASONS_UNWILLING, CONTACT_FAIL_REASON, MAY_CALL
+from ..choices import (
+    APPT_GRADING, APPT_LOCATIONS, APPT_REASONS_UNWILLING,
+    CONTACT_FAIL_REASON, MAY_CALL, PHONE_CHOICES)
 
 
 class Call(CallModelMixin, BaseUuidModel):
@@ -38,8 +41,7 @@ class LogEntry(BaseUuidModel):
 
     study_maternal_identifier = models.CharField(
         verbose_name='Study maternal Subject Identifier',
-        max_length=50,
-        unique=True)
+        max_length=50)
 
     prev_study = models.CharField(
         verbose_name='Previous Study Name',
@@ -49,13 +51,13 @@ class LogEntry(BaseUuidModel):
         default=get_utcnow,
         verbose_name='Date of contact attempt')
 
-    phone_num_type = models.CharField(
+    phone_num_type = MultiSelectField(
         verbose_name='Which phone number(s) was used for contact?',
-        max_length=50)
+        choices=PHONE_CHOICES) 
 
-    phone_num_success = models.CharField(
+    phone_num_success = MultiSelectField(
         verbose_name='Which number(s) were you successful in reaching?',
-        max_length=50)
+        choices=PHONE_CHOICES) 
 
     cell_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Cell phone] unsuccessful?',

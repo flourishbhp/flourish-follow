@@ -66,7 +66,6 @@ class ModelAdminCallMixin(ModelAdminChangelistModelButtonMixin, ModelAdminBasicM
     list_display_pos = None
     mixin_list_display = (
         'subject_identifier',
-        'call_button',
         'call_attempts',
         'call_outcome',
         'scheduled',
@@ -90,19 +89,6 @@ class ModelAdminCallMixin(ModelAdminChangelistModelButtonMixin, ModelAdminBasicM
 
     mixin_search_fields = ('subject_identifier', 'initials', 'label')
 
-    def call_button(self, obj):
-        Log = django_apps.get_model('edc_call_manager', 'log')
-        log = Log.objects.get(call=obj)
-        args = (log.call.label, str(log.pk))
-        if obj.call_status == NEW_CALL:
-            change_label = 'New&nbsp;Call'.format(obj.call_attempts)
-        elif obj.call_status == OPEN_CALL:
-            change_label = 'Open&nbsp;Call'.format(obj.call_attempts)
-        else:
-            change_label = 'Closed&nbsp;Call'
-        return self.change_button(
-            'call-subject-add', args, label=change_label, namespace='edc_call_manager')
-    call_button.short_description = 'call'
 
 
 @admin.register(Call, site=flourish_follow_admin)
@@ -213,7 +199,7 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
             for field_attr in field_attrs:
                 value = getattr(locator_obj, field_attr)
                 if value:
-                    phone_choices += ((value, value),)
+                    phone_choices += ((field_attr, value),)
             return phone_choices
 
     def custom_field_label(self, study_identifier, field):

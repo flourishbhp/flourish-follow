@@ -48,3 +48,14 @@ UNSUCCESSFUL_VISIT = (
     ('location_no_longer_used', 'Previous BHP participant no longer uses this location'),
     (OTHER, 'Other'),
 )
+
+PHONE_CHOICES = (
+    ('subject_cell', 'subject_cell'),
+    ('subject_cell_alt', 'subject_cell_alt'),
+    ('subject_phone', 'subject_phone'),
+    ('subject_phone_alt', 'subject_phone_alt'),
+    ('subject_work_phone', 'subject_work_phone'),
+    ('indirect_contact_cell', 'indirect_contact_cell'),
+    ('indirect_contact_phone', 'indirect_contact_phone'),
+    ('caretaker_cell',  'caretaker_cell'),
+    ('caretaker_tel', 'caretaker_tel'),)
