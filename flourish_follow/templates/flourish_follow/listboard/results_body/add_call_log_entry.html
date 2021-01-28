@@ -3,7 +3,7 @@
 
 <div class="btn-group">
   <a title="add call log entry"
-	href="{% url 'flourish_follow_admin:flourish_follow_logentry_add' %}?log={{ result.call_log}}&study_maternal_identifier={{result.study_maternal_identifier}}&next={{listboard_url_name}}&subject_identifier={{ result.subject_identifier }}">
+	href="{% url 'flourish_follow_admin:flourish_follow_logentry_add' %}?log={{ result.call_log}}&study_maternal_identifier={{result.study_maternal_identifier}}&next={% url 'flourish_follow:flourish_follow_listboard_url' %}&subject_identifier{{ result.subject_identifier }}">
 	  <button type="button" {% if result.log_entries %} class="btn btn-default" {% else %} class="btn btn-warning" {%endif%} btn-sm>
 	  	 Add Call Log Enrty</button>
   </a>
@@ -14,8 +14,8 @@
   	{% if result.log_entries %}
 	  	{% for log_entry in result.log_entries %}
 	    <li>
-	    	<!-- <a href="{% url 'flourish_follow_admin:flourish_follow_logentry_change' log_entry.id %}?log={{ log_entry.log.id}}&study_maternal_identifier={{result.study_maternal_identifier}}&next={% url 'flourish_follow:flourish_follow_listboard_url' %}&subject_identifier{{ result.subject_identifier }}">
-	    	 -->{{ log_entry.call_datetime }}
+	    	<a href="{% url 'flourish_follow_admin:flourish_follow_logentry_change' log_entry.id %}?log={{ log_entry.log.id}}&study_maternal_identifier={{result.study_maternal_identifier}}&next={% url 'flourish_follow:flourish_follow_listboard_url' %}&subject_identifier{{ result.subject_identifier }}">
+	    	 {{ log_entry.call_datetime }}
 	    	</a>
 	    </li>
 	    {% endfor %}

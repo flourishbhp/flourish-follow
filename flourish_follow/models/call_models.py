@@ -8,7 +8,7 @@ from edc_constants.choices import ALIVE_DEAD_UNKNOWN, YES_NO
 from edc_constants.constants import ALIVE, YES, NO, DEAD
 
 from edc_call_manager.model_mixins import (
-    CallModelMixin, LogModelMixin, LogEntryModelMixin)
+    CallModelMixin, LogModelMixin)
 
 from ..choices import APPT_GRADING, APPT_LOCATIONS
 from ..choices import APPT_REASONS_UNWILLING, CONTACT_FAIL_REASON, MAY_CALL

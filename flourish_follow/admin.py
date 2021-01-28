@@ -124,7 +124,8 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('study_maternal_identifier',
+            'fields': ('log',
+                        'study_maternal_identifier',
                        'prev_study',
                        'call_datetime',
                        'phone_num_type',
@@ -186,7 +187,7 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
 
             if custom_value:
                 custom_choices.append([field, custom_value])
-                form.base_fields[field].label = f'{idx + 1} Why was the contact to {custom_value} unsuccessful?'
+                form.base_fields[field].label = f'{idx + 1}. Why was the contact to {custom_value} unsuccessful?'
         form.custom_choices = custom_choices
         return form
 
