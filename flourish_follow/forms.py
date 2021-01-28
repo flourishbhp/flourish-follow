@@ -121,16 +121,13 @@ class LogEntryForm(
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        choices = self.update_choices_vars(self.custom_choices)
+        choices = self.custom_choices
         self.fields['phone_num_type'].choices = choices
         self.fields['phone_num_success'].choices = choices
 
-    def update_choices_vars(self, choices_list=[]):
-        new_choices = []
-        for choices in choices_list:
-            choices[1] = choices[1]
-            new_choices.append(tuple(choices))
-        return new_choices
+
+
+                 
 
 
 class InPersonContactAttemptForm(

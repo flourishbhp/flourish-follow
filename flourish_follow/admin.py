@@ -173,7 +173,6 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     def get_form(self, request, obj=None, *args, **kwargs):
         form = super().get_form(request, *args, **kwargs)
-        custom_choices = []
 
         if obj:
             study_maternal_identifier = getattr(obj, 'study_maternal_identifier', '')
@@ -186,10 +185,36 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
             custom_value = self.custom_field_label(study_maternal_identifier, field)
 
             if custom_value:
-                custom_choices.append([field, custom_value])
                 form.base_fields[field].label = f'{idx + 1}. Why was the contact to {custom_value} unsuccessful?'
-        form.custom_choices = custom_choices
+        form.custom_choices = self.phone_choices(study_maternal_identifier)
         return form
+
+    def phone_choices(self, study_identifier):
+        caregiver_locator_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverlocator')
+        field_attrs = [
+            'subject_cell',
+            'subject_cell_alt',
+            'subject_phone',
+            'subject_phone_alt',
+            'subject_work_phone',
+            'indirect_contact_cell',
+            'indirect_contact_phone',
+            'caretaker_cell',
+            'caretaker_tel']
+
+        try:
+            locator_obj = caregiver_locator_cls.objects.get(
+                study_maternal_identifier=study_identifier)
+        except caregiver_locator_cls.DoesNotExist:
+            pass
+        else:
+            phone_choices = ()
+            for field_attr in field_attrs:
+                value = getattr(locator_obj, field_attr)
+                if value:
+                    phone_choices += ((value, value),)
+            return phone_choices
 
     def custom_field_label(self, study_identifier, field):
         caregiver_locator_cls = django_apps.get_model(
