@@ -1,4 +1,3 @@
-from django.apps import apps as django_apps
 from django.db import models
 from multiselectfield import MultiSelectField
 
@@ -7,7 +6,7 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_is_future
 from edc_base.utils import get_utcnow
 from edc_constants.choices import ALIVE_DEAD_UNKNOWN, YES_NO
-from edc_constants.constants import ALIVE, YES, NO, DEAD
+from edc_constants.constants import ALIVE, YES, NO, DEAD, NOT_APPLICABLE
 
 from edc_call_manager.model_mixins import (
     CallModelMixin, LogModelMixin)
@@ -53,74 +52,65 @@ class LogEntry(BaseUuidModel):
 
     phone_num_type = MultiSelectField(
         verbose_name='Which phone number(s) was used for contact?',
-        choices=PHONE_CHOICES) 
+        choices=PHONE_CHOICES)
 
     phone_num_success = MultiSelectField(
         verbose_name='Which number(s) were you successful in reaching?',
-        choices=PHONE_CHOICES) 
+        choices=PHONE_CHOICES)
 
     cell_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Cell phone] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
-        blank=True,
-        null=True)
+        default=NOT_APPLICABLE)
 
     alt_cell_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Cell phone (alternative)] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
-        blank=True,
-        null=True)
+        default=NOT_APPLICABLE)
 
     tel_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Telephone] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
-        blank=True,
-        null=True)
+        default=NOT_APPLICABLE)
 
     alt_tel_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Telephone (alternative)] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
-        blank=True,
-        null=True)
+        default=NOT_APPLICABLE)
 
     work_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Work Contact Number] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
-        blank=True,
-        null=True)
+        default=NOT_APPLICABLE)
 
     cell_alt_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Alternative contact person cell phone] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
-        blank=True,
-        null=True)
+        default=NOT_APPLICABLE)
 
     tel_alt_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Alternative contact person telephone] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
-        blank=True,
-        null=True)
+        default=NOT_APPLICABLE)
 
     cell_resp_person_fail = models.CharField(
         verbose_name='Why was the contact to [Responsible person cell phone] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
-        blank=True,
-        null=True)
+        default=NOT_APPLICABLE)
 
     tel_resp_person_fail = models.CharField(
         verbose_name='Why was the contact to [Responsible person telephone] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
-        blank=True,
-        null=True)
+        default=NOT_APPLICABLE)
 
     survival_status = models.CharField(
         verbose_name='Survival status of the participant',
@@ -132,9 +122,7 @@ class LogEntry(BaseUuidModel):
     appt = models.CharField(
         verbose_name='Is the participant willing to schedule an appointment',
         max_length=7,
-        choices=YES_NO,
-        null=True,
-        blank=True)
+        choices=YES_NO)
 
     appt_reason_unwilling = models.CharField(
         verbose_name='What is the reason the participant is unwilling to schedule an appointment',
@@ -185,9 +173,7 @@ class LogEntry(BaseUuidModel):
         verbose_name='May we continue to contact the participant?',
         max_length=10,
         choices=MAY_CALL,
-        default=YES,
-        null=True,
-        blank=True)
+        default=YES)
 
     @property
     def subject(self):

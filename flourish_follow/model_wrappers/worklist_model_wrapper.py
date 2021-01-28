@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.apps import apps as django_apps
 from edc_model_wrapper import ModelWrapper
+
 from ..models import Call, Log, LogEntry
+from .log_entry_model_wrapper import LogEntryModelWrapper
 
 
 class WorkListModelWrapper(ModelWrapper):
@@ -55,6 +57,14 @@ class WorkListModelWrapper(ModelWrapper):
             subject_identifier=self.object.subject_identifier).order_by('scheduled').last()
         return LogEntry.objects.filter(
             log__call__subject_identifier=call.subject_identifier).order_by('call_datetime')[:3]
+
+    @property
+    def log_entry(self):
+        log = Log.objects.get(id=self.call_log)
+        logentry = LogEntry(
+            log=log,
+            study_maternal_identifier=self.study_maternal_identifier)
+        return LogEntryModelWrapper(logentry)
 
     @property
     def subject_consent(self):

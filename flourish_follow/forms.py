@@ -11,6 +11,7 @@ from crispy_forms.layout import Layout, Submit
 from edc_base.sites import SiteModelFormMixin
 
 from .models import WorkList, LogEntry, InPersonContactAttempt
+from .form_validations import LogEntryFormValidator
 
 
 class WorkListForm(SiteModelFormMixin, forms.ModelForm):
@@ -103,17 +104,19 @@ class LogEntryForm(
         SiteModelFormMixin, FormValidatorMixin,
         forms.ModelForm):
 
+    form_validator_cls = LogEntryFormValidator
+
     study_maternal_identifier = forms.CharField(
         label='Study maternal Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    
+
     phone_num_type = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        label='Which phone number(s) was used for contact?',)
-    
+        label='Which phone number(s) was used for contact?')
+
     phone_num_success = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        label='Which number(s) were you successful in reaching?',)
+        label='Which number(s) were you successful in reaching?')
 
     class Meta:
         model = LogEntry
@@ -124,10 +127,6 @@ class LogEntryForm(
         choices = self.custom_choices
         self.fields['phone_num_type'].choices = choices
         self.fields['phone_num_success'].choices = choices
-
-
-
-                 
 
 
 class InPersonContactAttemptForm(
