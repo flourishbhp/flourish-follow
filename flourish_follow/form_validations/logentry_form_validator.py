@@ -31,19 +31,22 @@ class LogEntryFormValidator(FormValidator):
         self.validate_other_specify(field='appt_location')
 
         contact_used = cleaned_data.get('phone_num_type')
+            
         contact_success = cleaned_data.get('phone_num_success')
+        print(contact_success, contact_used, '##############')
         if contact_success and contact_used:
-            if not set(contact_success).issubset(set(contact_used)):
-                contacts = []
-                diff = [item for item in contact_success if item not in contact_used]
-                for item in diff:
-                    locator_obj = self.caregiver_locator(study_maternal_identifier)
-                    contacts.append(getattr(locator_obj, item))
-                msg = {'phone_num_success':
-                       f'{", ".join(contacts)} have not been used for contact so can not '
-                       'be selected as successful in reaching'}
-                self._errors.update(msg)
-                raise ValidationError(msg)
+            if not 'none_of_the_above' in contact_success:
+                if not set(contact_success).issubset(set(contact_used)):
+                    contacts = []
+                    diff = [item for item in contact_success if item not in contact_used]
+                    for item in diff:
+                        locator_obj = self.caregiver_locator(study_maternal_identifier)
+                        contacts.append(getattr(locator_obj, item))
+                    msg = {'phone_num_success':
+                           f'{", ".join(contacts)} have not been used for contact so can not '
+                           'be selected as successful in reaching'}
+                    self._errors.update(msg)
+                    raise ValidationError(msg)
 
             fields_map = {
                 'subject_cell': 'cell_contact_fail',

@@ -102,15 +102,11 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def first_name(self):
-        if self.subject_consent:
-            return self.subject_consent.first_name
-        return None
+        return self.subject_locator.first_name
 
     @property
     def last_name(self):
-        if self.subject_consent:
-            return self.subject_consent.last_name
-        return None
+        return self.subject_locator.last_name
 
     @property
     def contacts(self):

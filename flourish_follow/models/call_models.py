@@ -13,7 +13,7 @@ from edc_call_manager.model_mixins import (
 
 from ..choices import (
     APPT_GRADING, APPT_LOCATIONS, APPT_REASONS_UNWILLING,
-    CONTACT_FAIL_REASON, MAY_CALL, PHONE_CHOICES)
+    CONTACT_FAIL_REASON, MAY_CALL, PHONE_USED, PHONE_SUCCESS)
 
 
 class Call(CallModelMixin, BaseUuidModel):
@@ -52,11 +52,11 @@ class LogEntry(BaseUuidModel):
 
     phone_num_type = MultiSelectField(
         verbose_name='Which phone number(s) was used for contact?',
-        choices=PHONE_CHOICES)
+        choices=PHONE_USED)
 
     phone_num_success = MultiSelectField(
         verbose_name='Which number(s) were you successful in reaching?',
-        choices=PHONE_CHOICES)
+        choices=PHONE_SUCCESS)
 
     cell_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Cell phone] unsuccessful?',

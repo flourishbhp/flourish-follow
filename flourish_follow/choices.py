@@ -49,7 +49,20 @@ UNSUCCESSFUL_VISIT = (
     (OTHER, 'Other'),
 )
 
-PHONE_CHOICES = (
+PHONE_SUCCESS = (
+    ('subject_cell', 'subject_cell'),
+    ('subject_cell_alt', 'subject_cell_alt'),
+    ('subject_phone', 'subject_phone'),
+    ('subject_phone_alt', 'subject_phone_alt'),
+    ('subject_work_phone', 'subject_work_phone'),
+    ('indirect_contact_cell', 'indirect_contact_cell'),
+    ('indirect_contact_phone', 'indirect_contact_phone'),
+    ('caretaker_cell',  'caretaker_cell'),
+    ('caretaker_tel', 'caretaker_tel'),
+    ('none_of_the_above', 'None of the above'),)
+
+
+PHONE_USED = (
     ('subject_cell', 'subject_cell'),
     ('subject_cell_alt', 'subject_cell_alt'),
     ('subject_phone', 'subject_phone'),

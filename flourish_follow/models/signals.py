@@ -16,7 +16,7 @@ def cal_log_entry_on_post_save(sender, instance, using, raw, **kwargs):
         except WorkList.DoesNotExist:
             pass
         else:
-            if instance.phone_num_success:
+            if not 'none_of_the_above' in instance.phone_num_success:
                 work_list.is_called = True
                 work_list.called_datetime = instance.call_datetime
                 work_list.save()
