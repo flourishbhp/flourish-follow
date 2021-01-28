@@ -2,10 +2,10 @@
 
 <div class="btn-group">
 
-	{% if not add_button|default:False %}
+	{% if add_button|default:False %}
 		<div class="btn-group">
 		  <a title="Add {{ title|lower }}" type="button" class="btn {% if history_object %}btn-default disabled{% else %}btn-warning{% endif %} btn-sm dropdown-toggle"
-		    href="{{ history_object.href }}">
+		    href="{{ history_object.href }}">{{history_object}}
 		      <i class="fa fa-plus"></i>
 		  </a>
 		</div>

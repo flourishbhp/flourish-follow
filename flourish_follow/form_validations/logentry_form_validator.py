@@ -72,6 +72,13 @@ class LogEntryFormValidator(FormValidator):
                     self._errors.update(msg)
                     raise ValidationError(msg)
 
+            not_applicable = [fields_map.get(na) for na in fields_map.keys() if na not in contact_used]
+            for field in not_applicable:
+                if field in cleaned_data and cleaned_data.get(field) != NOT_APPLICABLE:
+                    msg = {field: 'This field is not applicable'}
+                    self._errors.update(msg)
+                    raise ValidationError(msg)
+
     def caregiver_locator(self, study_maternal_identifier):
         try:
             locator = self.caregiver_locator_cls.objects.get(
