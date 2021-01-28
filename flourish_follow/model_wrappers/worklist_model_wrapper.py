@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.apps import apps as django_apps
 from edc_model_wrapper import ModelWrapper
-from ..models import Call, Log, LogEntry
+
+from ..model_wrappers import InPersonContactAttemptModelWrapper
+from ..models import Call, Log, LogEntry, InPersonContactAttempt
 
 
 class WorkListModelWrapper(ModelWrapper):
@@ -55,6 +57,28 @@ class WorkListModelWrapper(ModelWrapper):
             subject_identifier=self.object.subject_identifier).order_by('scheduled').last()
         return LogEntry.objects.filter(
             log__call__subject_identifier=call.subject_identifier).order_by('call_datetime')[:3]
+
+    @property
+    def home_visit_log_entries(self):
+        in_person_log = getattr(self.object, 'inpersonlog')
+        wrapped_entries = []
+        log_entries = InPersonContactAttempt.objects.filter(
+            in_person_log=in_person_log)
+        for log_entry in log_entries:
+            wrapped_entries.append(
+                InPersonContactAttemptModelWrapper(log_entry))
+
+        return wrapped_entries
+
+    @property
+    def home_visit_log_entry(self):
+        in_person_log = getattr(self.object, 'inpersonlog')
+        log_entry = InPersonContactAttempt(in_person_log=in_person_log)
+        return InPersonContactAttemptModelWrapper(log_entry)
+
+    @property
+    def home_visit_required(self):
+        return True
 
     @property
     def subject_consent(self):

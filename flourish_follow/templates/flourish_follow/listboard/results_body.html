@@ -21,6 +21,11 @@
 	    <td>
 	    	 {% include 'flourish_follow/listboard/results_body/add_call_log_entry.html' %}
 	    </td>
+	    <td>
+	    	    	 {% with history_objects=result.home_visit_log_entries title="Visit logs" history_object=result.home_visit_log_entry add_button=result.home_visit_required %}
+			  {% include 'flourish_follow/listboard/results_body/home_visit_log_entries.html' %}   
+			{% endwith %}
+	    </td>
 	    <td>{{ result.assigned }}</td>
 	    <td>{{ result.date_assigned }}</td>
 	    <td>{% if result.call_datetime %} {{ result.call_datetime }} {% endif %}</td>

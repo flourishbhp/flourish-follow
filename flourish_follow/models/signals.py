@@ -1,10 +1,9 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from edc_call_manager.models import LogEntry
-from flourish_caregiver.models import MaternalVisit
-
 from ..models.worklist import WorkList
+from .home_visit_models import InPersonLog
+from .call_models import LogEntry
 
 
 @receiver(post_save, weak=False, sender=LogEntry,
@@ -13,7 +12,8 @@ def cal_log_entry_on_post_save(sender, instance, using, raw, **kwargs):
     if not raw:
         try:
             work_list = WorkList.objects.get(
-                subject_identifier=instance.log.call.subject_identifier)
+                study_maternal_identifier=instance.study_maternal_identifier,
+                phone_num_success__isnull=False)
         except WorkList.DoesNotExist:
             pass
         else:
@@ -22,15 +22,29 @@ def cal_log_entry_on_post_save(sender, instance, using, raw, **kwargs):
             work_list.save()
 
 
-@receiver(post_save, weak=False, sender=MaternalVisit,
-          dispatch_uid="materal_visit_on_post_save")
-def maternal_visit_on_post_save(sender, instance, using, raw, **kwargs):
+@receiver(post_save, weak=False, sender=WorkList,
+          dispatch_uid="worklist_on_post_save")
+def worklist_on_post_save(sender, instance, using, raw, **kwargs):
     if not raw:
         try:
-            work_list = WorkList.objects.get(
-                subject_identifier=instance.subject_identifier)
-        except WorkList.DoesNotExist:
-            pass
-        else:
-            work_list.visited = True
-            work_list.save()
+            InPersonLog.objects.get(
+                study_maternal_identifier=instance.study_maternal_identifier)
+        except InPersonLog.DoesNotExist:
+            print('Testnig, **********************8')
+            InPersonLog.objects.create(
+                worklist=instance,
+                study_maternal_identifier=instance.study_maternal_identifier)
+
+
+# @receiver(post_save, weak=False, sender=MaternalVisit,
+#           dispatch_uid="materal_visit_on_post_save")
+# def maternal_visit_on_post_save(sender, instance, using, raw, **kwargs):
+#     if not raw:
+#         try:
+#             work_list = WorkList.objects.get(
+#                 subject_identifier=instance.subject_identifier)
+#         except WorkList.DoesNotExist:
+#             pass
+#         else:
+#             work_list.visited = True
+#             work_list.save()

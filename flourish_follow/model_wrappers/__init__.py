@@ -1,1 +1,2 @@
+from .in_person_contact_attempt_model_wrapper import InPersonContactAttemptModelWrapper
 from .worklist_model_wrapper import WorkListModelWrapper

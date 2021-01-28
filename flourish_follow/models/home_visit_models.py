@@ -3,19 +3,24 @@ from django.db.models.deletion import PROTECT
 
 from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
-from edc_base.sites import SiteModelMixin
 
-from ..choices import LOCATION_FOR_CONTACT, UNSUCCESSFUL_VISIT
+from ..choices import UNSUCCESSFUL_VISIT
 
 
 from edc_base.model_managers import HistoricalRecords
 from edc_base.utils import get_utcnow
+
+from .worklist import WorkList
 
 
 class InPersonLog(BaseUuidModel):
     """A system model to track an RA\'s attempts to confirm a Plot
     (related).
     """
+
+    worklist = models.OneToOneField(
+        WorkList,
+        on_delete=PROTECT,)
 
     study_maternal_identifier = models.CharField(
         verbose_name='Study maternal Subject Identifier',
@@ -29,7 +34,7 @@ class InPersonLog(BaseUuidModel):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.maternal_dataset.study_maternal_identifier
+        return self.study_maternal_identifier
 
     class Meta:
         app_label = 'flourish_follow'
