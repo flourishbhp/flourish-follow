@@ -5,7 +5,7 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_is_future
 from edc_base.utils import get_utcnow
-from edc_constants.choices import ALIVE_DEAD_UNKNOWN, YES_NO
+from edc_constants.choices import YES_NO_NA
 from edc_constants.constants import ALIVE, YES, NO, DEAD, NOT_APPLICABLE
 
 from edc_call_manager.model_mixins import (
@@ -112,17 +112,10 @@ class LogEntry(BaseUuidModel):
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
 
-    survival_status = models.CharField(
-        verbose_name='Survival status of the participant',
-        max_length=10,
-        choices=ALIVE_DEAD_UNKNOWN,
-        default=ALIVE,
-        null=True)
-
     appt = models.CharField(
         verbose_name='Is the participant willing to schedule an appointment',
         max_length=7,
-        choices=YES_NO)
+        choices=YES_NO_NA)
 
     appt_reason_unwilling = models.CharField(
         verbose_name='What is the reason the participant is unwilling to schedule an appointment',
@@ -185,11 +178,6 @@ class LogEntry(BaseUuidModel):
 
         See also: CallSubjectViewMixin.get_context_data()"""
         return None
-
-    def save(self, *args, **kwargs):
-        if self.survival_status == DEAD:
-            self.may_call = NO
-        super().save(*args, **kwargs)
 
     @property
     def outcome(self):

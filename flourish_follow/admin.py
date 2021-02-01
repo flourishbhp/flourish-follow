@@ -124,7 +124,6 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                        'tel_alt_contact_fail',
                        'cell_resp_person_fail',
                        'tel_resp_person_fail',
-                       'survival_status',
                        'appt',
                        'appt_reason_unwilling',
                        'appt_reason_unwilling_other',
@@ -137,8 +136,7 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         audit_fieldset_tuple
     )
 
-    radio_fields = {'survival_status': admin.VERTICAL,
-                    'appt': admin.VERTICAL,
+    radio_fields = {'appt': admin.VERTICAL,
                     'appt_reason_unwilling': admin.VERTICAL,
                     'appt_grading': admin.VERTICAL,
                     'appt_location': admin.VERTICAL,

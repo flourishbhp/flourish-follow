@@ -41,6 +41,7 @@ LOCATION_FOR_CONTACT = (
 MAY_CALL = (
     (YES, 'Yes, we may continue to contact the participant.'),
     (NO, 'No, participant has asked NOT to be contacted again.'),
+    (NOT_APPLICABLE, 'Not Applicable')
 )
 
 UNSUCCESSFUL_VISIT = (

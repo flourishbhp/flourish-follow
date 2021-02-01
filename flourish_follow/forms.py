@@ -110,6 +110,10 @@ class LogEntryForm(
         label='Study maternal Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
+    prev_study = forms.CharField(
+        label=' Previous Study Name',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
     phone_num_type = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         label='Which phone number(s) was used for contact?')
