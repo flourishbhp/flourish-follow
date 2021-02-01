@@ -184,8 +184,6 @@ class LogEntry(BaseUuidModel):
         outcome = []
         if self.appt_date:
             outcome.append('Appt. scheduled')
-        if self.survival_status in [ALIVE, DEAD]:
-            outcome.append('Alive' if ALIVE else 'Deceased')
         elif self.may_call == NO:
             outcome.append('Do not call')
         return outcome
