@@ -34,8 +34,15 @@ CONTACT_FAIL_REASON = (
 
 LOCATION_FOR_CONTACT = (
     ('physical_address', 'Physical Address with detailed description'),
-    ('workplace_location', 'Name and location of workplace'),
-    ('contact_person', 'Full physical address '),
+    ('subject_work_place', 'Name and location of workplace'),
+    ('indirect_contact_physical_address', 'Indirect contact address'),
+)
+
+LOCATION_SUCCESS = (
+    ('physical_address', 'Physical Address with detailed description'),
+    ('subject_work_place', 'Name and location of workplace'),
+    ('indirect_contact_physical_address', 'Indirect contact address '),
+    ('none_of_the_above', 'None of the above'),
 )
 
 MAY_CALL = (
@@ -47,6 +54,7 @@ MAY_CALL = (
 UNSUCCESSFUL_VISIT = (
     ('no_one_was_home', 'No one was home'),
     ('location_no_longer_used', 'Previous BHP participant no longer uses this location'),
+    (NOT_APPLICABLE, 'Not Applicable'),
     (OTHER, 'Other'),
 )
 
@@ -60,7 +68,8 @@ PHONE_SUCCESS = (
     ('indirect_contact_phone', 'indirect_contact_phone'),
     ('caretaker_cell',  'caretaker_cell'),
     ('caretaker_tel', 'caretaker_tel'),
-    ('none_of_the_above', 'None of the above'),)
+    ('none_of_the_above', 'None of the above'),
+)
 
 
 PHONE_USED = (
@@ -72,4 +81,5 @@ PHONE_USED = (
     ('indirect_contact_cell', 'indirect_contact_cell'),
     ('indirect_contact_phone', 'indirect_contact_phone'),
     ('caretaker_cell',  'caretaker_cell'),
-    ('caretaker_tel', 'caretaker_tel'),)
+    ('caretaker_tel', 'caretaker_tel'),
+)

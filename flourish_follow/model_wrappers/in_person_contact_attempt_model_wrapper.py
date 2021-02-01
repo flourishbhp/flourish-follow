@@ -9,7 +9,7 @@ class InPersonContactAttemptModelWrapper(ModelWrapper):
     next_url_name = settings.DASHBOARD_URL_NAMES.get(
                                 'flourish_follow_listboard_url')
     querystring_attrs = ['in_person_log']
-    next_url_attrs = ['study_maternal_identifier']
+    next_url_attrs = ['in_person_log', 'study_maternal_identifier', 'prev_study']
 
     @property
     def study_maternal_identifier(self):

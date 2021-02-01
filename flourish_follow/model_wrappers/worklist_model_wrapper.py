@@ -74,7 +74,10 @@ class WorkListModelWrapper(ModelWrapper):
     @property
     def home_visit_log_entry(self):
         in_person_log = getattr(self.object, 'inpersonlog')
-        log_entry = InPersonContactAttempt(in_person_log=in_person_log)
+        log_entry = InPersonContactAttempt(
+            in_person_log=in_person_log,
+            prev_study=self.prev_protocol,
+            study_maternal_identifier=self.study_maternal_identifier)
         return InPersonContactAttemptModelWrapper(log_entry)
 
     @property

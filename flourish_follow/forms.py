@@ -3,7 +3,6 @@ from django.apps import apps as django_apps
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from edc_form_validators import FormValidatorMixin
-from flourish_form_validations.form_validators import InPersonContactAttemptFormValidator
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
@@ -11,7 +10,7 @@ from crispy_forms.layout import Layout, Submit
 from edc_base.sites import SiteModelFormMixin
 
 from .models import WorkList, LogEntry, InPersonContactAttempt
-from .form_validations import LogEntryFormValidator
+from .form_validations import LogEntryFormValidator, HomeVisitFormValidator
 
 
 class WorkListForm(SiteModelFormMixin, forms.ModelForm):
@@ -137,13 +136,32 @@ class InPersonContactAttemptForm(
         SiteModelFormMixin, FormValidatorMixin,
         forms.ModelForm):
 
-    form_validator_cls = InPersonContactAttemptFormValidator
+    form_validator_cls = HomeVisitFormValidator
 
     study_maternal_identifier = forms.CharField(
         label='Study maternal Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
+    prev_study = forms.CharField(
+        label=' Previous Study Name',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
+    contact_location = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        label='Which location was used for contact?')
+
+    successful_location = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        label='Which location(s) were successful?')
+
     class Meta:
         model = InPersonContactAttempt
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        choices = self.custom_choices
+        self.fields['contact_location'].choices = choices
+        self.fields['successful_location'].choices = choices + (('none_of_the_above', 'None of the above'),)
+
 

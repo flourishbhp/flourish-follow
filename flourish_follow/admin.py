@@ -164,11 +164,11 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
 
         fields = self.get_all_fields(form)
 
-        for idx, field in enumerate(fields):
+        for field in fields:
             custom_value = self.custom_field_label(study_maternal_identifier, field)
 
             if custom_value:
-                form.base_fields[field].label = f'{idx + 1}. Why was the contact to {custom_value} unsuccessful?'
+                form.base_fields[field].label = f'Why was the contact to {custom_value} unsuccessful?'
         form.custom_choices = self.phone_choices(study_maternal_identifier)
         return form
 
@@ -249,7 +249,8 @@ class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('study_maternal_identifier',
+            'fields': ('in_person_log',
+                       'study_maternal_identifier',
                        'prev_study',
                        'contact_date',
                        'contact_location',
@@ -274,7 +275,10 @@ class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
     def get_form(self, request, obj=None, *args, **kwargs):
         form = super().get_form(request, *args, **kwargs)
 
-        study_maternal_identifier = kwargs.get('study_maternal_identifier', '')
+        if obj:
+            study_maternal_identifier = getattr(obj, 'study_maternal_identifier', '')
+        else:
+            study_maternal_identifier = request.GET.get('study_maternal_identifier')
 
         fields = self.get_all_fields(form)
 
@@ -283,10 +287,30 @@ class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
                                                    field)
 
             if custom_value:
-                form.base_fields[
-                    field].label = f'Why was the in-person visit to {custom_value} unsuccessful?'
-
+                form.base_fields[field].label = f'Why was the in-person visit to {custom_value} unsuccessful?'
+        form.custom_choices = self.home_visit_choices(study_maternal_identifier)
         return form
+
+    def home_visit_choices(self, study_identifier):
+        caregiver_locator_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverlocator')
+        field_attrs = [
+            'physical_address',
+            'subject_work_place',
+            'indirect_contact_physical_address']
+
+        try:
+            locator_obj = caregiver_locator_cls.objects.get(
+                study_maternal_identifier=study_identifier)
+        except caregiver_locator_cls.DoesNotExist:
+            pass
+        else:
+            home_visit_choices = ()
+            for field_attr in field_attrs:
+                value = getattr(locator_obj, field_attr)
+                if value:
+                    home_visit_choices += ((field_attr, value),)
+            return home_visit_choices
 
     def custom_field_label(self, study_identifier, field):
         caregiver_locator_cls = django_apps.get_model(
