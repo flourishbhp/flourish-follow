@@ -168,7 +168,7 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
             custom_value = self.custom_field_label(study_maternal_identifier, field)
 
             if custom_value:
-                form.base_fields[field].label = f'{idx}. Why was the contact to {custom_value} unsuccessful?'
+                form.base_fields[field].label = f'{idx +1}. Why was the contact to {custom_value} unsuccessful?'
         form.custom_choices = self.phone_choices(study_maternal_identifier)
         return form
 
@@ -287,7 +287,7 @@ class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
                                                    field)
 
             if custom_value:
-                form.base_fields[field].label = f'{idx}. Why was the in-person visit to {custom_value} unsuccessful?'
+                form.base_fields[field].label = f'{idx +1}. Why was the in-person visit to {custom_value} unsuccessful?'
         form.custom_choices = self.home_visit_choices(study_maternal_identifier)
         return form
 

@@ -8,7 +8,6 @@ from edc_constants.constants import NOT_APPLICABLE
 from ..model_wrappers import InPersonContactAttemptModelWrapper
 from ..models import Call, Log, LogEntry, InPersonContactAttempt
 from .log_entry_model_wrapper import LogEntryModelWrapper
-from builtins import False
 
 
 class WorkListModelWrapper(ModelWrapper):
