@@ -3,12 +3,10 @@ from django.conf import settings
 from django.db.models import Q
 
 from edc_model_wrapper import ModelWrapper
-from edc_constants.constants import NOT_APPLICABLE
 
 from ..model_wrappers import InPersonContactAttemptModelWrapper
 from ..models import Call, Log, LogEntry, InPersonContactAttempt
 from .log_entry_model_wrapper import LogEntryModelWrapper
-from builtins import False
 
 
 class WorkListModelWrapper(ModelWrapper):
@@ -85,6 +83,36 @@ class WorkListModelWrapper(ModelWrapper):
         return InPersonContactAttemptModelWrapper(log_entry)
 
     @property
+    def locator_phone_numbers(self):
+        """Return all contact numbers on the locator.
+        """
+        field_attrs = [
+            'subject_cell',
+            'subject_cell_alt',
+            'subject_phone',
+            'subject_phone_alt',
+            'subject_work_phone',
+            'indirect_contact_cell',
+            'indirect_contact_phone',
+            'caretaker_cell',
+            'caretaker_tel']
+        if self.subject_locator:
+            phone_choices = ()
+            for field_attr in field_attrs:
+                value = getattr(self.subject_locator, field_attr)
+                if value:
+                    phone_choices += ((field_attr, value),)
+            return phone_choices
+
+    @property
+    def call_log_required(self):
+        """Return True if the call log is required.
+        """
+        if self.locator_phone_numbers:
+            return True
+        return False
+
+    @property
     def home_visit_required(self):
         check_fields = [
             'cell_contact_fail', 'alt_cell_contact_fail',
@@ -92,20 +120,23 @@ class WorkListModelWrapper(ModelWrapper):
             'work_contact_fail', 'cell_alt_contact_fail',
             'tel_alt_contact_fail', 'cell_resp_person_fail',
             'tel_resp_person_fail']
-        log_entries = LogEntry.objects.filter(
-            ~Q(phone_num_success='none_of_the_above'),
-            study_maternal_identifier=self.object.study_maternal_identifier)
-        log_answers = []
-        for log in log_entries:
-            for var in check_fields:
-                value = getattr(log, var)
-                log_answers.append(value)
-        if 'no_response' in log_answers:
-            return False
-        elif 'no_response_vm_not_left' in log_answers:
-            return False
-        elif 'disconnected' in log_answers:
+        if not self.locator_phone_numbers:
             return True
+        else:
+            log_entries = LogEntry.objects.filter(
+                ~Q(phone_num_success='none_of_the_above'),
+                study_maternal_identifier=self.object.study_maternal_identifier)
+            log_answers = []
+            for log in log_entries:
+                for var in check_fields:
+                    value = getattr(log, var)
+                    log_answers.append(value)
+            if 'no_response' in log_answers:
+                return False
+            elif 'no_response_vm_not_left' in log_answers:
+                return False
+            elif 'disconnected' in log_answers:
+                return True
         return False
 
     @property
