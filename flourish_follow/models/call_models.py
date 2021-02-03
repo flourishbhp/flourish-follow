@@ -13,7 +13,8 @@ from edc_call_manager.model_mixins import (
 
 from ..choices import (
     APPT_GRADING, APPT_LOCATIONS, APPT_REASONS_UNWILLING,
-    CONTACT_FAIL_REASON, MAY_CALL, PHONE_USED, PHONE_SUCCESS)
+    CONTACT_FAIL_REASON, MAY_CALL, PHONE_USED, PHONE_SUCCESS,
+    HOME_VISIT)
 
 
 class Call(CallModelMixin, BaseUuidModel):
@@ -168,6 +169,18 @@ class LogEntry(BaseUuidModel):
         max_length=10,
         choices=MAY_CALL,
         default=YES)
+
+    home_visit = models.CharField(
+        verbose_name='Perform home visit.',
+        max_length=50,
+        choices=HOME_VISIT,
+        default=NOT_APPLICABLE)
+
+    home_visit_other = models.CharField(
+        verbose_name='Other reason, please specify ...',
+        max_length=50,
+        null=True,
+        blank=True)
 
     @property
     def subject(self):

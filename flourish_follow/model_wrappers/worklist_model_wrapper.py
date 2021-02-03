@@ -2,6 +2,7 @@ from django.apps import apps as django_apps
 from django.conf import settings
 from django.db.models import Q
 
+from edc_constants.constants import NOT_APPLICABLE
 from edc_model_wrapper import ModelWrapper
 
 from ..model_wrappers import InPersonContactAttemptModelWrapper
@@ -113,6 +114,17 @@ class WorkListModelWrapper(ModelWrapper):
         return False
 
     @property
+    def perform_home_visit(self):
+        """Returns True is an RA took the descretions to do a home visit.
+        """
+        log_entries = LogEntry.objects.filter(
+            study_maternal_identifier=self.object.study_maternal_identifier)
+        for log in log_entries:
+            if log.home_visit and not log.home_visit == NOT_APPLICABLE:
+                return True
+        return False
+
+    @property
     def home_visit_required(self):
         check_fields = [
             'cell_contact_fail', 'alt_cell_contact_fail',
@@ -121,6 +133,8 @@ class WorkListModelWrapper(ModelWrapper):
             'tel_alt_contact_fail', 'cell_resp_person_fail',
             'tel_resp_person_fail']
         if not self.locator_phone_numbers:
+            return True
+        elif self.perform_home_visit:
             return True
         else:
             log_entries = LogEntry.objects.filter(

@@ -131,7 +131,9 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                        'appt_grading',
                        'appt_location',
                        'appt_location_other',
-                       'may_call')},
+                       'may_call',
+                       'home_visit',
+                       'home_visit_other')},
          ),
         audit_fieldset_tuple
     )
@@ -149,7 +151,8 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'cell_alt_contact_fail': admin.VERTICAL,
                     'tel_alt_contact_fail': admin.VERTICAL,
                     'cell_resp_person_fail': admin.VERTICAL,
-                    'tel_resp_person_fail': admin.VERTICAL}
+                    'tel_resp_person_fail': admin.VERTICAL,
+                    'home_visit': admin.VERTICAL}
 
     list_display = (
         'study_maternal_identifier', 'prev_study', 'call_datetime', )

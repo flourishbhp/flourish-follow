@@ -58,6 +58,13 @@ UNSUCCESSFUL_VISIT = (
     (OTHER, 'Other'),
 )
 
+HOME_VISIT = (
+    (NOT_APPLICABLE, 'Not Applicable'),
+    ('never_answer', 'Decide to do home visit because the phone is never answered'),
+    ('requested_home_visit', 'Participants prefers/requested a home visit'),
+    (OTHER, 'Other reason ...'),
+)
+
 PHONE_SUCCESS = (
     ('subject_cell', 'subject_cell'),
     ('subject_cell_alt', 'subject_cell_alt'),
