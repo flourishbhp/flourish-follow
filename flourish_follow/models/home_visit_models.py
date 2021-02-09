@@ -3,7 +3,7 @@ from django.db.models.deletion import PROTECT
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
-from edc_base.model_validators import datetime_not_future
+from edc_base.model_validators import date_not_future
 from edc_base.utils import get_utcnow
 from edc_constants.constants import NOT_APPLICABLE
 from multiselectfield import MultiSelectField
@@ -58,7 +58,7 @@ class InPersonContactAttempt(BaseUuidModel):
 
     contact_date = models.DateField(
         verbose_name='Date of contact attempt',
-        validators=[datetime_not_future, ])
+        validators=[date_not_future, ])
 
     contact_location = MultiSelectField(
         verbose_name='Which location was used for contact?',

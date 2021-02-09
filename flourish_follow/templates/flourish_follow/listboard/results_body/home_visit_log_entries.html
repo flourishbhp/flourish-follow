@@ -4,7 +4,7 @@
 
 	{% if add_button|default:False %}
 		<div class="btn-group">
-		  <a title="Add {{ title|lower }}" type="button" class="btn {% if history_object %}btn-default disabled{% else %}btn-warning{% endif %} btn-sm dropdown-toggle"
+		  <a title="Add {{ title|lower }}" type="button" class="btn {% if history_objects %}btn-default{% else %}btn-warning{% endif %} btn-sm dropdown-toggle"
 		    href="{{ history_object.href }}">
 		      <i class="fa fa-plus"></i>
 		  </a>
@@ -27,7 +27,7 @@
 	        <li class="dropdown-header">{{ title|default:"History" }}</li>
 	        {% for obj in history_objects reversed %}
 	          <li><a href="{{ obj.get_absolute_url }}?next={{ obj.next_url }}&{{ obj.querystring }}">
-	               {{ obj.report_datetime }}</a></li>
+	               {{ obj.contact_date }}</a></li>
 	        {% endfor %}
 	      </ul>
 	</div>
