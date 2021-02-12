@@ -99,7 +99,8 @@ class HomeView(
             participants_assignments=self.participants_assignments,
             total_assigned=len(self.participants_assignments),
             available_participants=len(self.available_participants),
-            total_locators=CaregiverLocator.objects.all().count())
+            total_locators=CaregiverLocator.objects.all().count(),
+            successful_calls=WorkList.objects.filter(is_called=True).count())
         return context
 
     @method_decorator(login_required)
