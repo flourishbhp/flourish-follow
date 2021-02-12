@@ -1,8 +1,9 @@
 from django.apps import apps as django_apps
-from edc_constants.constants import NO, YES
+from edc_constants.constants import NO, YES, CLOSED
 from edc_form_validators import FormValidator
 
 from .contact_form_validator import ContactFormValidator
+from django.core.exceptions import ValidationError
 
 
 class LogEntryFormValidator(ContactFormValidator, FormValidator):
@@ -56,3 +57,12 @@ class LogEntryFormValidator(ContactFormValidator, FormValidator):
         self.validate_other_specify(field='appt_reason_unwilling')
 
         self.validate_other_specify(field='appt_location')
+
+        self.validate_other_specify(field='home_visit')
+
+        call = cleaned_data.get('log').call
+        self.validate_closed_call(call)
+
+    def validate_closed_call(self, call_model):
+        if call_model.call_status == CLOSED:
+            raise ValidationError('This call is already closed.')
