@@ -50,22 +50,18 @@ class HomeView(
     def participants_assignments(self):
         """Return participants assignments.
         """
-        assigned_worklists = WorkList.objects.filter(
-            date_assigned=timezone.now().date())
-        assignments = [
-            [obj.assigned, obj.study_maternal_identifier
-             ] for obj in assigned_worklists]
+        assignments = WorkList.objects.filter(
+            date_assigned=timezone.now().date()).values_list(
+                'study_maternal_identifier', flat=True)
         return assignments
 
     @property
     def available_participants(self):
-        locators = CaregiverLocator.objects.all()
-        work_list = WorkList.objects.filter(
-            Q(is_called=True) | Q(date_assigned=timezone.now().date()))
-        locator_identifiers = [
-            obj.study_maternal_identifier for obj in locators]
-        called_assigned_identifiers = [
-            obj.study_maternal_identifier for obj in work_list]
+        locator_identifiers = CaregiverLocator.objects.values_list(
+            'study_maternal_identifier', flat=True)
+        called_assigned_identifiers = WorkList.objects.filter(
+            Q(is_called=True) | Q(date_assigned=timezone.now().date())).values_list(
+                'study_maternal_identifier', flat=True) 
         return list(set(locator_identifiers) - set(called_assigned_identifiers))
 
     def reset_participant_assignments(self, reset=None):
