@@ -15,7 +15,8 @@ from edc_dashboard.view_mixins import (
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
-from flourish_caregiver.models import CaregiverLocator
+from flourish_caregiver.models import CaregiverLocator, MaternalDataset
+from flourish_caregiver.helper_classes import Cohort
 
 from ..forms import ParticipantsNumberForm
 from ..model_wrappers import WorkListModelWrapper
@@ -97,12 +98,26 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
         return q
 
     @property
+    def over_age_limit(self):
+        """Return the list of 17 years 9 months children.
+        """
+        maternal_data = MaternalDataset.objects.all()
+        over_age_limit = []
+        for maternal in maternal_data:
+            age = Cohort().age_at_enrollment(
+                child_dob=maternal.delivdt, check_date=timezone.now().date())
+            if age >= 17.9:
+                over_age_limit.append(maternal.study_maternal_identifier)
+        return over_age_limit
+
+    @property
     def available_participants(self):
         locator_identifiers = CaregiverLocator.objects.values_list(
-            'study_maternal_identifier', flat=True)
+            'study_maternal_identifier', flat=True).distinct()
         called_assigned_identifiers = WorkList.objects.filter(
             Q(is_called=True) | Q(date_assigned=timezone.now().date())).values_list(
                 'study_maternal_identifier', flat=True) 
+        locator_identifiers = list(set(locator_identifiers)) - list(set(self.over_age_limit))
         return list(set(locator_identifiers) - set(called_assigned_identifiers))
 
     def get_context_data(self, **kwargs):
