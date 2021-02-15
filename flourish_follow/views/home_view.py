@@ -53,7 +53,8 @@ class HomeView(
         """
         assignments = WorkList.objects.filter(
             date_assigned=timezone.now().date()).values_list(
-                'study_maternal_identifier', 'user_created', flat=True)
+                'assigned', 'study_maternal_identifier',)
+        print(assignments, '#################3')
         return assignments
 
     @property
