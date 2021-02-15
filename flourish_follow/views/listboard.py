@@ -116,8 +116,8 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
             'study_maternal_identifier', flat=True).distinct()
         called_assigned_identifiers = WorkList.objects.filter(
             Q(is_called=True) | Q(date_assigned=timezone.now().date())).values_list(
-                'study_maternal_identifier', flat=True) 
-        locator_identifiers = list(set(locator_identifiers)) - list(set(self.over_age_limit))
+                'study_maternal_identifier', flat=True)
+        locator_identifiers = list(set(locator_identifiers) - set(self.over_age_limit))
         return list(set(locator_identifiers) - set(called_assigned_identifiers))
 
     def get_context_data(self, **kwargs):
