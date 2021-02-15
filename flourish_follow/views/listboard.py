@@ -15,8 +15,8 @@ from edc_dashboard.view_mixins import (
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
-from flourish_caregiver.models import CaregiverLocator, MaternalDataset
 from flourish_caregiver.helper_classes import Cohort
+from flourish_caregiver.models import CaregiverLocator, MaternalDataset
 
 from ..forms import ParticipantsNumberForm
 from ..model_wrappers import WorkListModelWrapper
