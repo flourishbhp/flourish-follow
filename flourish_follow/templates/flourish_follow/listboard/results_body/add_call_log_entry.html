@@ -14,7 +14,7 @@
   	{% if result.log_entries %}
 	  	{% for log_entry in result.log_entries %}
 	    <li>
-	    	<a href="{% url 'flourish_follow_admin:flourish_follow_logentry_change' log_entry.id %}?log={{ log_entry.log.id}}&study_maternal_identifier={{result.study_maternal_identifier}}&next={% url 'flourish_follow:flourish_follow_listboard_url' %}&subject_identifier={{ result.subject_identifier }}">
+	    	<a href="{{ log_entry.get_absolute_url }}?next={{ log_entry.next_url }}&{{ log_entry.querystring }}">
 	    	 {{ log_entry.call_datetime }}
 	    	</a>
 	    </li>
