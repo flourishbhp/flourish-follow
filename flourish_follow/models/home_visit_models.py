@@ -49,8 +49,7 @@ class InPersonContactAttempt(BaseUuidModel):
 
     study_maternal_identifier = models.CharField(
         verbose_name='Study maternal Subject Identifier',
-        max_length=50,
-        unique=True)
+        max_length=50, )
 
     prev_study = models.CharField(
         verbose_name='Previous Study Name',
