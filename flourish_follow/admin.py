@@ -1,5 +1,6 @@
 from django.apps import apps as django_apps
 from django.contrib import admin
+from django.conf import settings
 
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 from edc_base.sites.admin import ModelAdminSiteMixin
@@ -16,6 +17,10 @@ from edc_model_admin.changelist_buttons import ModelAdminChangelistModelButtonMi
 from .admin_site import flourish_follow_admin
 from .forms import WorkListForm, LogEntryForm, InPersonContactAttemptForm
 from .models import Call, WorkList, Log, LogEntry, InPersonContactAttempt
+from django.urls.base import reverse
+from django.urls.exceptions import NoReverseMatch
+from edc_model_admin.model_admin_next_url_redirect_mixin import ModelAdminNextUrlRedirectError
+from edc_constants.constants import NOT_APPLICABLE
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
@@ -174,6 +179,22 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                 form.base_fields[field].label = f'{idx +1}. Why was the contact to {custom_value} unsuccessful?'
         form.custom_choices = self.phone_choices(study_maternal_identifier)
         return form
+
+    def redirect_url(self, request, obj, post_url_continue=None):
+        redirect_url = super().redirect_url(
+            request, obj, post_url_continue=post_url_continue)
+        if ('none_of_the_above' not in obj.phone_num_success
+                and obj.home_visit == NOT_APPLICABLE):
+            if request.GET.dict().get('next'):
+                url_name = settings.DASHBOARD_URL_NAMES.get(
+                    'maternal_dataset_listboard_url')
+            options = {'study_maternal_identifier': request.GET.dict().get('study_maternal_identifier')}
+            try:
+                redirect_url = reverse(url_name, kwargs=options)
+            except NoReverseMatch as e:
+                raise ModelAdminNextUrlRedirectError(
+                    f'{e}. Got url_name={url_name}, kwargs={options}.')
+        return redirect_url
 
     def phone_choices(self, study_identifier):
         caregiver_locator_cls = django_apps.get_model(
@@ -344,3 +365,18 @@ class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
             if field not in fields:
                 fields.append(field)
         return fields
+
+    def redirect_url(self, request, obj, post_url_continue=None):
+        redirect_url = super().redirect_url(
+            request, obj, post_url_continue=post_url_continue)
+        if 'none_of_the_above' not in obj.successful_location:
+            if request.GET.dict().get('next'):
+                url_name = settings.DASHBOARD_URL_NAMES.get(
+                    'maternal_dataset_listboard_url')
+            options = {'study_maternal_identifier': request.GET.dict().get('study_maternal_identifier')}
+            try:
+                redirect_url = reverse(url_name, kwargs=options)
+            except NoReverseMatch as e:
+                raise ModelAdminNextUrlRedirectError(
+                    f'{e}. Got url_name={url_name}, kwargs={options}.')
+        return redirect_url
