@@ -264,6 +264,13 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         return fields
 
 
+    def render_change_form(self, request, context, *args, **kwargs):
+        context['adminform'].form.fields['log'].queryset = \
+            Log.objects.filter(id=request.GET.get('log'))
+        return super(LogEntryAdmin, self).render_change_form(
+            request, context, *args, **kwargs)
+
+
 @admin.register(InPersonContactAttempt, site=flourish_follow_admin)
 class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
 
