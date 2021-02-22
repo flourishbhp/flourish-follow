@@ -51,19 +51,12 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
     def create_user_worklist(self, selected_participants=None):
         """Sets a work list for a user.
         """
-        for selected_participant in selected_participants:
-            try:
-                work_list = WorkList.objects.get(
-                    study_maternal_identifier=selected_participant)
-            except WorkList.DoesNotExist:
-                WorkList.objects.create(
-                    study_maternal_identifier=selected_participant,
-                    assigned=self.request.user.username,
-                    date_assigned=timezone.now().date())
-            else:
-                work_list.assigned = self.request.user.username
-                work_list.date_assigned = timezone.now().date()
-                work_list.save()
+        update_values = {
+            'assigned': self.request.user.username,
+            'date_assigned': timezone.now().date()}
+        WorkList.objects.update_or_create(
+            study_maternal_identifier__in=selected_participants,
+            defaults=update_values)
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
