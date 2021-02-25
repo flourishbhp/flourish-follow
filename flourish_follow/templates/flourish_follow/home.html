@@ -21,6 +21,7 @@
 		<div class="raw">
 	    <div id="div-home-right" class="col-md-8">
 	    {% include 'flourish_follow/forms/assign_participants.html' %}
+	    {% include 'flourish_follow/forms/reset_assignment_form.html' %}
 		{% if participants_assignments %}
 			<div class="panel panel-default">
 			    <div class="panel-heading"><h4>Participants assignments</h4>
@@ -51,6 +52,7 @@
     	{% endif %}
      </div>
      {% include 'flourish_follow/admin_stats.html' %}
+     
     </div>    
 </div>
 {% endblock main %}

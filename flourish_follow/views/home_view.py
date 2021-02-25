@@ -14,7 +14,7 @@ from edc_navbar import NavbarViewMixin
 from flourish_caregiver.helper_classes import Cohort
 from flourish_caregiver.models import CaregiverLocator, MaternalDataset
 
-from ..forms import AssignParticipantForm
+from ..forms import AssignParticipantForm, ResetAssignmentForm
 from ..models import WorkList
 
 
@@ -73,15 +73,19 @@ class HomeView(
         locator_identifiers = list(set(locator_identifiers) - set(self.over_age_limit))
         return list(set(locator_identifiers) - set(called_assigned_identifiers))
 
-    def reset_participant_assignments(self, reset=None):
+    def reset_participant_assignments(self, username=None):
         """Resets all assignments if reset is yes.
         """
-        if reset == 'yes':
-            for obj in WorkList.objects.filter(
-                    date_assigned__isnull=False, assigned__isnull=False):
-                obj.assigned = None
-                obj.date_assigned = None
-                obj.save()
+        if username == 'all':
+            WorkList.objects.filter(
+                date_assigned__isnull=False,
+                assigned__isnull=False).update(
+                    assigned=None, date_assigned=None)
+        else:
+            WorkList.objects.filter(
+                date_assigned__isnull=False,
+                assigned=username).update(
+                    assigned=None, date_assigned=None)
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
@@ -101,15 +105,20 @@ class HomeView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        reset_assginments = self.request.GET.get('reset')
-        if reset_assginments:
-            self.reset_participant_assignments(reset=reset_assginments)
+        reset_assignment_form = ResetAssignmentForm()
+        if self.request.method == 'POST':
+            reset_assignment_form = ResetAssignmentForm(self.request.POST)
+            if reset_assignment_form.is_valid():
+                username = reset_assignment_form.data['username']
+                self.reset_participant_assignments(username=username)
+        
         context.update(
             participants_assignments=self.participants_assignments,
             total_assigned=len(self.participants_assignments),
             available_participants=len(self.available_participants),
             total_locators=CaregiverLocator.objects.all().count(),
-            successful_calls=WorkList.objects.filter(is_called=True).count())
+            successful_calls=WorkList.objects.filter(is_called=True).count(),
+            reset_assignment_form=reset_assignment_form)
         return context
 
     @method_decorator(login_required)
