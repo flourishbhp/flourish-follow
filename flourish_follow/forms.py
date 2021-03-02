@@ -51,7 +51,7 @@ class AssignParticipantForm(forms.Form):
         """
         assignable_users_choices = ()
         user = django_apps.get_model('auth.user')
-        app_config = django_apps.get_app_config('edc_data_manager')
+        app_config = django_apps.get_app_config('flourish_follow')
         assignable_users_group = app_config.assignable_users_group
         try:
             Group.objects.get(name=assignable_users_group)
@@ -105,7 +105,7 @@ class ResetAssignmentForm(forms.Form):
         """
         assignable_users_choices = (('all', 'All'),)
         user = django_apps.get_model('auth.user')
-        app_config = django_apps.get_app_config('edc_data_manager')
+        app_config = django_apps.get_app_config('flourish_follow')
         assignable_users_group = app_config.assignable_users_group
         try:
             Group.objects.get(name=assignable_users_group)
