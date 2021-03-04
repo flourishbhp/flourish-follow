@@ -229,8 +229,8 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
             for field_attr in field_attrs:
                 value = getattr(locator_obj, field_attr)
                 if value:
-
-                    value = f'{value} {field_attr}'
+                    field_name = field_attr.replace('_', ' ')
+                    value = f'{value} {field_name.title()}'
                     phone_choices += ((field_attr, value),)
             return phone_choices
 
