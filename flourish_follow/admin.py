@@ -119,29 +119,38 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                        'prev_study',
                        'call_datetime',
                        'phone_num_type',
-                       'phone_num_success',
-                       'cell_contact_fail',
+                       'phone_num_success',)
+        }),
+
+        ('Subject Cell & Telephones', {
+            'fields': ('cell_contact_fail',
                        'alt_cell_contact_fail',
                        'tel_contact_fail',
-                       'alt_tel_contact_fail',
-                       'work_contact_fail',
-                       'cell_alt_contact_fail',
-                       'tel_alt_contact_fail',
-                       'cell_resp_person_fail',
-                       'tel_resp_person_fail',
-                       'appt',
-                       'appt_reason_unwilling',
-                       'appt_reason_unwilling_other',
-                       'appt_date',
-                       'appt_grading',
-                       'appt_location',
-                       'appt_location_other',
-                       'may_call',
-                       'home_visit',
-                       'home_visit_other')},
-         ),
-        audit_fieldset_tuple
-    )
+                       'alt_tel_contact_fail',)
+        }),
+        ('Subject Work Contact', {
+            'fields': ('work_contact_fail',)
+        }),
+        ('Indirect Contact Cell & Telephone', {
+            'fields': ('cell_alt_contact_fail',
+                       'tel_alt_contact_fail',)
+        }),
+        ('Caretaker Cell & Telephone', {
+            'fields': ('cell_resp_person_fail',
+                       'tel_resp_person_fail')
+        }),
+        ('Schedule Appointment With Participant', {
+           'fields': ('appt',
+                      'appt_reason_unwilling',
+                      'appt_reason_unwilling_other',
+                      'appt_date',
+                      'appt_grading',
+                      'appt_location',
+                      'appt_location_other',
+                      'may_call',
+                      'home_visit',
+                      'home_visit_other',)
+        }), audit_fieldset_tuple)
 
     radio_fields = {'appt': admin.VERTICAL,
                     'appt_reason_unwilling': admin.VERTICAL,
@@ -220,6 +229,8 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
             for field_attr in field_attrs:
                 value = getattr(locator_obj, field_attr)
                 if value:
+
+                    value = f'{value} {field_attr}'
                     phone_choices += ((field_attr, value),)
             return phone_choices
 

@@ -61,55 +61,55 @@ class LogEntry(BaseUuidModel):
         choices=PHONE_SUCCESS)
 
     cell_contact_fail = models.CharField(
-        verbose_name='Why was the contact to [Cell phone] unsuccessful?',
+        verbose_name='Why was the contact to [ ] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
 
     alt_cell_contact_fail = models.CharField(
-        verbose_name='Why was the contact to [Cell phone (alternative)] unsuccessful?',
+        verbose_name='Why was the contact to [ ] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
 
     tel_contact_fail = models.CharField(
-        verbose_name='Why was the contact to [Telephone] unsuccessful?',
+        verbose_name='Why was the contact to [ ] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
 
     alt_tel_contact_fail = models.CharField(
-        verbose_name='Why was the contact to [Telephone (alternative)] unsuccessful?',
+        verbose_name='Why was the contact to [ ] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
 
     work_contact_fail = models.CharField(
-        verbose_name='Why was the contact to [Work Contact Number] unsuccessful?',
+        verbose_name='Why was the contact to [ ] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
 
     cell_alt_contact_fail = models.CharField(
-        verbose_name='Why was the contact to [Alternative contact person cell phone] unsuccessful?',
+        verbose_name='Why was the contact to [ ] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
 
     tel_alt_contact_fail = models.CharField(
-        verbose_name='Why was the contact to [Alternative contact person telephone] unsuccessful?',
+        verbose_name='Why was the contact to [ ] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
 
     cell_resp_person_fail = models.CharField(
-        verbose_name='Why was the contact to [Responsible person cell phone] unsuccessful?',
+        verbose_name='Why was the contact to [ ] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
 
     tel_resp_person_fail = models.CharField(
-        verbose_name='Why was the contact to [Responsible person telephone] unsuccessful?',
+        verbose_name='Why was the contact to [ ] unsuccessful?',
         max_length=100,
         choices=CONTACT_FAIL_REASON,
         default=NOT_APPLICABLE)
