@@ -33,12 +33,13 @@ class HomeView(
     def create_user_worklist(self, username=None, selected_participants=None):
         """Sets a work list for a user.
         """
-        update_values = {
-            'assigned': username,
-            'date_assigned': timezone.now().date()}
-        WorkList.objects.update_or_create(
-            study_maternal_identifier__in=selected_participants,
-            defaults=update_values)
+        for participant in selected_participants:
+            update_values = {
+                'assigned': self.request.user.username,
+                'date_assigned': timezone.now().date()}
+            WorkList.objects.update_or_create(
+                study_maternal_identifier=participant,
+                defaults=update_values)
 
 
     @property
