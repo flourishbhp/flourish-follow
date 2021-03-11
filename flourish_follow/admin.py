@@ -104,7 +104,15 @@ class CallAdmin(ModelAdminMixin, ModelAdminCallMixin, admin.ModelAdmin):
 
 @admin.register(Log, site=flourish_follow_admin)
 class LogAdmin(ModelAdminMixin, admin.ModelAdmin):
-    pass
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(LogEntry, site=flourish_follow_admin)
