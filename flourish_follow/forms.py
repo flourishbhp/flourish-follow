@@ -78,6 +78,7 @@ class AssignParticipantForm(forms.Form):
             assignable_users_choices += extra_choices
         return assignable_users_choices
 
+
 class ResetAssignmentForm(forms.Form):
 
     username = forms.ChoiceField(

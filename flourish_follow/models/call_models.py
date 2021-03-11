@@ -117,7 +117,8 @@ class LogEntry(BaseUuidModel):
     appt = models.CharField(
         verbose_name='Is the participant willing to schedule an appointment',
         max_length=7,
-        choices=YES_NO_NA)
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE)
 
     appt_reason_unwilling = models.CharField(
         verbose_name='What is the reason the participant is unwilling to schedule an appointment',

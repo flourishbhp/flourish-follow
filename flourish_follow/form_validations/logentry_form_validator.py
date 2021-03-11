@@ -16,12 +16,6 @@ class LogEntryFormValidator(ContactFormValidator, FormValidator):
         cleaned_data = self.cleaned_data
         study_maternal_identifier = cleaned_data.get('study_maternal_identifier')
 
-        for field in ['appt', 'may_call']:
-            self.not_applicable_if(
-                ['none_of_the_above'],
-                field='phone_num_success',
-                field_applicable=field)
-
         contact_used = cleaned_data.get('phone_num_type')
 
         contact_success = cleaned_data.get('phone_num_success')
@@ -57,6 +51,12 @@ class LogEntryFormValidator(ContactFormValidator, FormValidator):
         self.validate_other_specify(field='appt_reason_unwilling')
 
         self.validate_other_specify(field='appt_location')
+
+        for field in ['appt', 'may_call']:
+            self.not_applicable_if(
+                ['none_of_the_above'],
+                field='phone_num_success',
+                field_applicable=field)
 
         self.validate_other_specify(field='home_visit')
 
