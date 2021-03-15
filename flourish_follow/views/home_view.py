@@ -112,7 +112,7 @@ class HomeView(
             if reset_assignment_form.is_valid():
                 username = reset_assignment_form.data['username']
                 self.reset_participant_assignments(username=username)
-        
+
         context.update(
             participants_assignments=self.participants_assignments,
             total_assigned=len(self.participants_assignments),

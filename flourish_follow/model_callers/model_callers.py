@@ -1,6 +1,5 @@
 from edc_call_manager.model_caller import ModelCaller, DAILY
 from edc_call_manager.decorators import register
-
 from flourish_caregiver.models import CaregiverLocator
 
 from ..models import Call, Log, LogEntry, WorkList
