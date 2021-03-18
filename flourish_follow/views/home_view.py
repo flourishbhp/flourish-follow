@@ -11,7 +11,7 @@ from django.views.generic.edit import FormView
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_navbar import NavbarViewMixin
 
-from flourish_caregiver.helper_classes import Cohort
+from flourish_caregiver.helper_classes.cohort import Cohort
 from flourish_caregiver.models import CaregiverLocator, MaternalDataset
 
 from ..forms import AssignParticipantForm, ResetAssignmentForm
@@ -40,7 +40,6 @@ class HomeView(
             WorkList.objects.update_or_create(
                 study_maternal_identifier=participant,
                 defaults=update_values)
-
 
     @property
     def participants_assignments(self):
