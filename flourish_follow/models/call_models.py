@@ -209,3 +209,6 @@ class LogEntry(BaseUuidModel):
     class Meta:
         unique_together = ('call_datetime', 'log')
         app_label = 'flourish_follow'
+        verbose_name = 'Call Log Entry'
+        verbose_name_plural = 'Call Log Entries'
+

@@ -39,6 +39,18 @@ class WorkListModelWrapper(ModelWrapper):
         return None
 
     @property
+    def maternal_dataset(self):
+        maternal_dataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
+        try:
+            maternal_dataset_obj = maternal_dataset_cls.objects.get(
+                study_maternal_identifier=self.study_maternal_identifier)
+        except maternal_dataset_cls.DoesNotExist:
+            return None
+        else:
+            return maternal_dataset_obj
+
+    @property
     def call_datetime(self):
         return self.object.called_datetime
 
@@ -161,6 +173,7 @@ class WorkListModelWrapper(ModelWrapper):
     @property
     def log_entry(self):
         log = Log.objects.get(id=self.call_log)
+
         logentry = LogEntry(
             log=log,
             prev_study=self.prev_protocol,
@@ -181,11 +194,11 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def first_name(self):
-        return self.subject_locator.first_name
+        return self.maternal_dataset.first_name
 
     @property
     def last_name(self):
-        return self.subject_locator.last_name
+        return self.maternal_dataset.last_name
 
     @property
     def contacts(self):
@@ -203,12 +216,7 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def prev_protocol(self):
-        maternal_dataset_cls = django_apps.get_model(
-            'flourish_caregiver.maternaldataset')
-        try:
-            maternal_dataset_obj = maternal_dataset_cls.objects.get(
-                study_maternal_identifier=self.study_maternal_identifier)
-        except maternal_dataset_cls.DoesNotExist:
-            return None
-        else:
-            return maternal_dataset_obj.protocol
+        if self.maternal_dataset:
+            return self.maternal_dataset.protocol
+        return None
+
