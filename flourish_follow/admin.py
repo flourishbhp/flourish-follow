@@ -54,7 +54,7 @@ class WorkListAdmin(ModelAdminMixin, admin.ModelAdmin):
         audit_fieldset_tuple)
 
     instructions = ['Complete this form once per day.']
-    
+
     list_display = ('subject_identifier', 'study_maternal_identifier', 'prev_study', 'is_called')
 
 

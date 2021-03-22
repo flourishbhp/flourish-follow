@@ -194,11 +194,11 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def first_name(self):
-        return self.maternal_dataset.first_name
+        return self.subject_locator.first_name
 
     @property
     def last_name(self):
-        return self.maternal_dataset.last_name
+        return self.subject_locator.last_name
 
     @property
     def contacts(self):
