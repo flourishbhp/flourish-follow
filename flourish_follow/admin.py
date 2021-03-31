@@ -16,7 +16,7 @@ from edc_model_admin.changelist_buttons import ModelAdminChangelistModelButtonMi
 
 from .admin_site import flourish_follow_admin
 from .forms import WorkListForm, LogEntryForm, InPersonContactAttemptForm
-from .models import Call, WorkList, Log, LogEntry, InPersonContactAttempt
+from .models import Call, WorkList, Log, LogEntry, InPersonContactAttempt, InPersonLog
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from edc_model_admin.model_admin_next_url_redirect_mixin import ModelAdminNextUrlRedirectError
@@ -284,7 +284,6 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                 fields.append(field)
         return fields
 
-
     def render_change_form(self, request, context, *args, **kwargs):
         context['adminform'].form.fields['log'].queryset = \
             Log.objects.filter(id=request.GET.get('log'))
@@ -408,3 +407,8 @@ class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
                 raise ModelAdminNextUrlRedirectError(
                     f'{e}. Got url_name={url_name}, kwargs={options}.')
         return redirect_url
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        context['adminform'].form.fields['in_person_log'].queryset = \
+            InPersonLog.objects.filter(id=request.GET.get('in_person_log'))
+        return super().render_change_form(request, context, *args, **kwargs)
