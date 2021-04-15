@@ -106,13 +106,20 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
     @property
     def available_participants(self):
+        mashi_participants = MaternalDataset.objects.filter(
+            protocol='mashi').values_list(
+                'study_maternal_identifier', flat=True)
         locator_identifiers = CaregiverLocator.objects.values_list(
             'study_maternal_identifier', flat=True).distinct()
         called_assigned_identifiers = WorkList.objects.filter(
             Q(is_called=True) | Q(date_assigned=timezone.now().date())).values_list(
                 'study_maternal_identifier', flat=True)
         locator_identifiers = list(set(locator_identifiers) - set(self.over_age_limit))
-        return list(set(locator_identifiers) - set(called_assigned_identifiers))
+        first_list = list(set(locator_identifiers) - set(called_assigned_identifiers))
+        final_list = list(set(first_list) & set(mashi_participants))
+        if not final_list:
+            final_list = first_list
+        return final_list
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
