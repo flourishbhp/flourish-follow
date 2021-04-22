@@ -35,7 +35,7 @@ class HomeView(
         """
         for participant in selected_participants:
             update_values = {
-                'assigned': self.request.user.username,
+                'assigned': username,
                 'date_assigned': timezone.now().date()}
             WorkList.objects.update_or_create(
                 study_maternal_identifier=participant,
@@ -99,7 +99,7 @@ class HomeView(
         # It should return an HttpResponse.
         if form.is_valid():
             selected_participants = []
-            username = form.cleaned_data['username']
+            username = form.cleaned_data.get('username')
             participants = form.cleaned_data['participants']
             if len(self.available_participants) < participants:
                 selected_participants = self.available_participants
