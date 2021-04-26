@@ -16,7 +16,7 @@ from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
 from flourish_caregiver.helper_classes.cohort import Cohort
-from flourish_caregiver.models import CaregiverLocator, MaternalDataset
+from flourish_caregiver.models import MaternalDataset
 
 from ..forms import ParticipantsNumberForm
 from ..model_wrappers import WorkListModelWrapper
@@ -106,19 +106,16 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
     @property
     def available_participants(self):
-        mashi_participants = MaternalDataset.objects.filter(
-            protocol='mashi').values_list(
+        mashi_participants = WorkList.objects.filter(
+            prev_study='Mashi').values_list(
                 'study_maternal_identifier', flat=True)
-        locator_identifiers = CaregiverLocator.objects.values_list(
-            'study_maternal_identifier', flat=True).distinct()
-        called_assigned_identifiers = WorkList.objects.filter(
-            Q(is_called=True) | Q(date_assigned=timezone.now().date())).values_list(
+        identifiers = WorkList.objects.filter(
+            is_called=False, assigned=None, date_assigned=None).values_list(
                 'study_maternal_identifier', flat=True)
-        locator_identifiers = list(set(locator_identifiers) - set(self.over_age_limit))
-        first_list = list(set(locator_identifiers) - set(called_assigned_identifiers))
-        final_list = list(set(first_list) & set(mashi_participants))
+        final_list = list(set(identifiers) & set(mashi_participants))
+        final_list = list(set(final_list) - set(self.over_age_limit))
         if not final_list:
-            final_list = first_list
+            final_list = list(set(identifiers) - set(self.over_age_limit))
         return final_list
 
     def get_context_data(self, **kwargs):
