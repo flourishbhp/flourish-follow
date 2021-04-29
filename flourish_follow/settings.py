@@ -27,6 +27,8 @@ APP_NAME = 'flourish_follow'
 
 LOGIN_REDIRECT_URL = 'home_url'
 
+# AUTO_CREATE_KEYS = True
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -60,11 +62,13 @@ INSTALLED_APPS = [
     'edc_identifier.apps.AppConfig',
     'edc_registration.apps.AppConfig',
     'edc_call_manager.apps.AppConfig',
+    'flourish_caregiver.apps.AppConfig',
+    'flourish_child.apps.AppConfig',
+    'flourish_prn.apps.AppConfig',
     'flourish_follow.apps.EdcAppointmentAppConfig',
     'flourish_follow.apps.EdcProtocolAppConfig',
     'flourish_follow.apps.EdcTimepointAppConfig',
     'flourish_follow.apps.EdcVisitTrackingAppConfig',
-    'flourish_caregiver.apps.AppConfig',
     'flourish_follow.apps.AppConfig'
 ]
 
