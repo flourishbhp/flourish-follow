@@ -19,6 +19,9 @@ from ..choices import (
 
 class Call(CallModelMixin, BaseUuidModel):
 
+    scheduled = models.DateTimeField(
+        default=get_utcnow)
+
     class Meta(CallModelMixin.Meta):
         app_label = 'flourish_follow'
 

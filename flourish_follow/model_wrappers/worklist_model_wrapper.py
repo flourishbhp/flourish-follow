@@ -73,7 +73,7 @@ class WorkListModelWrapper(ModelWrapper):
         call = Call.objects.filter(
             subject_identifier=self.object.subject_identifier).order_by('scheduled').last()
         log_entries = LogEntry.objects.filter(
-            log__call__subject_identifier=call.subject_identifier).order_by('call_datetime')[:3]
+            log__call__subject_identifier=call.subject_identifier).order_by('-call_datetime')[:3]
         for log_entry in log_entries:
             wrapped_entries.append(
                 LogEntryModelWrapper(log_entry))
