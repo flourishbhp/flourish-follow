@@ -1,6 +1,7 @@
 {% extends "edc_dashboard/listboard.html" %}
 {% load admin_urls %}
 {% load edc_base_extras %}
+{% load edc_dashboard_extras %}
 
 {% load tz %}
 {% load static %}
@@ -84,11 +85,10 @@
                     <tr><td>&nbsp;</td></tr>
                     </table>
                     <!-- end spacer rows -->
-                </div>
-                
-        </div>
+                </div><!-- end table -->
+           {% paginator_row %}
+        </div><!--end panel-group -->
       </div>
-    </div>
-  </div>
-</div>
+</div> 
+
 {% endblock main %}
