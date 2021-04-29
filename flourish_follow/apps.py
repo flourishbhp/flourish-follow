@@ -34,6 +34,10 @@ if settings.APP_NAME == 'flourish_follow':
             AppointmentConfig(
                 model='edc_appointment.appointment',
                 related_visit_model='flourish_caregiver.maternalvisit',
+                appt_type='clinic'),
+            AppointmentConfig(
+                model='flourish_child.appointment',
+                related_visit_model='flourish_child.childvisit',
                 appt_type='clinic')]
 
     class EdcProtocolAppConfig(BaseEdcProtocolAppConfigs):
