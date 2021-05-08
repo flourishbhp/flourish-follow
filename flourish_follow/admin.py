@@ -3,6 +3,11 @@ from django.contrib import admin
 from django.conf import settings
 
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
+from django.urls.base import reverse
+from django.urls.exceptions import NoReverseMatch
+
+from edc_model_admin.model_admin_next_url_redirect_mixin import ModelAdminNextUrlRedirectError
+from edc_constants.constants import NOT_APPLICABLE
 from edc_base.sites.admin import ModelAdminSiteMixin
 from edc_model_admin import (
     ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
@@ -11,16 +16,14 @@ from edc_model_admin import (
     ModelAdminRedirectOnDeleteMixin)
 from edc_model_admin import audit_fieldset_tuple
 from edc_model_admin import ModelAdminBasicMixin
-from edc_call_manager.constants import NEW_CALL, OPEN_CALL
 from edc_model_admin.changelist_buttons import ModelAdminChangelistModelButtonMixin
 
 from .admin_site import flourish_follow_admin
-from .forms import WorkListForm, LogEntryForm, InPersonContactAttemptForm
-from .models import Call, WorkList, Log, LogEntry, InPersonContactAttempt, InPersonLog
-from django.urls.base import reverse
-from django.urls.exceptions import NoReverseMatch
-from edc_model_admin.model_admin_next_url_redirect_mixin import ModelAdminNextUrlRedirectError
-from edc_constants.constants import NOT_APPLICABLE
+from .forms import (
+    WorkListForm, LogEntryForm, InPersonContactAttemptForm)
+from .models import (
+    Call, WorkList, Log, LogEntry, InPersonContactAttempt,
+    InPersonLog)
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
