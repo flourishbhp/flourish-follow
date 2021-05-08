@@ -1,3 +1,4 @@
+from decimal import Decimal
 import random
 import re
 
@@ -15,8 +16,7 @@ from edc_dashboard.view_mixins import (
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
-from flourish_caregiver.helper_classes.cohort import Cohort
-from flourish_caregiver.models import MaternalDataset
+from flourish_child.models import ChildDataset
 
 from ..forms import ParticipantsNumberForm
 from ..model_wrappers import WorkListModelWrapper
@@ -95,14 +95,10 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
     def over_age_limit(self):
         """Return the list of 17 years 9 months children.
         """
-        maternal_data = MaternalDataset.objects.all()
-        over_age_limit = []
-        for maternal in maternal_data:
-            age = Cohort().age_at_enrollment(
-                child_dob=maternal.delivdt, check_date=timezone.now().date())
-            if age >= 17.9:
-                over_age_limit.append(maternal.study_maternal_identifier)
-        return over_age_limit
+        over_age_limit = ChildDataset.objects.filter(
+            age_today__gte=Decimal('17.9')).values_list(
+                'study_maternal_identifier', flat=True)
+        return list(set(over_age_limit))
 
     @property
     def available_participants(self):
