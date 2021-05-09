@@ -40,7 +40,8 @@ class HomeView(
         for participant in selected_participants:
             update_values = {
                 'assigned': username,
-                'date_assigned': timezone.now().date()}
+                'date_assigned': timezone.now().date(),
+                'user_modified': self.request.user.username}
             WorkList.objects.update_or_create(
                 study_maternal_identifier=participant,
                 defaults=update_values)
@@ -133,8 +134,6 @@ class HomeView(
         return assignable_users_choices
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
         if form.is_valid():
             selected_participants = []
             username = form.cleaned_data.get('username')

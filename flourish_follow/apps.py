@@ -12,11 +12,6 @@ class AppConfig(DjangoAppConfig):
     def ready(self):
         from .models import cal_log_entry_on_post_save
         from .models import worklist_on_post_save
-        from django.contrib.auth.models import Group
-        try:
-            Group.objects.get(name='assign manager')
-        except Group.DoesNotExist:
-            Group.objects.create(name='assign manager')
 
 
 if settings.APP_NAME == 'flourish_follow':
