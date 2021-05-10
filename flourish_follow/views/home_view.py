@@ -51,7 +51,7 @@ class HomeView(
     def participants_assignments(self):
         """Return participants assignments.
         """
-        assignments = WorkList.objects.all().values_list(
+        assignments = WorkList.objects.filter(assigned__isnull=False).values_list(
                 'assigned', 'study_maternal_identifier', 'is_called', 'visited')
         return assignments
 
