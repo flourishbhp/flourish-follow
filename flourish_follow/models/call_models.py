@@ -15,6 +15,8 @@ from ..choices import (
     APPT_GRADING, APPT_LOCATIONS, APPT_REASONS_UNWILLING,
     CONTACT_FAIL_REASON, MAY_CALL, PHONE_USED, PHONE_SUCCESS,
     HOME_VISIT)
+from flourish_caregiver.models.maternal_dataset import MaternalDataset
+from django.core.exceptions import ValidationError
 
 
 class Call(CallModelMixin, BaseUuidModel):
@@ -41,6 +43,12 @@ class LogEntry(BaseUuidModel):
     subject_identifier = models.CharField(
         max_length=50,
         blank=True,)
+
+    screening_identifier = models.CharField(
+        verbose_name="Eligibility Identifier",
+        max_length=36,
+        blank=True,
+        null=True)
 
     study_maternal_identifier = models.CharField(
         verbose_name='Study maternal Subject Identifier',
@@ -185,6 +193,18 @@ class LogEntry(BaseUuidModel):
         max_length=50,
         null=True,
         blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.screening_identifier:
+            try:
+                maternal_dataset = MaternalDataset.objects.get(
+                    study_maternal_identifier=self.study_maternal_identifier)
+            except MaternalDataset.DoesNotExist:
+                raise ValidationError(
+                    f'Dataset object missing. for {self.study_maternal_identifier}')
+            else:
+                self.screening_identifier = maternal_dataset.screening_identifier 
+        super().save(*args, **kwargs)
 
     @property
     def subject(self):
