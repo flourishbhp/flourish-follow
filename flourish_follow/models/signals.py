@@ -52,20 +52,6 @@ def worklist_on_post_save(sender, instance, using, raw, **kwargs):
             InPersonLog.objects.create(
                 worklist=instance,
                 study_maternal_identifier=instance.study_maternal_identifier)
-        # Add user to Recruiters group
-        try:
-            recruiters_group = Group.objects.get(name='Recruiters')
-        except Group.DoesNotExist:
-            raise ValidationError('Recruiters group must exist.')
-        else:
-            try:
-                user = User.objects.get(username=instance.user_created)
-            except User.DoesNotExist:
-                raise ValueError(f'The user {instance.user_created}, does not exist.')
-            else:
-                if not User.objects.filter(username=instance.user_created,
-                                       groups__name='Recruiters').exists():
-                    recruiters_group.user_set.add(user)
 
 
 @receiver(post_save, weak=False, sender=InPersonContactAttempt,

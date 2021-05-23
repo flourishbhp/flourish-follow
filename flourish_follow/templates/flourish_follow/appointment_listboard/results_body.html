@@ -1,0 +1,31 @@
+
+<!-- begin results body -->
+
+{% for result in results %}
+    <tr> 
+   
+    <!--  begin columns  -->
+    	<td>{{ forloop.counter }}</td>
+		<td>
+	    {% if result.gender == MALE %}
+	        <i class="fa fa-male fa-lg"></i>
+	    {% else %}
+	        <i class="fa fa-female fa-lg"></i>
+	    {% endif %}
+	    {{ result.subject_identifier }}
+	    {{ result.first_name }}
+	    {{ result.last_name }}
+		</td>
+	    <td>{{ result.earliesr_date_due }}</td>
+	    <td>{{ result.latest_date_due }}</td>
+	    <td>{{ result.ideal_date_due }}</td>
+	    <td>{{result.object.appt_datetime}}</td>  
+	    <td>{{ result.appt_status }}</td>
+	    <td>{{ result.visit_code  }}</td>  
+	<!--  end columns  -->
+
+    </tr>                     
+
+{% endfor %}
+
+<!-- begin results body -->

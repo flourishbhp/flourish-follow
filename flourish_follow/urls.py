@@ -2,7 +2,7 @@ from django.urls import path
 
 from edc_dashboard import UrlConfig
 from .admin_site import flourish_follow_admin
-from .views import ListboardView, HomeView
+from .views import AppointmentListboardView, ListboardView, HomeView
 
 
 app_name = 'flourish_follow'
@@ -22,4 +22,12 @@ flourish_follow_listboard_url_config = UrlConfig(
     identifier_label='subject_identifier',
     identifier_pattern=screening_identifier)
 
+flourish_follow_appt_listboard_url_config = UrlConfig(
+    url_name='flourish_follow_appt_listboard_url',
+    view_class=AppointmentListboardView,
+    label='flourish_follow_appt_listboard',
+    identifier_label='subject_identifier',
+    identifier_pattern=screening_identifier)
+
 urlpatterns += flourish_follow_listboard_url_config.listboard_urls
+urlpatterns += flourish_follow_appt_listboard_url_config.listboard_urls

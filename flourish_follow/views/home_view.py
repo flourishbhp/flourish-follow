@@ -29,7 +29,7 @@ class HomeView(
     form_class = AssignParticipantForm
     template_name = 'flourish_follow/home.html'
     navbar_name = 'flourish_follow'
-    navbar_selected_item = 'flourish_follow'
+    navbar_selected_item = 'assignments'
 
     def get_success_url(self):
         return reverse('flourish_follow:home_url')

@@ -1,0 +1,52 @@
+{% extends "edc_dashboard/listboard.html" %}
+{% load admin_urls %}
+{% load edc_base_extras %}
+{% load flourish_dashboard_extras %}
+{% load follow_extras %}
+
+
+{% block listboard_panel %}
+{% if results %}
+	<span class="pull-right">
+	<span class="glyphicon glyphicon-folder-open"></span>
+	<a href="" class="btn btn-sm btn-info">Export</a>
+	</span>
+	&nbsp;&nbsp;
+ {% endif %}
+{% endblock listboard_panel %}
+{% block listboard_table_header %}
+    <!-- begin results header -->
+    <th>#</th>
+    <th>Subject</th>
+	<th>EARLIEST DATE DUE</th>
+	<th>IDEAL DATE DUE</th>
+	<th>LATEST DATE DUE</th>
+	<th>SCHEDULED DATE</th>
+	<th>Appt Status</th>
+	<th>Visit Code</th>
+    <!-- end results header -->
+{% endblock listboard_table_header %}
+
+{% block listboard_table_button_column %} 
+    <td>
+    {% if result.gender == MALE %}
+        <i class="fa fa-male fa-lg"></i>
+    {% else %}
+        <i class="fa fa-female fa-lg"></i>
+    {% endif %}
+    {{ result.subject_identifier }}
+    {{ result.first_name }}
+    {{ result.last_name }}
+    {% dashboard_button result %}
+	</td>
+{% endblock listboard_table_button_column %}
+
+{% block listboard_table_columns %}
+	
+    <td>{{ result.earliesr_date_due }}</td>
+    <td>{{ result.latest_date_due }}</td>
+    <td>{{ result.ideal_date_due }}</td>
+    <td>{{result.object.appt_datetime}}</td>  
+    <td>{{ result.appt_status }}</td>
+    <td>{{ result.visit_code  }}</td>
+{% endblock listboard_table_columns %}
