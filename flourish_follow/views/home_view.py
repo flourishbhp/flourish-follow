@@ -1,7 +1,10 @@
 from decimal import Decimal
+from django_pandas.io import read_frame
+import datetime
 import random
 
 from django.apps import apps as django_apps
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
@@ -16,15 +19,16 @@ from edc_navbar import NavbarViewMixin
 
 from flourish_child.models import ChildDataset
 
+from .download_report_mixin import DownloadReportMixin
 from ..forms import (
     AssignParticipantForm, ResetAssignmentForm, ReAssignParticipantForm,
     SingleReAssignParticipantForm)
-from ..models import WorkList
+from ..models import FollowExportFile, WorkList
 
 
 class HomeView(
         EdcBaseViewMixin, NavbarViewMixin,
-        TemplateView, FormView):
+        DownloadReportMixin, TemplateView, FormView):
 
     form_class = AssignParticipantForm
     template_name = 'flourish_follow/home.html'
@@ -146,10 +150,34 @@ class HomeView(
                 username=username, selected_participants=selected_participants)
         return super().form_valid(form)
 
+    def export(self):
+        """Export data.
+        """
+        qs = WorkList.objects.filter(assigned__isnull=False)
+        df = read_frame(qs, fieldnames=[
+            'assigned', 'study_maternal_identifier', 'is_called', 'visited'])
+        self.download_data(
+            description='Participants Assignments',
+            start_date=datetime.datetime.now().date(),
+            end_date=datetime.datetime.now().date(),
+            report_type='participants_assignment', 
+            df=df)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         reset_assignment_form = ResetAssignmentForm()
         re_assign_participant_form = ReAssignParticipantForm()
+        
+        # Export Assignments
+        if self.request.GET.get('assignments_export') == 'yes':
+            self.export()
+            msg = (
+                f'Participants file generated succesfully. '
+                'Go to the download list to download file.')
+            messages.add_message(
+                self.request, messages.SUCCESS, msg)
+        assignments_downloads = FollowExportFile.objects.filter(
+            description='Participants Assignments').order_by('uploaded_at')
         
         # Reset participants
         if self.request.method == 'POST':
@@ -187,7 +215,8 @@ class HomeView(
             participants_assignments=self.participants_assignments,
             reset_assignment_form=reset_assignment_form,
             re_assign_participant_form=re_assign_participant_form,
-            assign_users=self.assign_users)
+            assign_users=self.assign_users,
+            assignments_downloads=assignments_downloads)
         return context
 
     @method_decorator(login_required)
