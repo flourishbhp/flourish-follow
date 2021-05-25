@@ -1,0 +1,28 @@
+{% load crispy_forms_tags %}
+{% load follow_extras %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+    <b>Re-Assign participants</b>
+    </div>
+    <div class="panel-body">
+    
+    
+    <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group col-md-6 mb-0">
+      	username_from: 
+        {{ re_assign_participant_form.username_from|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-6 mb-0">
+      	username_to: 
+        {{ re_assign_participant_form.username_to|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-6 mb-0">
+      <button type="submit" {% if request.user|has_group:"assign manager" %} {% else %}disabled="true"{% endif %} class="btn btn-primary">re-assign</button>
+      </div>
+    </div>
+  </form>
+			
+	</div>
+</div>

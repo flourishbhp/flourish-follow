@@ -1,0 +1,52 @@
+
+<!-- begin results body -->
+
+{% for result in results %}
+    <tr> 
+   
+    <!--  begin columns  -->
+    	<td>{{ forloop.counter }}</td>
+		<td>
+	    {% if result.gender == MALE %}
+	        <i class="fa fa-male fa-lg"></i>
+	    {% else %}
+	        <i class="fa fa-female fa-lg"></i>
+	    {% endif %}
+	    {{ result.subject_identifier }}
+	    {{ result.first_name }}
+	    {{ result.last_name }}
+		</td>
+	    <td>
+	    	{% if result.call_log_required %}
+				{% include 'flourish_follow/listboard/results_body/add_call_log_entry.html' %}
+	    	{% endif %}
+	    </td>
+	    <td>
+	    	{% with history_objects=result.home_visit_log_entries title="Visit logs" history_object=result.home_visit_log_entry add_button=result.home_visit_required %}
+			  	{% include 'flourish_follow/listboard/results_body/home_visit_log_entries.html' %}   
+			{% endwith %}
+	    </td>
+	    <td>{{ result.assigned }}</td>
+	    <td>{% if result.call_datetime %} {{ result.call_datetime }} {% endif %}</td>
+	    <td>
+		    {% if result.is_called %}
+		      <span class="text text-success"><i class="fa fa-check-circle fa-lg" title="Called"></i></span>
+		    {% else %}
+		      <span class="text text-danger"><i class="fa fa-times-circle fa-lg" title="Not called"></i></span>
+		    {% endif %}
+	    </td>
+	    <td>
+		    {% if result.visited %}
+		      <span class="text text-success"><i class="fa fa-check-circle fa-lg" title="Visited"></i></span>
+		    {% else %}
+		      <span class="text text-danger"><i class="fa fa-times-circle fa-lg" title="Not visited"></i></span>
+		    {% endif %}
+	    </td>  
+	    <td>{{ result.contacts }}</td>  
+	<!--  end columns  -->
+
+    </tr>                     
+
+{% endfor %}
+
+<!-- begin results body -->

@@ -1,0 +1,24 @@
+{% load crispy_forms_tags %}
+{% load follow_extras %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+    <b>Assign participants</b>
+    </div>
+    <div class="panel-body">
+    
+     <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group col-md-6 mb-0">
+        {{ form.username|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-6 mb-0">
+        {{ form.participants|as_crispy_field }}
+      </div>
+	    <div class="form-group col-md-6 mb-0">
+	    <button type="submit" {% if request.user|has_group:"assign manager" %} {% else %}disabled="true"{% endif %} class="btn btn-primary">assign</button>
+	 	</div> 
+ 	</div>
+ 	</form>
+	</div>
+</div>

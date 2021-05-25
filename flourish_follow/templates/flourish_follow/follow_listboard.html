@@ -1,0 +1,94 @@
+{% extends "edc_dashboard/listboard.html" %}
+{% load admin_urls %}
+{% load edc_base_extras %}
+{% load edc_dashboard_extras %}
+
+{% load tz %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block alert %}
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <div class="alert alert-danger alert-dismissable fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+              <i class="fa fa-hand-stop-o fa-lg"></i> {{ message }}
+            </div>
+            {% endif %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+            <div class="alert alert-warning alert-dismissable fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+              <i class="fa fa-hand-stop-o fa-lg"></i> {{ message }}
+            </div>
+            {% endif %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            <div class="alert alert-success alert-dismissable fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+              <i class="fa fa-thumbs-o-up fa-lg"></i> {{ message }}
+            </div>
+            {% endif %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+            <div class="alert alert-info alert-dismissable fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+              <i class="fa fa-hand-stop-o fa-lg"></i> {{ message }}
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+{% endblock alert %}
+
+{% block main %}
+<div class="container">
+<div class="row">
+    <div class="panel-group">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+				<span class="pull-right">{% include 'edc_dashboard/search_form.html' %}</span>
+				<span class="pull-right">{% include 'flourish_follow/forms.html' %}</span>
+                    {% block panel_action_form %}
+						 <div class="form-inline">
+						
+						   <!-- begin panel_action_buttons -->
+					        <span class="glyphicon glyphicon-phone-alt"></span> Called <span class="badge">{{called_subject}}</span> / <span class="badge">{{total_results}}</span>
+					        <span class="glyphicon glyphicon-home"></span> Visited <span class="badge">{{visited_subjects}}</span> / <span class="badge">{{total_results}}</span>
+					        &nbsp;&nbsp;
+					        <span class="glyphicon glyphicon-user"></span> Total available for randomization <span class="badge">{{total_available}}</span>
+					       <!-- end panel_action_buttons -->
+					       
+						</div>
+					{% endblock panel_action_form %}
+				</div>
+                </div>
+                <div class="table table-responsive">
+                    <table class="table table-condensed table-hover small">
+                    <thead>
+
+                        {% include 'flourish_follow/listboard/results_header.html' %}
+
+			        </thead>
+			        <tbody>
+
+                    {% include 'flourish_follow/listboard/results_body.html' %}
+
+			         </tbody>
+			         </table>
+                    <!-- begin spacer rows -->
+                    <table>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    </table>
+                    <!-- end spacer rows -->
+                </div><!-- end table -->
+           {% paginator_row %}
+        </div><!--end panel-group -->
+      </div>
+</div> 
+
+{% endblock main %}
