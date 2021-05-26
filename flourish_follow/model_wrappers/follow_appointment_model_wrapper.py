@@ -28,18 +28,6 @@ class FollowAppointmentModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
         return self.subject_consent.gender
 
     @property
-    def first_name(self):
-        """Returns the participant's first name.
-        """
-        return self.subject_consent.first_name
-
-    @property
-    def last_name(self):
-        """Returns the participant's last name.
-        """
-        return self.subject_consent.last_name
-
-    @property
     def earliesr_date_due(self):
         """Returns the earlist date to see a participant.
         """
