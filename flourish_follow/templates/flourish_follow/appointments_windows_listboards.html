@@ -105,13 +105,13 @@
 
 {% block listboard_table_button_column %} 
     <td>
+    {% dashboard_button result %}
     {% if result.gender == MALE %}
         <i class="fa fa-male fa-lg"></i>
     {% else %}
         <i class="fa fa-female fa-lg"></i>
     {% endif %}
     {{ result.subject_identifier }}
-    {% dashboard_button result %}
 	</td>
 {% endblock listboard_table_button_column %}
 
