@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
+from django.views.generic.edit import FormView
 
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import (
@@ -16,20 +17,22 @@ from edc_navbar import NavbarViewMixin
 
 from ..model_wrappers import FollowAppointmentModelWrapper
 from ..models import FollowExportFile
+from ..forms import AppointmentsWindowForm
 from .download_report_mixin import DownloadReportMixin
 from .filters import ListboardViewFilters
 
 
 class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                     ListboardFilterViewMixin, SearchFormViewMixin,
-                    DownloadReportMixin, ListboardView):
+                    DownloadReportMixin, ListboardView, FormView):
 
+    form_class = AppointmentsWindowForm
     listboard_template = 'flourish_follow_appt_listboard_template'
     listboard_url = 'flourish_follow_appt_listboard_url'
     listboard_panel_style = 'info'
     listboard_fa_icon = "fa-user-plus"
 
-    model = 'edc_appointment.appointment'
+    model = 'flourish_child.appointment'
     listboard_view_filters = ListboardViewFilters()
     model_wrapper_cls = FollowAppointmentModelWrapper
     navbar_name = 'flourish_follow'
@@ -58,10 +61,14 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             q = Q(first_name__exact=search_term)
         return q
 
-    def export(self, queryset=None):
+    def export(self, queryset=None, start_date=None, end_date=None):
         """Export data.
         """
         data = []
+        if start_date and end_date:
+            queryset = queryset.objects.filter(
+                created__date__gte=start_date,
+                created__date__lte=end_date)
         for obj in queryset:
             data.append(
                 {'subject_identifier': getattr(obj, 'subject_identifier'),
@@ -73,13 +80,23 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                  'ideal_date_due': getattr(obj, 'ideal_date_due'),
                  'appt_datetime': getattr(obj, 'appt_datetime')})
         df = pd.DataFrame(data)
-        print('Here ************')
         self.download_data(
             description='Appointment and windows',
-            start_date=datetime.datetime.now().date(),
-            end_date=datetime.datetime.now().date(),
+            start_date=start_date,
+            end_date=end_date,
             report_type='appointments_window_periods', 
             df=df)
+
+    def form_valid(self, form):
+        if form.is_valid():
+            start_date = form.data['start_date']
+            end_date = form.data['end_date']
+        appointment_downloads = FollowExportFile.objects.filter(
+            description='Appointment and windows').order_by('uploaded_at')
+        context = self.get_context_data(**self.kwargs)
+        context.update(
+            appointment_downloads=appointment_downloads)
+        return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

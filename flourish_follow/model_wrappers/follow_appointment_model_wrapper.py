@@ -2,13 +2,13 @@ from django.conf import settings
 from dateutil.relativedelta import relativedelta
 
 from edc_model_wrapper import ModelWrapper
-from flourish_caregiver.models import SubjectConsent
+from flourish_caregiver.models import CaregiverChildConsent
 from .consent_model_wrapper_mixin import ConsentModelWrapperMixin
 
 
 class FollowAppointmentModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
 
-    model = 'edc_appointment.appointment'
+    model = 'flourish_child.appointment'
     querystring_attrs = ['subject_identifier']
     next_url_attrs = ['study_maternal_identifier']
     next_url_name = settings.DASHBOARD_URL_NAMES.get(
@@ -18,7 +18,7 @@ class FollowAppointmentModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
     def subject_consent(self):
         """Returns a subject consent object.
         """
-        return SubjectConsent.objects.filter(
+        return CaregiverChildConsent.objects.filter(
             subject_identifier=self.object.subject_identifier).last()
 
     @property

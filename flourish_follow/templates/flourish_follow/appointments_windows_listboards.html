@@ -1,6 +1,7 @@
 {% extends "edc_dashboard/listboard.html" %}
 {% load admin_urls %}
 {% load edc_base_extras %}
+{% load crispy_forms_tags %}
 {% load flourish_dashboard_extras %}
 {% load follow_extras %}
 
@@ -86,6 +87,7 @@
 	
 	|
 	<a href="{% url 'flourish_follow:flourish_follow_appt_listboard_url' %}?export=yes" class="btn btn-sm btn-info">Export</a>
+	<span class="pull-right">{% csrf_token %}{% crispy form %}</span>
 	
 	&nbsp;&nbsp;
  {% endif %}

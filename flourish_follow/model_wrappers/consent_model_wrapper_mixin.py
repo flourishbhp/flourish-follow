@@ -28,7 +28,7 @@ class ConsentModelWrapperMixin:
 
     @property
     def subject_consent_cls(self):
-        return django_apps.get_model('flourish_caregiver.subjectconsent')
+        return django_apps.get_model('flourish_caregiver.CaregiverChildConsent')
 
     @property
     def consent_version(self):
