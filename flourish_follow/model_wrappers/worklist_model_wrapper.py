@@ -51,6 +51,17 @@ class WorkListModelWrapper(ModelWrapper):
             return maternal_dataset_obj
 
     @property
+    def multiple_births(self):
+        """Returns value of births if the mother has twins/triplets.
+        """
+        if self.maternal_dataset:
+            child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+            children = child_dataset_cls.objects.filter(
+                study_maternal_identifier=self.maternal_dataset.study_maternal_identifier)
+            return children.count()
+        return 0
+
+    @property
     def call_datetime(self):
         return self.object.called_datetime
 
