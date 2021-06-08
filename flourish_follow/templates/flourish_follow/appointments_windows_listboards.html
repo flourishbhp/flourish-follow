@@ -26,7 +26,6 @@
 	</script>
 {% endblock extra-scripts %}
 
-
 {% block listboard_panel %}
 {% if results %}
 	<!-- Trigger the modal with a button -->
@@ -108,7 +107,7 @@
 {% block listboard_table_button_column %} 
     <td>
     {% dashboard_button result %}
-    {% if result.gender == MALE %}
+    {% if result.gender == 'M' %}
         <i class="fa fa-male fa-lg"></i>
     {% else %}
         <i class="fa fa-female fa-lg"></i>

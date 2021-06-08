@@ -8,7 +8,7 @@
     	<td>{{ forloop.counter }}</td>
 		<td>
         <span class="badge badge-light">
-        	{% if result.gender == MALE %} <i class="fa fa-male fa-lg"></i>
+        	{% if result.gender == 'M' %} <i class="fa fa-male fa-lg"></i>
         	{% else %} <i class="fa fa-female fa-lg"></i> {% endif %}
         	{% if result.multiple_births > 1 %} <sup> {{result.multiple_births}}</sup> {% endif %}
         </span>

@@ -5,6 +5,7 @@ import re
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView
@@ -23,8 +24,8 @@ from .filters import ListboardViewFilters
 
 
 class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
-                    ListboardFilterViewMixin, SearchFormViewMixin,
-                    DownloadReportMixin, ListboardView, FormView):
+                               ListboardFilterViewMixin, SearchFormViewMixin,
+                               DownloadReportMixin, ListboardView, FormView):
 
     form_class = AppointmentsWindowForm
     listboard_template = 'flourish_follow_appt_listboard_template'
@@ -84,10 +85,12 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             description='Appointment and windows',
             start_date=start_date,
             end_date=end_date,
-            report_type='appointments_window_periods', 
+            report_type='appointments_window_periods',
             df=df)
 
     def form_valid(self, form):
+        start_date = None
+        end_date = None
         if form.is_valid():
             start_date = form.data['start_date']
             end_date = form.data['end_date']
@@ -95,21 +98,29 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             description='Appointment and windows').order_by('uploaded_at')
         context = self.get_context_data(**self.kwargs)
         context.update(
-            appointment_downloads=appointment_downloads)
-        return self.render_to_response(context)
+            appointment_downloads=appointment_downloads,)
+        return HttpResponseRedirect(
+                    reverse('flourish_follow:flourish_follow_appt_listboard_url')+
+                    f"?start_date={start_date}&end_date={end_date}")
 
     def get_context_data(self, **kwargs):
+
+        self.object_list = self.get_queryset()
         context = super().get_context_data(**kwargs)
         if self.request.GET.get('export') == 'yes':
             queryset = context.get('object_list')  # from ListView
             self.export(queryset=queryset)
-            msg = (
-                f'File generated succesfully. '
-                'Go to the download list to download file.')
+            msg = (f'File generated successfully.  Go to the download list to download file.')
             messages.add_message(
                 self.request, messages.SUCCESS, msg)
         appointment_downloads = FollowExportFile.objects.filter(
             description='Appointment and windows').order_by('uploaded_at')
-        context.update(
-        appointment_downloads=appointment_downloads)
+        context.update(appointment_downloads=appointment_downloads)
         return context
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.GET.get('start_date'):
+            qs = qs.filter(appt_datetime__date__gte=self.request.GET.get('start_date'),
+                           appt_datetime__date__lte=self.request.GET.get('end_date'))
+        return qs
