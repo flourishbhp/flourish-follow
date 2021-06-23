@@ -7,11 +7,11 @@
     <!--  begin columns  -->
     	<td>{{ forloop.counter }}</td>
 		<td>
-	    {% if result.gender == MALE %}
-	        <i class="fa fa-male fa-lg"></i>
-	    {% else %}
-	        <i class="fa fa-female fa-lg"></i>
-	    {% endif %}
+        <span class="badge badge-light">
+        	{% if result.gender == 'M' %} <i class="fa fa-male fa-lg"></i>
+        	{% else %} <i class="fa fa-female fa-lg"></i> {% endif %}
+        	{% if result.multiple_births > 1 %} <sup> {{result.multiple_births}}</sup> {% endif %}
+        </span>
 	    {{ result.subject_identifier }}
 	    {{ result.first_name }}
 	    {{ result.last_name }}

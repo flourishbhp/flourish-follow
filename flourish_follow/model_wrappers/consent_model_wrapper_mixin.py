@@ -28,7 +28,7 @@ class ConsentModelWrapperMixin:
 
     @property
     def subject_consent_cls(self):
-        return django_apps.get_model('flourish_caregiver.subjectconsent')
+        return django_apps.get_model('flourish_caregiver.CaregiverChildConsent')
 
     @property
     def consent_version(self):
@@ -91,25 +91,6 @@ class ConsentModelWrapperMixin:
         if self.consent_model_obj:
             return self.consent_model_obj.caregiverchildconsent_set.all()
         return []
-
-    @property
-    def show_dashboard(self):
-        show_dashboard = False
-        child_consents = self.child_consents.filter(is_eligible=True)
-        for child_consent in child_consents:
-            child_age = child_consent.child_age_at_enrollment
-            if child_age < 7:
-                show_dashboard = True
-                break
-
-            assent_obj = getattr(self, 'child_assent_obj', None)
-            if assent_obj:
-                child_assent = assent_obj(
-                    subject_identifier=child_consent.subject_identifier,
-                    is_eligible=True)
-                show_dashboard = True if child_assent else False
-                break
-        return show_dashboard
 
     def set_initials(self, first_name=None, last_name=None):
         initials = ''

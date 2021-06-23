@@ -46,9 +46,9 @@ if settings.APP_NAME == 'flourish_follow':
         protocol_number = '035'
         protocol_title = ''
         study_open_datetime = datetime(
-            2016, 4, 1, 0, 0, 0, tzinfo=gettz('UTC'))
+            2020, 8, 14, 0, 0, 0, tzinfo=gettz('UTC'))
         study_close_datetime = datetime(
-            2020, 12, 1, 0, 0, 0, tzinfo=gettz('UTC'))
+            2025, 8, 13, 23, 59, 59, tzinfo=gettz('UTC'))
 
     class EdcTimepointAppConfig(BaseEdcTimepointAppConfig):
         timepoints = TimepointCollection(
