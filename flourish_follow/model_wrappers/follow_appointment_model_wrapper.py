@@ -29,7 +29,7 @@ class FollowAppointmentModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
     def ideal_date_due(self):
         """Ideal date due to see a participant.
         """
-        return self.object.timepoint_opened_datetime
+        return self.object.timepoint_datetime
 
     @property
     def earliest_date_due(self):
