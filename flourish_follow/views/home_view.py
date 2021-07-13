@@ -49,7 +49,6 @@ class HomeView(
             WorkList.objects.update_or_create(
                 study_maternal_identifier=participant,
                 defaults=update_values)
-                
 
     @property
     def participants_assignments(self):
@@ -95,7 +94,7 @@ class HomeView(
                 date_assigned__isnull=False,
                 assigned=username).update(
                     assigned=None, date_assigned=None)
-    
+
     def re_assign_participant_assignments(
             self, username_from=None, username_to=None):
         WorkList.objects.filter(
@@ -160,14 +159,14 @@ class HomeView(
             description='Participants Assignments',
             start_date=datetime.datetime.now().date(),
             end_date=datetime.datetime.now().date(),
-            report_type='participants_assignment', 
+            report_type='participants_assignment',
             df=df)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         reset_assignment_form = ResetAssignmentForm()
         re_assign_participant_form = ReAssignParticipantForm()
-        
+
         # Export Assignments
         if self.request.GET.get('assignments_export') == 'yes':
             self.export()
@@ -178,14 +177,14 @@ class HomeView(
                 self.request, messages.SUCCESS, msg)
         assignments_downloads = FollowExportFile.objects.filter(
             description='Participants Assignments').order_by('uploaded_at')
-        
+
         # Reset participants
         if self.request.method == 'POST':
             reset_form = ResetAssignmentForm(self.request.POST)
             if reset_form.is_valid():
                 username = reset_form.data['username']
                 self.reset_participant_assignments(username=username)
-        
+
         # Re-assign participants
         if self.request.method == 'POST':
             re_assign_form = ReAssignParticipantForm(self.request.POST)
@@ -206,11 +205,11 @@ class HomeView(
                 study_maternal_identifier = single_re_assign_form.data[
                     'study_maternal_identifier']
                 WorkList.objects.filter(
-                assigned=username_from,
-                study_maternal_identifier=study_maternal_identifier).update(
+                    assigned=username_from,
+                    study_maternal_identifier=study_maternal_identifier).update(
                     assigned=reassign_name,
                     date_assigned=timezone.now().date())
-        
+
         context.update(
             participants_assignments=self.participants_assignments,
             reset_assignment_form=reset_assignment_form,

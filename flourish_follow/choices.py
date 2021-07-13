@@ -90,3 +90,11 @@ PHONE_USED = (
     ('caretaker_cell',  'caretaker_cell'),
     ('caretaker_tel', 'caretaker_tel'),
 )
+
+
+YES_NO_ST_NA = (
+    (YES, YES),
+    (NO, NO),
+    ('thinking', 'Still thinking'),
+    (NOT_APPLICABLE, 'Not applicable'),
+)
