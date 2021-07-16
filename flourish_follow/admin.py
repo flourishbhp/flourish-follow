@@ -168,7 +168,6 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         }), audit_fieldset_tuple)
 
     radio_fields = {'appt': admin.VERTICAL,
-                    'appt_reason_unwilling': admin.VERTICAL,
                     'appt_grading': admin.VERTICAL,
                     'appt_location': admin.VERTICAL,
                     'may_call': admin.VERTICAL,
@@ -182,6 +181,8 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'cell_resp_person_fail': admin.VERTICAL,
                     'tel_resp_person_fail': admin.VERTICAL,
                     'home_visit': admin.VERTICAL}
+
+    filter_horizontal = ('appt_reason_unwilling', )
 
     list_display = (
         'study_maternal_identifier', 'prev_study', 'call_datetime', )

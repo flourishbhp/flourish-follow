@@ -1,5 +1,5 @@
 from django.apps import apps as django_apps
-from edc_constants.constants import NO, YES, CLOSED
+from edc_constants.constants import NO, YES, CLOSED, OTHER
 from edc_form_validators import FormValidator
 
 from .contact_form_validator import ContactFormValidator
@@ -48,7 +48,10 @@ class LogEntryFormValidator(ContactFormValidator, FormValidator):
                 field='appt',
                 field_required=field)
 
-        self.validate_other_specify(field='appt_reason_unwilling')
+        self.m2m_other_specify(
+            OTHER,
+            m2m_field='appt_reason_unwilling',
+            field_other='appt_reason_unwilling_other')
 
         self.validate_other_specify(field='appt_location')
 
