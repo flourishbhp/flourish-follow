@@ -18,6 +18,7 @@ from edc_model_admin import audit_fieldset_tuple
 from edc_model_admin import ModelAdminBasicMixin
 from edc_model_admin.changelist_buttons import ModelAdminChangelistModelButtonMixin
 
+from .exportaction_mixin import ExportActionMixin
 from .admin_site import flourish_follow_admin
 from .forms import (
     WorkListForm, LogEntryForm, InPersonContactAttemptForm)
@@ -32,7 +33,8 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
                       ModelAdminAuditFieldsMixin, ModelAdminReadOnlyMixin,
                       ModelAdminInstitutionMixin,
                       ModelAdminRedirectOnDeleteMixin,
-                      ModelAdminSiteMixin):
+                      ModelAdminSiteMixin,
+                      ExportActionMixin):
 
     list_per_page = 10
     date_hierarchy = 'modified'
