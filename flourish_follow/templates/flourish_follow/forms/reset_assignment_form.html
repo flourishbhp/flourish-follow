@@ -13,7 +13,7 @@
         {{ reset_assignment_form.username|as_crispy_field }}
       </div>
 	    <div class="form-group col-md-6 mb-0">
-	    <button type="submit" {% if request.user|has_group:"assign manager" %} {% else %}disabled="true"{% endif %} class="btn btn-primary">reset</button>
+	    <button type="submit" disabled="true" class="btn btn-primary">reset</button>
 	 	</div> 
  	</div>
  	</form>
