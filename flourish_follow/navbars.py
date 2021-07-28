@@ -31,4 +31,10 @@ flourish_follow.append_item(
             'flourish_follow_appt_listboard_url'],
         no_url_namespace=no_url_namespace))
 
+flourish_follow.append_item(
+    NavbarItem(name='flourish_follow_admin',
+               label='Flourish Follow Admin',
+               fa_icon='fa-cogs',
+               url_name='flourish_follow:admin_url'))
+
 site_navbars.register(flourish_follow)

@@ -1,9 +1,8 @@
 from django.urls import path
-
+from django.views.generic.base import RedirectView
 from edc_dashboard import UrlConfig
 from .admin_site import flourish_follow_admin
 from .views import AppointmentListboardView, ListboardView, HomeView
-
 
 app_name = 'flourish_follow'
 
@@ -12,7 +11,8 @@ screening_identifier = '[A-Z0-9]{8}'
 
 urlpatterns = [
     path('admin/', flourish_follow_admin.urls),
-    path('', HomeView.as_view(), name='home_url'),
+    path('home', HomeView.as_view(), name='home_url'),
+    path('', RedirectView.as_view(url='admin/'), name='admin_url'),
 ]
 
 flourish_follow_listboard_url_config = UrlConfig(
