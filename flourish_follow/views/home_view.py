@@ -80,6 +80,14 @@ class HomeView(
         if not final_list:
             final_list = list(set(identifiers) - set(self.over_age_limit))
         return final_list
+    
+    @property
+    def available_td_participants(self):
+        td_participants = WorkList.objects.filter(
+            prev_study='Tshilo Dikotla').values_list(
+                'study_maternal_identifier', flat=True)
+        final_td_list = list(set(td_participants) - set(self.over_age_limit))
+        return final_td_list
 
     def reset_participant_assignments(self, username=None):
         """Resets all assignments if reset is yes.
@@ -140,14 +148,28 @@ class HomeView(
             selected_participants = []
             username = form.cleaned_data.get('username')
             participants = form.cleaned_data['participants']
-            if len(self.available_participants) < participants:
+
+            selected_td_participants = self.get_td_participants(participants, username)
+            other_participants = participants - selected_td_participants
+
+            if (len(self.available_participants) < other_participants):
                 selected_participants = self.available_participants
             else:
                 selected_participants = random.sample(
-                    self.available_participants, participants)
+                    self.available_participants, other_participants)
             self.create_user_worklist(
                 username=username, selected_participants=selected_participants)
         return super().form_valid(form)
+
+    def get_td_participants(self, participants, username):
+        if (len(self.available_td_participants) < participants):
+            selected_td_participants = self.available_td_participants 
+        else:
+            selected_td_participants = random.sample(
+                self.available_td_participants, round(participants * 0.7))
+        self.create_user_worklist(
+                username=username, selected_participants=selected_td_participants)
+        return len(selected_td_participants)
 
     def export(self):
         """Export data.
