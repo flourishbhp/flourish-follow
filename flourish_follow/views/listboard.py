@@ -83,7 +83,6 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
         else:
             selected_td_participants = random.sample(
                 self.available_td_participants, round(participants * 0.7))
-        import pdb; pdb.set_trace()
         self.create_user_worklist(selected_participants=selected_td_participants)
         return len(selected_td_participants)
 
