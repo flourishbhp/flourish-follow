@@ -65,14 +65,26 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
         if form.is_valid():
             selected_participants = []
             participants = form.cleaned_data['participants']
-            if len(self.available_participants) < participants:
+
+            selected_td_participants = self.get_td_participants(participants)
+            other_participants = participants - selected_td_participants
+
+            if (len(self.available_participants) < other_participants):
                 selected_participants = self.available_participants
             else:
                 selected_participants = random.sample(
-                    self.available_participants, participants)
-            self.create_user_worklist(
-                selected_participants=selected_participants)
+                    self.available_participants, other_participants)
+            self.create_user_worklist(selected_participants=selected_participants)
         return super().form_valid(form)
+
+    def get_td_participants(self, participants):
+        if (len(self.available_td_participants) < participants):
+            selected_td_participants = self.available_td_participants
+        else:
+            selected_td_participants = random.sample(
+                self.available_td_participants, round(participants * 0.7))
+        self.create_user_worklist(selected_participants=selected_td_participants)
+        return len(selected_td_participants)
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -99,6 +111,14 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
             age_today__gte=Decimal('17.9')).values_list(
                 'study_maternal_identifier', flat=True)
         return list(set(over_age_limit))
+
+    @property
+    def available_td_participants(self):
+        td_participants = WorkList.objects.filter(
+            prev_study='Tshilo Dikotla').values_list(
+                'study_maternal_identifier', flat=True)
+        final_td_list = list(set(td_participants) - set(self.over_age_limit))
+        return final_td_list
 
     @property
     def available_participants(self):

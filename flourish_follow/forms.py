@@ -326,7 +326,7 @@ class InPersonContactAttemptForm(
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         choices = self.custom_choices
-        self.fields['contact_location'].choices = choices
-        self.fields['successful_location'].choices = choices + (('none_of_the_above', 'None of the above'),)
-
-
+        if choices:
+            self.fields['contact_location'].choices = choices
+            self.fields['successful_location'].choices = choices + (
+                ('none_of_the_above', 'None of the above'),)

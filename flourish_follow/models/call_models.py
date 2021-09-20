@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from multiselectfield import MultiSelectField
 
@@ -5,18 +6,17 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_is_future, datetime_not_future
 from edc_base.utils import get_utcnow
-from edc_constants.choices import YES_NO_NA
 from edc_constants.constants import YES, NO, NOT_APPLICABLE
 
 from edc_call_manager.model_mixins import (
     CallModelMixin, LogModelMixin)
+from flourish_caregiver.models.maternal_dataset import MaternalDataset
 
 from ..choices import (
     APPT_GRADING, APPT_LOCATIONS, APPT_REASONS_UNWILLING,
     CONTACT_FAIL_REASON, MAY_CALL, PHONE_USED, PHONE_SUCCESS,
-    HOME_VISIT)
-from flourish_caregiver.models.maternal_dataset import MaternalDataset
-from django.core.exceptions import ValidationError
+    HOME_VISIT, YES_NO_ST_NA)
+from .list_models import ReasonsUnwilling
 
 
 class Call(CallModelMixin, BaseUuidModel):
@@ -127,15 +127,14 @@ class LogEntry(BaseUuidModel):
 
     appt = models.CharField(
         verbose_name='Is the participant willing to schedule an appointment',
-        max_length=7,
-        choices=YES_NO_NA,
+        max_length=10,
+        choices=YES_NO_ST_NA,
         default=NOT_APPLICABLE)
 
-    appt_reason_unwilling = models.CharField(
-        verbose_name='What is the reason the participant is unwilling to schedule an appointment',
-        max_length=25,
-        choices=APPT_REASONS_UNWILLING,
-        null=True,
+    appt_reason_unwilling = models.ManyToManyField(
+        ReasonsUnwilling,
+        verbose_name=('What is the reason the participant is unwilling to '
+                      'schedule an appointment'),
         blank=True)
 
     appt_reason_unwilling_other = models.CharField(

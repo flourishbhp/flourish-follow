@@ -1,6 +1,4 @@
 from django.conf import settings
-from dateutil.relativedelta import relativedelta
-
 from edc_model_wrapper import ModelWrapper
 from flourish_caregiver.models import CaregiverChildConsent
 from .consent_model_wrapper_mixin import ConsentModelWrapperMixin
@@ -28,20 +26,23 @@ class FollowAppointmentModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
         return self.subject_consent.gender
 
     @property
-    def earliesr_date_due(self):
+    def ideal_date_due(self):
+        """Ideal date due to see a participant.
+        """
+        return self.object.timepoint_datetime
+
+    @property
+    def earliest_date_due(self):
         """Returns the earlist date to see a participant.
         """
-        return self.object.appt_datetime - relativedelta(days=45)
+        visit_definition = self.object.visits.get(self.object.visit_code)
+
+        return self.ideal_date_due - visit_definition.rlower
 
     @property
     def latest_date_due(self):
         """Returns the last date to see a participant.
         """
-        return self.object.appt_datetime + relativedelta(days=45)
+        visit_definition = self.object.visits.get(self.object.visit_code)
 
-    @property
-    def ideal_date_due(self):
-        """Ideal date due to see a participant.
-        """
-        return self.earliesr_date_due + (
-            self.latest_date_due - self.earliesr_date_due)/2
+        return self.ideal_date_due + visit_definition.rupper

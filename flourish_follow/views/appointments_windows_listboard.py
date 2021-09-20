@@ -76,7 +76,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                  'first_name': getattr(obj, 'first_name'),
                  'last_name': getattr(obj, 'last_name'),
                  'gender': getattr(obj, 'gender'),
-                 'earliesr_date_due': getattr(obj, 'earliesr_date_due'),
+                 'earliest_date_due': getattr(obj, 'earliest_date_due'),
                  'latest_date_due': getattr(obj, 'latest_date_due'),
                  'ideal_date_due': getattr(obj, 'ideal_date_due'),
                  'appt_datetime': getattr(obj, 'appt_datetime')})
