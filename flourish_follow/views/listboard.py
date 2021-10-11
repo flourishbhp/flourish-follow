@@ -115,7 +115,8 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
     @property
     def available_td_participants(self):
         td_participants = WorkList.objects.filter(
-            prev_study='Tshilo Dikotla').values_list(
+            prev_study='Tshilo Dikotla',
+            is_called=False, assigned=None, date_assigned=None).values_list(
                 'study_maternal_identifier', flat=True)
         final_td_list = list(set(td_participants) - set(self.over_age_limit))
         return final_td_list
