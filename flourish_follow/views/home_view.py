@@ -1,6 +1,5 @@
-from decimal import Decimal
-from django_pandas.io import read_frame
 import datetime
+from decimal import Decimal
 import random
 
 from django.apps import apps as django_apps
@@ -13,17 +12,17 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_navbar import NavbarViewMixin
 
+from django_pandas.io import read_frame
 from flourish_child.models import ChildDataset
 
-from .download_report_mixin import DownloadReportMixin
 from ..forms import (
     AssignParticipantForm, ResetAssignmentForm, ReAssignParticipantForm,
     SingleReAssignParticipantForm)
 from ..models import FollowExportFile, WorkList
+from .download_report_mixin import DownloadReportMixin
 
 
 class HomeView(
@@ -80,11 +79,12 @@ class HomeView(
         if not final_list:
             final_list = list(set(identifiers) - set(self.over_age_limit))
         return final_list
-    
+
     @property
     def available_td_participants(self):
         td_participants = WorkList.objects.filter(
-            prev_study='Tshilo Dikotla').values_list(
+            prev_study='Tshilo Dikotla',
+            is_called=False, assigned=None, date_assigned=None).values_list(
                 'study_maternal_identifier', flat=True)
         final_td_list = list(set(td_participants) - set(self.over_age_limit))
         return final_td_list
