@@ -2,20 +2,18 @@ from decimal import Decimal
 import random
 import re
 
-# from django.apps import apps as django_apps
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.urls.base import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView
-
 from edc_base.view_mixins import EdcBaseViewMixin
+from edc_navbar import NavbarViewMixin
+
 from edc_dashboard.view_mixins import (
     ListboardFilterViewMixin, SearchFormViewMixin)
 from edc_dashboard.views import ListboardView
-from edc_navbar import NavbarViewMixin
-
 from flourish_child.models import ChildDataset
 
 from ..forms import ParticipantsNumberForm
@@ -25,6 +23,7 @@ from .filters import ListboardViewFilters
 from .worklist_queryset_view_mixin import WorkListQuerysetViewMixin
 
 
+# from django.apps import apps as django_apps
 class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
                     ListboardFilterViewMixin, SearchFormViewMixin,
                     WorkListQuerysetViewMixin,
@@ -63,28 +62,30 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         if form.is_valid():
-            selected_participants = []
             participants = form.cleaned_data['participants']
 
-            selected_td_participants = self.get_td_participants(participants)
-            other_participants = participants - selected_td_participants
+            self.get_participants(participants, ratio=0.5, prev_study='Tshilo Dikotla')
 
-            if (len(self.available_participants) < other_participants):
-                selected_participants = self.available_participants
-            else:
-                selected_participants = random.sample(
-                    self.available_participants, other_participants)
-            self.create_user_worklist(selected_participants=selected_participants)
+            self.get_participants(participants, ratio=0.5, prev_study='Mma Bana')
+
         return super().form_valid(form)
 
-    def get_td_participants(self, participants):
-        if (len(self.available_td_participants) < participants):
-            selected_td_participants = self.available_td_participants
+    def get_participants(self, participants, ratio=None, prev_study=None):
+
+        available_participants = self.available_participants(prev_study=prev_study)
+
+        if (len(available_participants) < participants):
+            selected_participants = self.available_participants(prev_study=prev_study)
         else:
-            selected_td_participants = random.sample(
-                self.available_td_participants, round(participants * 0.7))
-        self.create_user_worklist(selected_participants=selected_td_participants)
-        return len(selected_td_participants)
+            if ratio:
+                selected_participants = random.sample(
+                    available_participants, round(participants * ratio))
+            else:
+                selected_participants = random.sample(
+                    available_participants, participants)
+
+        self.create_user_worklist(selected_participants=selected_participants)
+        return len(selected_participants)
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -112,27 +113,20 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
                 'study_maternal_identifier', flat=True)
         return list(set(over_age_limit))
 
-    @property
-    def available_td_participants(self):
-        td_participants = WorkList.objects.filter(
-            prev_study='Tshilo Dikotla',
-            is_called=False, assigned=None, date_assigned=None).values_list(
-                'study_maternal_identifier', flat=True)
-        final_td_list = list(set(td_participants) - set(self.over_age_limit))
-        return final_td_list
+    def available_participants(self, prev_study=None):
 
-    @property
-    def available_participants(self):
-        mashi_participants = WorkList.objects.filter(
-            prev_study='Mashi').values_list(
-                'study_maternal_identifier', flat=True)
-        identifiers = WorkList.objects.filter(
-            is_called=False, assigned=None, date_assigned=None).values_list(
-                'study_maternal_identifier', flat=True)
-        final_list = list(set(identifiers) & set(mashi_participants))
-        final_list = list(set(final_list) - set(self.over_age_limit))
-        if not final_list:
-            final_list = list(set(identifiers) - set(self.over_age_limit))
+        if prev_study:
+            identifiers = WorkList.objects.filter(
+                prev_study=prev_study,
+                is_called=False, assigned=None, date_assigned=None).values_list(
+                    'study_maternal_identifier', flat=True)
+        else:
+            identifiers = WorkList.objects.filter(
+                is_called=False, assigned=None, date_assigned=None).values_list(
+                    'study_maternal_identifier', flat=True)
+
+        final_list = list(set(identifiers) - set(self.over_age_limit))
+
         return final_list
 
     def get_context_data(self, **kwargs):
@@ -141,6 +135,6 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
             total_results=self.get_queryset().count(),
             called_subject=WorkList.objects.filter(is_called=True).count(),
             visited_subjects=WorkList.objects.filter(visited=True).count(),
-            total_available=len(self.available_participants),
+            total_available=len(self.available_participants()),
         )
         return context
