@@ -37,4 +37,13 @@ flourish_follow.append_item(
                fa_icon='fa-cogs',
                url_name='flourish_follow:admin_url'))
 
+flourish_follow.append_item(
+    NavbarItem(
+        name='book',
+        title='book',
+        label='Screening Bookings',
+        fa_icon='fa-user-plus',
+        url_name=settings.DASHBOARD_URL_NAMES[
+            'flourish_follow_book_listboard_url']))
+
 site_navbars.register(flourish_follow)

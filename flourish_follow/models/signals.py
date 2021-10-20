@@ -4,9 +4,12 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from edc_constants.constants import YES, NONE
+
 from ..models.worklist import WorkList
 from .home_visit_models import InPersonLog, InPersonContactAttempt
 from .call_models import LogEntry
+from .booking import Booking
 
 
 @receiver(post_save, weak=False, sender=LogEntry,
@@ -25,6 +28,29 @@ def cal_log_entry_on_post_save(sender, instance, using, raw, **kwargs):
                 work_list.called_datetime = instance.call_datetime
                 work_list.user_modified=instance.user_modified
                 work_list.save()
+        
+        # Create or update a booking
+        SubjectLocator = django_apps.get_model(
+            'flourish_caregiver.caregiverlocator')
+        if instance.appt == YES:
+            try:
+                locator = SubjectLocator.objects.get(
+                    study_maternal_identifier=instance.study_maternal_identifier)
+            except SubjectLocator.DoesNotExist:
+                return None
+            else:
+                try:
+                    booking = Booking.objects.get(
+                        study_maternal_identifier=instance.study_maternal_identifier)
+                except Booking.DoesNotExist:
+                    Booking.objects.create(
+                        study_maternal_identifier=instance.study_maternal_identifier,
+                        first_name=locator.first_name,
+                        last_name=locator.last_name,
+                        booking_date=instance.appt_date)
+                else:
+                    booking.booking_date = instance.appt_date
+                    booking.save()
         
         # Add user to Recruiters group
         try:

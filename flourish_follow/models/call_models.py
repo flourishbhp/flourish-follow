@@ -13,7 +13,7 @@ from edc_call_manager.model_mixins import (
 from flourish_caregiver.models.maternal_dataset import MaternalDataset
 
 from ..choices import (
-    APPT_GRADING, APPT_LOCATIONS, APPT_REASONS_UNWILLING,
+    APPT_GRADING, APPT_LOCATIONS,
     CONTACT_FAIL_REASON, MAY_CALL, PHONE_USED, PHONE_SUCCESS,
     HOME_VISIT, YES_NO_ST_NA)
 from .list_models import ReasonsUnwilling
