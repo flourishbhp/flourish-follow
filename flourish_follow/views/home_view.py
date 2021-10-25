@@ -66,28 +66,22 @@ class HomeView(
                 'study_maternal_identifier', flat=True)
         return list(set(over_age_limit))
 
-    @property
-    def available_participants(self):
-        mashi_participants = WorkList.objects.filter(
-            prev_study='Mashi').values_list(
-                'study_maternal_identifier', flat=True)
-        identifiers = WorkList.objects.filter(
-            is_called=False, assigned=None, date_assigned=None).values_list(
-                'study_maternal_identifier', flat=True)
-        final_list = list(set(identifiers) & set(mashi_participants))
-        final_list = list(set(final_list) - set(self.over_age_limit))
-        if not final_list:
-            final_list = list(set(identifiers) - set(self.over_age_limit))
-        return final_list
 
-    @property
-    def available_td_participants(self):
-        td_participants = WorkList.objects.filter(
-            prev_study='Tshilo Dikotla',
-            is_called=False, assigned=None, date_assigned=None).values_list(
-                'study_maternal_identifier', flat=True)
-        final_td_list = list(set(td_participants) - set(self.over_age_limit))
-        return final_td_list
+    def available_participants(self, prev_study=None):
+
+        if prev_study:
+            identifiers = WorkList.objects.filter(
+                prev_study=prev_study,
+                is_called=False, assigned=None, date_assigned=None).values_list(
+                    'study_maternal_identifier', flat=True)
+        else:
+            identifiers = WorkList.objects.filter(
+                is_called=False, assigned=None, date_assigned=None).values_list(
+                    'study_maternal_identifier', flat=True)
+
+        final_list = list(set(identifiers) - set(self.over_age_limit))
+
+        return final_list
 
     def reset_participant_assignments(self, username=None):
         """Resets all assignments if reset is yes.
@@ -147,29 +141,33 @@ class HomeView(
         if form.is_valid():
             selected_participants = []
             username = form.cleaned_data.get('username')
+
             participants = form.cleaned_data['participants']
 
-            selected_td_participants = self.get_td_participants(participants, username)
-            other_participants = participants - selected_td_participants
+            self.get_participants(participants, username, ratio=0.5, 
+                                  prev_study='Tshilo Dikotla')
 
-            if (len(self.available_participants) < other_participants):
-                selected_participants = self.available_participants
+            self.get_participants(participants, username, ratio=0.5, prev_study='Mma Bana')
+
+        return super().form_valid(form)
+    
+    def get_participants(self, participants, username, ratio=None, prev_study=None):
+
+        available_participants = self.available_participants(prev_study=prev_study)
+
+        if (len(available_participants) < participants):
+            selected_participants = self.available_participants(prev_study=prev_study)
+        else:
+            if ratio:
+                selected_participants = random.sample(
+                    available_participants, round(participants * ratio))
             else:
                 selected_participants = random.sample(
-                    self.available_participants, other_participants)
-            self.create_user_worklist(
-                username=username, selected_participants=selected_participants)
-        return super().form_valid(form)
+                    available_participants, participants)
 
-    def get_td_participants(self, participants, username):
-        if (len(self.available_td_participants) < participants):
-            selected_td_participants = self.available_td_participants 
-        else:
-            selected_td_participants = random.sample(
-                self.available_td_participants, round(participants * 0.7))
-        self.create_user_worklist(
-                username=username, selected_participants=selected_td_participants)
-        return len(selected_td_participants)
+        self.create_user_worklist(username=username,
+                                  selected_participants=selected_participants)
+        return len(selected_participants)
 
     def export(self):
         """Export data.

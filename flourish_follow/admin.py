@@ -21,9 +21,9 @@ from edc_model_admin.changelist_buttons import ModelAdminChangelistModelButtonMi
 from .exportaction_mixin import ExportActionMixin
 from .admin_site import flourish_follow_admin
 from .forms import (
-    WorkListForm, LogEntryForm, InPersonContactAttemptForm)
+    BookingForm, WorkListForm, LogEntryForm, InPersonContactAttemptForm)
 from .models import (
-    Call, WorkList, Log, LogEntry, InPersonContactAttempt,
+    Booking, Call, WorkList, Log, LogEntry, InPersonContactAttempt,
     InPersonLog)
 
 
@@ -39,6 +39,23 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
     list_per_page = 10
     date_hierarchy = 'modified'
     empty_value_display = '-'
+
+
+@admin.register(Booking, site=flourish_follow_admin)
+class BookingAdmin(ModelAdminMixin, admin.ModelAdmin):
+
+    form = BookingForm
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                'study_maternal_identifier',
+                'first_name',
+                'last_name',
+                'booking_date',)}),
+        audit_fieldset_tuple)
+
+    list_display = ('first_name', 'last_name',)
 
 
 @admin.register(WorkList, site=flourish_follow_admin)

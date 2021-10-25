@@ -92,10 +92,21 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         start_date = None
         end_date = None
         if form.is_valid():
-            start_date = form.data['start_date']
-            end_date = form.data['end_date']
-        appointment_downloads = FollowExportFile.objects.filter(
-            description='Appointment and windows').order_by('uploaded_at')
+            first_name = form.data['first_name']
+            middle_name = form.data['middle_name']
+            last_name = form.data['last_name']
+            cell_number = form.data['cell_number']
+            booking_date = form.data['booking_date']
+            options = {
+                'first_name': first_name,
+                'middle_name': middle_name,
+                'last_name': last_name,
+                'cell_number': cell_number,
+                'booking_date': booking_date}
+            try:
+                Booking.objects.get()
+            except Booking.DoesNotExist:
+                Booking.create(**options)
         context = self.get_context_data(**self.kwargs)
         context.update(
             appointment_downloads=appointment_downloads,)
