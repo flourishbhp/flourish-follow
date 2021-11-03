@@ -36,6 +36,13 @@ class LogEntryFormValidator(ContactFormValidator, FormValidator):
 
             self.validate_unsuccesful_na(fields_map, contact_used, contact_success)
 
+        self.required_if(YES,
+                         field='appt',
+                         field_required='appt_type')
+
+        self.validate_other_specify(field='appt_type',
+                                    other_specify_field='other_appt_type')
+
         self.required_if(
             NO,
             field='appt',

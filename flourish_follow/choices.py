@@ -30,6 +30,14 @@ APPT_REASONS_UNWILLING = (
     (OTHER, 'Other reason ...'),
 )
 
+APPT_TYPE = (
+    ('screening', 'Screening'),
+    ('re_call', 'Re-call'),
+    ('consenting', 'Consenting'),
+    (OTHER, 'Other')
+
+)
+
 CONTACT_FAIL_REASON = (
     ('no_response', 'Phone rang, no response but voicemail left'),
     ('no_response_vm_not_left', 'Phone rang no response and no option to leave voicemail'),

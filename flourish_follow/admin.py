@@ -173,6 +173,8 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         }),
         ('Schedule Appointment With Participant', {
            'fields': ('appt',
+                      'appt_type',
+                      'other_appt_type',
                       'appt_reason_unwilling',
                       'appt_reason_unwilling_other',
                       'appt_date',
@@ -185,6 +187,7 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         }), audit_fieldset_tuple)
 
     radio_fields = {'appt': admin.VERTICAL,
+                    'appt_type': admin.VERTICAL,
                     'appt_grading': admin.VERTICAL,
                     'appt_location': admin.VERTICAL,
                     'may_call': admin.VERTICAL,
