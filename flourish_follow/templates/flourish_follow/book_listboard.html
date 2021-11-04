@@ -79,6 +79,7 @@
     <th>Edit</th>
     <th>Names</th>
     <th>Appt Status</th>
+    <th>Appt type</th>
 	<th>Cell Number</th>
 	<th>Booked Date</th>
     <!-- end results header -->
@@ -98,6 +99,7 @@
 {% block listboard_table_columns %}
 	<td>{{result.first_name}} {{result.middle_name}} {{result.last_name}}</td>
 	<td>{{ result.appt_status }}</td>
+	<td>{{ result.appt_type }}</td>
     <td>{{ result.subject_cell  }}</td>
     <td>{{result.booking_date}}</td>
 {% endblock listboard_table_columns %}

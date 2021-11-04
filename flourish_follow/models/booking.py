@@ -4,7 +4,7 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_search.model_mixins import SearchSlugModelMixin, SearchSlugManager
 
-from ..choices import APPT_STATUS
+from ..choices import APPT_STATUS, APPT_TYPE
 
 
 class BookingManager(SearchSlugManager, models.Manager):
@@ -38,6 +38,13 @@ class Booking(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
         max_length=25,
         default='pending',
         db_index=True)
+
+    appt_type = models.CharField(
+        verbose_name='Type of appointment',
+        max_length=10,
+        choices=APPT_TYPE,
+        blank=True,
+        null=True)
 
     successful = models.BooleanField(default=False)
 
