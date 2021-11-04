@@ -47,9 +47,11 @@ def cal_log_entry_on_post_save(sender, instance, using, raw, **kwargs):
                         study_maternal_identifier=instance.study_maternal_identifier,
                         first_name=locator.first_name,
                         last_name=locator.last_name,
-                        booking_date=instance.appt_date)
+                        booking_date=instance.appt_date,
+                        appt_type=instance.appt_type)
                 else:
                     booking.booking_date = instance.appt_date
+                    booking.appt_type = instance.appt_type
                     booking.save()
         
         # Add user to Recruiters group

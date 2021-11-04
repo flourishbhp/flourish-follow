@@ -14,13 +14,13 @@ from flourish_caregiver.models.maternal_dataset import MaternalDataset
 
 from ..choices import (
     APPT_GRADING, APPT_LOCATIONS,
+    APPT_TYPE,
     CONTACT_FAIL_REASON, MAY_CALL, PHONE_USED, PHONE_SUCCESS,
     HOME_VISIT, YES_NO_ST_NA)
 from .list_models import ReasonsUnwilling
 
 
 class Call(CallModelMixin, BaseUuidModel):
-
     scheduled = models.DateTimeField(
         default=get_utcnow)
 
@@ -29,7 +29,6 @@ class Call(CallModelMixin, BaseUuidModel):
 
 
 class Log(LogModelMixin, BaseUuidModel):
-
     call = models.ForeignKey(Call, on_delete=models.PROTECT)
 
     class Meta(LogModelMixin.Meta):
@@ -37,12 +36,11 @@ class Log(LogModelMixin, BaseUuidModel):
 
 
 class LogEntry(BaseUuidModel):
-
     log = models.ForeignKey(Log, on_delete=models.PROTECT)
 
     subject_identifier = models.CharField(
         max_length=50,
-        blank=True,)
+        blank=True, )
 
     screening_identifier = models.CharField(
         verbose_name="Eligibility Identifier",
@@ -56,7 +54,7 @@ class LogEntry(BaseUuidModel):
 
     prev_study = models.CharField(
         verbose_name='Previous Study Name',
-        max_length=100,)
+        max_length=100, )
 
     call_datetime = models.DateTimeField(
         default=get_utcnow,
@@ -131,6 +129,19 @@ class LogEntry(BaseUuidModel):
         choices=YES_NO_ST_NA,
         default=NOT_APPLICABLE)
 
+    appt_type = models.CharField(
+        verbose_name='Type of appointment',
+        max_length=10,
+        choices=APPT_TYPE,
+        blank=True,
+        null=True)
+
+    other_appt_type = models.CharField(
+        verbose_name='Type of appointment',
+        max_length=10,
+        null=True,
+        blank=True)
+
     appt_reason_unwilling = models.ManyToManyField(
         ReasonsUnwilling,
         verbose_name=('What is the reason the participant is unwilling to '
@@ -202,7 +213,7 @@ class LogEntry(BaseUuidModel):
                 raise ValidationError(
                     f'Dataset object missing. for {self.study_maternal_identifier}')
             else:
-                self.screening_identifier = maternal_dataset.screening_identifier 
+                self.screening_identifier = maternal_dataset.screening_identifier
         super().save(*args, **kwargs)
 
     @property
@@ -225,12 +236,13 @@ class LogEntry(BaseUuidModel):
             outcome.append('Do not call')
         return outcome
 
+    @property
     def log_entries(self):
-        return self.__class__.objects.filter(log=self.log)
+        # return self.objects.filter()
+        return LogEntry.objects.filter(log__id=self.log.id)
 
     class Meta:
         unique_together = ('call_datetime', 'log')
         app_label = 'flourish_follow'
         verbose_name = 'Call Log Entry'
         verbose_name_plural = 'Call Log Entries'
-
