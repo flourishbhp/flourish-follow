@@ -164,7 +164,8 @@
                     <h4 class="m-b-20"><b>{{booking.first_name}} {{booking.last_name}}</b></h4>
                     <p class="m-b-0"><b>Contact #: {{booking.subject_cell}}</b></p>
                     <p class="m-b-0"><b>Date: {{booking.booking_date}}</b></p>
-                    <p class="m-b-0"><b>Date: {{booking.appt_status}}</b></p>
+                    <p class="m-b-0"><b>Status: {{booking.appt_status}}</b></p>
+                    <p class="m-b-0"><b>App type: {{booking.appt_type}}</b></p>
                     <br>
                     <a class="btn btn-success" href="{% url 'flourish_follow:flourish_follow_booking_listboard_url' %}?status=done&subject_cell={{ booking.subject_cell }}" role="button">Done</a>
                     <span class="f-right"><a class="btn btn-danger" href="{% url 'flourish_follow:flourish_follow_booking_listboard_url' %}?status=cancelled&subject_cell={{ booking.subject_cell }}" role="button">Re Schedule</a></span>

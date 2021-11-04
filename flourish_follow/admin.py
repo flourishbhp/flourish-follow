@@ -52,7 +52,8 @@ class BookingAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'study_maternal_identifier',
                 'first_name',
                 'last_name',
-                'booking_date',)}),
+                'booking_date',
+                'appt_type',)}),
         audit_fieldset_tuple)
 
     list_display = ('first_name', 'last_name',)
