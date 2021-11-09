@@ -42,6 +42,61 @@
 {% endblock alert %}
 
 {% block main %}
+{% block extra_content%}
+	<br>
+<div class="panel panel-info">
+  <div class="panel-heading">
+      <div class="panel-body">
+       <!-- begin panel_action_buttons -->
+        <span class="glyphicon glyphicon-ok-sign"></span> Done <span class="badge">{{done}}</span> / <span class="badge">{{total_bookings}}</span>
+        <span class="glyphicon glyphicon-adjust"></span> Pending <span class="badge">{{pending}}</span> / <span class="badge">{{total_bookings}}</span>
+        <span class="glyphicon glyphicon-remove"></span> Cancelled <span class="badge">{{cancelled}}</span> / <span class="badge">{{total_bookings}}</span>
+        <a class="btn btn-primary btn-sm" href="{% url 'flourish_follow:flourish_follow_booking_listboard_url' %}" role="button">booking cards</a>
+        &nbsp;&nbsp;
+        <hr>
+       <!-- end panel_action_buttons -->  
+	       		<table class="table table-hover">
+				  <thead>
+				    <tr>
+				      <th scope="col">#</th>
+				      <th scope="col">Booking days</th>
+				      <th scope="col">Total booked</th>
+				      <th scope="col">Done</th>
+				      <th scope="col">Pending</th>
+				      <th scope="col">Cancelled</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr>
+				      <th scope="row">1</th>
+				      <td>Today</td>
+				      <td>{{ booked_today }}</td>
+				      <td>{{ booked_today_done }}</td>
+				      <td>{{ booked_today_pending }}</td>
+				      <td>{{ booked_today_cancelled }}</td>
+				    </tr>
+				    <tr>
+				      <th scope="row">2</th>
+				      <td>Tomorrow</td>
+				      <td>{{ booked_tomorrow }}</td>
+				      <td>{{ booked_tomorrow_done }}</td>
+				      <td>{{ booked_tomorrow_pending }}</td>
+				      <td>{{ booked_tomorrow_cancelled }}</td>
+				    </tr>
+				    <tr>
+				      <th scope="row">2</th>
+				      <td>This Week</td>
+				      <td>{{ booked_this_week }}</td>
+				      <td>{{ booked_this_week_done }}</td>
+				      <td>{{ booked_this_week_pending }}</td>
+				      <td>{{ booked_this_week_cancelled }}</td>
+				    </tr>
+				  </tbody>
+				</table>
+      </div>
+  </div>
+</div>
+{% endblock extra_content %}
 <div class="container">
 <div class="row">
     <div class="panel-group">
