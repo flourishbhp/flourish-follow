@@ -117,12 +117,15 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
         if prev_study:
             identifiers = WorkList.objects.filter(
-                prev_study=prev_study,
+                prev_study=prev_study, consented=False,
                 is_called=False, assigned=None, date_assigned=None).values_list(
                     'study_maternal_identifier', flat=True)
         else:
             identifiers = WorkList.objects.filter(
-                is_called=False, assigned=None, date_assigned=None).values_list(
+                is_called=False,
+                assigned=None,
+                date_assigned=None,
+                consented=False).values_list(
                     'study_maternal_identifier', flat=True)
 
         final_list = list(set(identifiers) - set(self.over_age_limit))
