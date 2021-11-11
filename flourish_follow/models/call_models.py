@@ -137,7 +137,7 @@ class LogEntry(BaseUuidModel):
         null=True)
 
     other_appt_type = models.CharField(
-        verbose_name='Specify other type of appointment',
+        verbose_name='If other, specify',
         max_length=10,
         null=True,
         blank=True)
