@@ -71,12 +71,15 @@ class HomeView(
 
         if prev_study:
             identifiers = WorkList.objects.filter(
-                prev_study=prev_study,
+                prev_study=prev_study, consented=False,
                 is_called=False, assigned=None, date_assigned=None).values_list(
                     'study_maternal_identifier', flat=True)
         else:
             identifiers = WorkList.objects.filter(
-                is_called=False, assigned=None, date_assigned=None).values_list(
+                is_called=False,
+                assigned=None,
+                date_assigned=None,
+                consented=False,).values_list(
                     'study_maternal_identifier', flat=True)
 
         final_list = list(set(identifiers) - set(self.over_age_limit))
@@ -139,7 +142,6 @@ class HomeView(
 
     def form_valid(self, form):
         if form.is_valid():
-            selected_participants = []
             username = form.cleaned_data.get('username')
 
             participants = form.cleaned_data['participants']
