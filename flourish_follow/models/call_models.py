@@ -188,7 +188,7 @@ class LogEntry(BaseUuidModel):
 
     may_call = models.CharField(
         verbose_name='May we continue to contact the participant?',
-        max_length=10,
+        max_length=30,
         choices=MAY_CALL,
         default=YES)
 

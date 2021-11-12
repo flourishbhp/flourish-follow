@@ -67,11 +67,19 @@ class LogEntryFormValidator(ContactFormValidator, FormValidator):
             field='phone_num_success',
             field_applicable='appt')
 
+        self.validate_appointment_is_no()
+
         self.validate_other_specify(field='home_visit')
 
-        call = cleaned_data.get('log').call
-        self.validate_closed_call(call)
+        self.validate_closed_call()
 
-    def validate_closed_call(self, call_model):
+    def validate_closed_call(self):
+        call_model = self.cleaned_data.get('log').call
         if call_model.call_status == CLOSED:
             raise ValidationError('This call is already closed.')
+
+    def validate_appointment_is_no(self):
+        appt = self.cleaned_data.get('appt')
+        may_call = self.cleaned_data.get('may_call')
+        if appt == NO and not (may_call == 'no_flourish_study_calls' or may_call == 'no_any_bhp_study_calls'):
+            raise ValidationError({'may_call': 'The participant said no to an appointment, please give the reason why'})
