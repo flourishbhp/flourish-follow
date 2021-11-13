@@ -42,6 +42,60 @@
 {% endblock alert %}
 
 {% block main %}
+{% block extra_content%}
+	<br>
+<div class="panel panel-info">
+  <div class="panel-heading">
+      <div class="panel-body">
+       <!-- begin panel_action_buttons -->
+        &nbsp;&nbsp;
+        <hr>
+       <!-- end panel_action_buttons -->
+		<div class="row mt-5">
+			<div class="col-md-6">
+				<table class="table table-hover">
+				  <thead>
+				    <tr>
+				      <th scope="col"></th>
+				      <th scope="col">Successful calls</th>
+				      <th scope="col">Failed calls</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr>
+				      <td>Called Participants</td>
+				      <td>1</td>
+				      <td>2</td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+			
+			<div class="col-md-6">
+				<table class="table table-hover">
+				  <thead>
+				    <tr>
+				      <th scope="col"></th>
+				      <th scope="col">Screening</th>
+				      <th scope="col">Re Call</th>
+				      <th scope="col">Consenting</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr>
+				      <td>Appointments</td>
+				      <td>1</td>
+				      <td>2</td>
+				      <td>3</td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+		</div> 
+      </div>
+  </div>
+</div>
+{% endblock extra_content %}
 <div class="container">
 <div class="row">
     <div class="panel-group">
