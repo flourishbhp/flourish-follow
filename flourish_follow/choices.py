@@ -1,6 +1,5 @@
 from edc_constants.constants import NOT_APPLICABLE, YES, NO, DWTA, OTHER
 
-
 APPT_STATUS = (
     ('pending', 'Pending'),
     ('done', 'Done'),
@@ -61,7 +60,8 @@ LOCATION_SUCCESS = (
 
 MAY_CALL = (
     (YES, 'Yes, we may continue to contact the participant.'),
-    (NO, 'No, participant has asked NOT to be contacted again.'),
+    ('no_flourish_study_calls', 'No, the participant has asked to not be contacted about the FLOURISH study.'),
+    ('no_any_bhp_study_calls', 'No, the participant has asked not to be contacted about ANY BHP study'),
     (NOT_APPLICABLE, 'Not Applicable')
 )
 
@@ -87,11 +87,10 @@ PHONE_SUCCESS = (
     ('subject_work_phone', 'subject_work_phone'),
     ('indirect_contact_cell', 'indirect_contact_cell'),
     ('indirect_contact_phone', 'indirect_contact_phone'),
-    ('caretaker_cell',  'caretaker_cell'),
+    ('caretaker_cell', 'caretaker_cell'),
     ('caretaker_tel', 'caretaker_tel'),
     ('none_of_the_above', 'None of the above'),
 )
-
 
 PHONE_USED = (
     ('subject_cell', 'subject_cell'),
@@ -101,10 +100,9 @@ PHONE_USED = (
     ('subject_work_phone', 'subject_work_phone'),
     ('indirect_contact_cell', 'indirect_contact_cell'),
     ('indirect_contact_phone', 'indirect_contact_phone'),
-    ('caretaker_cell',  'caretaker_cell'),
+    ('caretaker_cell', 'caretaker_cell'),
     ('caretaker_tel', 'caretaker_tel'),
 )
-
 
 YES_NO_ST_NA = (
     (YES, YES),
