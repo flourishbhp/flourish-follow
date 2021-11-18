@@ -82,4 +82,4 @@ class LogEntryFormValidator(ContactFormValidator, FormValidator):
         appt = self.cleaned_data.get('appt')
         may_call = self.cleaned_data.get('may_call')
         if appt == NO and not (may_call == 'no_flourish_study_calls' or may_call == 'no_any_bhp_study_calls'):
-            raise ValidationError({'may_call': 'The participant said no to an appointment, please give the reason why'})
+            raise ValidationError({'may_call': 'Q16 - Participant NOT willing to schedule an appointment'})
