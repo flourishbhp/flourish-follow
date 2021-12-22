@@ -3,6 +3,7 @@ import uuid
 import xlwt
 
 from django.apps import apps as django_apps
+from django.db.models import ManyToManyField, ForeignKey, OneToOneField
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -25,20 +26,25 @@ class ExportActionMixin:
         font_style.font.bold = True
         font_style.num_format_str = 'YYYY/MM/DD h:mm:ss'
 
-        field_names = queryset[0].__dict__
-        field_names = [a for a in field_names.keys()]
-        field_names.remove('_state')
+        field_names = [field.name for field in self.get_fields]
 
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
 
         for obj in queryset:
-            obj_data = obj.__dict__
-            study_maternal_identifier = getattr(obj, 'study_maternal_identifier', None)
-            previous_study = self.previous_bhp_study(
-                study_maternal_identifier=study_maternal_identifier)
-            data = [obj_data[field] if field != 'previous study name'
-                    else previous_study for field in field_names]
+            data = []
+            for field in self.get_fields:
+                if isinstance(field, ManyToManyField):
+                    key_manager = getattr(obj, field.name)
+                    field_value = ', '.join([obj.name for obj in key_manager.all()])
+                    data.append(field_value)
+                    continue
+                if isinstance(field, (ForeignKey, OneToOneField, )):
+                    field_value = getattr(obj, field.name)
+                    data.append(field_value.id)
+                    continue
+                field_value = getattr(obj, field.name, '')
+                data.append(field_value)
 
             row_num += 1
             for col_num in range(len(data)):
@@ -73,3 +79,7 @@ class ExportActionMixin:
                 return None
             else:
                 return dataset_obj.protocol
+
+    @property
+    def get_fields(self):
+        return self.model._meta.get_fields()

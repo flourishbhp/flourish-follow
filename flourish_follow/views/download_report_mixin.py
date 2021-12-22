@@ -8,7 +8,7 @@ from ..models import FollowExportFile
 
 
 class DownloadReportMixin:
-    
+
     def download_data(
             self, description=None, start_date=None,
             end_date=None, report_type=None, df=None):
@@ -24,14 +24,14 @@ class DownloadReportMixin:
             'end_date': end_date
         }
         doc = FollowExportFile.objects.create(**options)
-        
+
         # Document path
         upload_to = FollowExportFile.document.field.upload_to
-        fname = export_identifier +  '.csv'
-        final_path = upload_to  + report_type +'/' + fname
-         
-        # Export path 
-        export_path = settings.MEDIA_ROOT + '/documents/' + report_type +'/'
+        fname = export_identifier + '.csv'
+        final_path = upload_to + report_type + '/' + fname
+
+        # Export path
+        export_path = settings.MEDIA_ROOT + '/documents/' + report_type + '/'
         if not os.path.exists(export_path):
             os.makedirs(export_path)
         export_path += fname
