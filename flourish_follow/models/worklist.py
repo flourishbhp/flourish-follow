@@ -59,7 +59,7 @@ class WorkList(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
     called_datetime = models.DateTimeField(null=True)
 
     visited = models.BooleanField(default=False)
-    
+
     consented = models.BooleanField(default=False)
 
     objects = WorklistManager()
