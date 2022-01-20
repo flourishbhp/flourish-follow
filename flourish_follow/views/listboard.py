@@ -74,6 +74,9 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
         available_participants = self.available_participants(prev_study=prev_study)
 
+        if not available_participants:
+            available_participants = self.available_participants()
+
         if (len(available_participants) < participants):
             selected_participants = self.available_participants(prev_study=prev_study)
         else:
