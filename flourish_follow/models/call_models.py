@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from edc_constants.choices import YES_NO
 from multiselectfield import MultiSelectField
 
 from edc_base.model_fields import OtherCharField
@@ -203,6 +204,13 @@ class LogEntry(BaseUuidModel):
         max_length=50,
         null=True,
         blank=True)
+
+    final_contact = models.CharField(
+        verbose_name=('Is this the final contact attempt and no other calls or home '
+                      'visits will be made for this participant?'),
+        max_length=50,
+        choices=YES_NO
+    )
 
     def save(self, *args, **kwargs):
         if not self.screening_identifier:
