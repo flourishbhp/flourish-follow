@@ -184,7 +184,9 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                       'appt_location_other',
                       'may_call',
                       'home_visit',
-                      'home_visit_other',)
+                      'home_visit_other',
+                      'final_contact',
+                      )
         }), audit_fieldset_tuple)
 
     radio_fields = {'appt': admin.VERTICAL,
@@ -201,7 +203,9 @@ class LogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'tel_alt_contact_fail': admin.VERTICAL,
                     'cell_resp_person_fail': admin.VERTICAL,
                     'tel_resp_person_fail': admin.VERTICAL,
-                    'home_visit': admin.VERTICAL}
+                    'home_visit': admin.VERTICAL,
+                    'final_contact': admin.VERTICAL,
+                    }
 
     filter_horizontal = ('appt_reason_unwilling', )
 
