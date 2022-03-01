@@ -209,7 +209,8 @@ class LogEntry(BaseUuidModel):
         verbose_name=('Is this the final contact attempt and no other calls or home '
                       'visits will be made for this participant?'),
         max_length=50,
-        choices=YES_NO
+        choices=YES_NO,
+        default=NO
     )
 
     def save(self, *args, **kwargs):
