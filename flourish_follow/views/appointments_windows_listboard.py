@@ -33,7 +33,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     listboard_panel_style = 'info'
     listboard_fa_icon = "fa-user-plus"
 
-    model = 'flourish_child.appointment'
+    model = 'edc_appointment.appointment'
     listboard_view_filters = ListboardViewFilters()
     model_wrapper_cls = FollowAppointmentModelWrapper
     navbar_name = 'flourish_follow'
