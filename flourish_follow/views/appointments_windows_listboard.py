@@ -1,4 +1,4 @@
-
+import six
 import re
 from django.shortcuts import render
 from numpy import object_
@@ -20,6 +20,7 @@ from .filters import AppointmentListboardViewFilters
 from ..forms import AppointmentsWindowForm
 from ..model_wrappers import FollowAppointmentModelWrapper
 from ..models import FollowExportFile
+from django.utils.text import slugify
 
 
 class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
@@ -128,9 +129,55 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             appointment_downloads=appointment_downloads)
         return context
 
+    def modified_get_queryset(self):
+        """Return the list of items for this view.
+
+        Completely overrides ListView.get_queryset.
+
+        The return value gets set to self.object_list in get()
+        just before rendering to response.
+        """
+        filter_options = self.get_queryset_filter_options(
+            self.request, *self.args, **self.kwargs)
+        exclude_options = self.get_queryset_exclude_options(
+            self.request, *self.args, **self.kwargs)
+        if self.search_term and '|' not in self.search_term:
+            search_terms = self.search_term.split('+')
+            q = None
+            q_objects = []
+            for search_term in search_terms:
+                """
+                Specify fields of interest
+                """
+                q_objects.append(
+                    Q(subject_identifier__icontains=search_term) |
+                    Q(appt_reason__icontains = search_term) |
+                    Q(schedule_name__icontains=search_term) |
+                    Q(visit_code__icontains=search_term))
+
+                q_objects.append(self.extra_search_options(search_term))
+            for q_object in q_objects:
+                if q:
+                    q = q | q_object
+                else:
+                    q = q_object
+            queryset = self.model_cls.objects.filter(
+                q or Q(), **filter_options).exclude(**exclude_options)
+        else:
+            queryset = self.model_cls.objects.filter(
+                **filter_options).exclude(
+                    **exclude_options)
+        ordering = self.get_ordering()
+        if ordering:
+            if isinstance(ordering, six.string_types):
+                ordering = (ordering,)
+            queryset = queryset.order_by(*ordering)
+        return queryset
+
+
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = self.modified_get_queryset()
 
         if self.start_date and self.end_date:
             qs = qs.filter(appt_datetime__date__range=[self.start_date, self.end_date])
