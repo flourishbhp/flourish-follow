@@ -128,3 +128,8 @@ ENV/
 .mypy_cache/
 
 crypto_fields/
+
+#ide configs
+./.vscode
+**/.idea/**
+**/.vscode/**

@@ -1,44 +1,41 @@
 import datetime
-import pandas as pd
 import re
 
+import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView
-
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import (
     ListboardFilterViewMixin, SearchFormViewMixin)
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
+from .download_report_mixin import DownloadReportMixin
+from .filters import AppointmentListboardViewFilters
+from ..forms import AppointmentsWindowForm
 from ..model_wrappers import FollowAppointmentModelWrapper
 from ..models import FollowExportFile
-from ..forms import AppointmentsWindowForm
-from .download_report_mixin import DownloadReportMixin
-from .filters import ListboardViewFilters
 
 
 class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                                ListboardFilterViewMixin, SearchFormViewMixin,
                                DownloadReportMixin, ListboardView, FormView):
-
     form_class = AppointmentsWindowForm
     listboard_template = 'flourish_follow_appt_listboard_template'
     listboard_url = 'flourish_follow_appt_listboard_url'
     listboard_panel_style = 'info'
     listboard_fa_icon = "fa-user-plus"
 
-    model = 'flourish_child.appointment'
-    listboard_view_filters = ListboardViewFilters()
+    model = 'edc_appointment.appointment'
+    listboard_view_filters = AppointmentListboardViewFilters()
     model_wrapper_cls = FollowAppointmentModelWrapper
     navbar_name = 'flourish_follow'
     navbar_selected_item = 'appointments'
-    ordering = '-modified'
+    ordering = '-timepoint_datetime'
     paginate_by = 10
     search_form_url = 'flourish_follow_appt_listboard_url'
 
@@ -88,9 +85,10 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             report_type='appointments_window_periods',
             df=df)
 
+
+
     def get_context_data(self, **kwargs):
 
-        self.object_list = self.get_queryset()
         context = super().get_context_data(**kwargs)
         if self.request.GET.get('export') == 'yes':
             queryset = context.get('object_list')  # from ListView
@@ -104,7 +102,9 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         return context
 
     def get_queryset(self):
+
         qs = super().get_queryset()
+
         if self.request.GET.get('start_date'):
             qs = qs.filter(appt_datetime__date__gte=self.request.GET.get('start_date'),
                            appt_datetime__date__lte=self.request.GET.get('end_date'))
