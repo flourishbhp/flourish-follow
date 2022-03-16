@@ -19,7 +19,7 @@ from flourish_child.models import ChildDataset
 from ..forms import ParticipantsNumberForm
 from ..model_wrappers import WorkListModelWrapper
 from ..models import WorkList
-from .filters import ListboardViewFilters
+from .filters import WorkListboardViewFilters
 from .worklist_queryset_view_mixin import WorkListQuerysetViewMixin
 
 
@@ -36,7 +36,7 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
     listboard_fa_icon = "fa-user-plus"
 
     model = 'flourish_follow.worklist'
-    listboard_view_filters = ListboardViewFilters()
+    listboard_view_filters = WorkListboardViewFilters()
     model_wrapper_cls = WorkListModelWrapper
     navbar_name = 'flourish_follow'
     navbar_selected_item = 'worklist'

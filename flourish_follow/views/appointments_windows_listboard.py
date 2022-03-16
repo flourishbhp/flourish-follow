@@ -15,7 +15,7 @@ from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
 from .download_report_mixin import DownloadReportMixin
-from .filters import ListboardViewFilters
+from .filters import AppointmentListboardViewFilters
 from ..forms import AppointmentsWindowForm
 from ..model_wrappers import FollowAppointmentModelWrapper
 from ..models import FollowExportFile
@@ -31,7 +31,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     listboard_fa_icon = "fa-user-plus"
 
     model = 'edc_appointment.appointment'
-    listboard_view_filters = ListboardViewFilters()
+    listboard_view_filters = AppointmentListboardViewFilters()
     model_wrapper_cls = FollowAppointmentModelWrapper
     navbar_name = 'flourish_follow'
     navbar_selected_item = 'appointments'
@@ -85,6 +85,8 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             report_type='appointments_window_periods',
             df=df)
 
+
+
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
@@ -101,10 +103,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
     def get_queryset(self):
 
-        due_date = datetime.datetime.now()
-        before_due = due_date - datetime.timedelta(days=15)
-
-        qs = super().get_queryset().filter(timepoint_datetime__range=[before_due, due_date])
+        qs = super().get_queryset()
 
         if self.request.GET.get('start_date'):
             qs = qs.filter(appt_datetime__date__gte=self.request.GET.get('start_date'),
