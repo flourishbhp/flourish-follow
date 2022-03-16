@@ -1,7 +1,6 @@
 import six
 import re
 from django.shortcuts import render
-from numpy import object_
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -36,7 +35,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     model_wrapper_cls = FollowAppointmentModelWrapper
     navbar_name = 'flourish_follow'
     navbar_selected_item = 'appointments'
-    # ordering = '-timepoint_datetime'
+    ordering = '-modified'
     paginate_by = 10
     search_form_url = 'flourish_follow_appt_listboard_url'
 
@@ -45,13 +44,6 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         self.start_date = None
         self.end_date = None
 
-    def get_ordering(self):
-
-        sort_by = self.request.GET.get('sort_by', None)
-
-        if sort_by:
-            return None
-        return 'timepoint_datetime'
 
     def get_success_url(self):
         return reverse('flourish_follow:flourish_follow_appt_listboard_url')
@@ -73,6 +65,8 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         self.start_date = request.POST.get('start_date', None)
 
         self.end_date = request.POST.get('end_date', None)
+
+        self.ordering = request.POST.get('sort_by',)
 
 
         return super().get(request, *args, **kwargs)
@@ -151,7 +145,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                 """
                 q_objects.append(
                     Q(subject_identifier__icontains=search_term) |
-                    Q(appt_reason__icontains = search_term) |
+                    Q(appt_status__icontains=search_term.lower().replace(' ', '_')) |
                     Q(schedule_name__icontains=search_term) |
                     Q(visit_code__icontains=search_term))
 
@@ -167,7 +161,9 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             queryset = self.model_cls.objects.filter(
                 **filter_options).exclude(
                     **exclude_options)
-        ordering = self.get_ordering()
+
+        ordering = self.ordering
+
         if ordering:
             if isinstance(ordering, six.string_types):
                 ordering = (ordering,)
@@ -179,6 +175,10 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     def get_queryset(self):
         qs = self.modified_get_queryset()
 
-        if self.start_date and self.end_date:
+        if self.start_date and not self.end_date:
+            qs = qs.filter(appt_datetime__date__gte=self.start_date)
+        elif not self.start_date and self.end_date:
+            qs = qs.filter(appt_datetime__date__lte=self.end_date)
+        elif self.start_date and self.end_date:
             qs = qs.filter(appt_datetime__date__range=[self.start_date, self.end_date])
         return qs

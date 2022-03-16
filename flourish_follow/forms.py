@@ -1,13 +1,13 @@
 from unicodedata import name
 from django import forms
 from django.apps import apps as django_apps
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from edc_form_validators import FormValidatorMixin
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
+
 
 from edc_base.sites import SiteModelFormMixin
 
@@ -69,23 +69,36 @@ class AppointmentRegistrationForm(forms.Form):
 class AppointmentsWindowForm(forms.Form):
 
     start_date = forms.DateField(
-        required=True, label='Start date',
+        required=False, label='Start date',
         widget=forms.TextInput(attrs={'type': 'date'}))
-        
+    
     end_date = forms.DateField(
-        required=True, label='End date',
+        required=False, label='End date',
         widget=forms.TextInput(attrs={'type': 'date'}))
+
+    sort_by = forms.ChoiceField(
+        choices=(
+            ('appt_status', 'Appt. Status',),
+            ('-appt_status', 'Desc. Appt. Status',),
+            ('visit_code', 'Visit Code'),
+            ('-visit_code', 'Desc. Visit Code'),
+            ('appt_datetime', 'Appt. Date'),
+            ('-appt_datetime', 'Desc. Appt. Date'),
+
+        )
+
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'POST'
         self.helper.form_id = 'appointment'
-        self.helper.form_action = settings.DASHBOARD_URL_NAMES.get(
-            'flourish_follow_appt_listboard_url')
+        self.helper.form_action = 'flourish_follow:flourish_follow_appt_listboard_url'
         self.helper.form_class = 'form-inline'
         self.helper.field_template = 'bootstrap3/layout/inline_field.html'
         self.helper.layout = Layout(
+            'sort_by',
             'start_date',
             'end_date',
             Submit('submit', u'filter report', css_class="btn btn-sm btn-default")
