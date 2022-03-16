@@ -13,6 +13,7 @@ class FollowAppointmentModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
         'flourish_follow_appt_listboard_url')
 
     subject_consent_cls = 'flourish_caregiver.subject_consent'
+    
 
     @property
     def subject_consent_model(self):

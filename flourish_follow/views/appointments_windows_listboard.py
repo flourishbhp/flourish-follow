@@ -1,16 +1,16 @@
-import datetime
+import six
 import re
-
+from django.shortcuts import render
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormMixin
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import (
-    ListboardFilterViewMixin, SearchFormViewMixin)
+    ListboardFilterViewMixin, SearchFormViewMixin, )
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
@@ -19,25 +19,31 @@ from .filters import AppointmentListboardViewFilters
 from ..forms import AppointmentsWindowForm
 from ..model_wrappers import FollowAppointmentModelWrapper
 from ..models import FollowExportFile
+from django.utils.text import slugify
 
 
 class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                                ListboardFilterViewMixin, SearchFormViewMixin,
-                               DownloadReportMixin, ListboardView, FormView):
+                               DownloadReportMixin, ListboardView, FormMixin):
     form_class = AppointmentsWindowForm
     listboard_template = 'flourish_follow_appt_listboard_template'
     listboard_url = 'flourish_follow_appt_listboard_url'
     listboard_panel_style = 'info'
     listboard_fa_icon = "fa-user-plus"
-
     model = 'edc_appointment.appointment'
     listboard_view_filters = AppointmentListboardViewFilters()
     model_wrapper_cls = FollowAppointmentModelWrapper
     navbar_name = 'flourish_follow'
     navbar_selected_item = 'appointments'
-    ordering = '-timepoint_datetime'
+    ordering = '-modified'
     paginate_by = 10
     search_form_url = 'flourish_follow_appt_listboard_url'
+
+    def __init__(self, *args, **kwarg):
+        super().__init__(*args, **kwarg)
+        self.start_date = None
+        self.end_date = None
+
 
     def get_success_url(self):
         return reverse('flourish_follow:flourish_follow_appt_listboard_url')
@@ -48,15 +54,29 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
     def get_queryset_filter_options(self, request, *args, **kwargs):
         options = super().get_queryset_filter_options(request, *args, **kwargs)
-        if kwargs.get('subject_identifier'):
+        if kwargs.get('subject_identifier', None):
             options.update(
                 {'subject_identifier': kwargs.get('subject_identifier')})
+
         return options
+
+    def post(self, request, *args, **kwargs):
+
+        self.start_date = request.POST.get('start_date', None)
+
+        self.end_date = request.POST.get('end_date', None)
+
+        self.ordering = request.POST.get('sort_by',)
+
+
+        return super().get(request, *args, **kwargs)
+
+
 
     def extra_search_options(self, search_term):
         q = Q()
         if re.match('^[A-Z]+$', search_term):
-            q = Q(first_name__exact=search_term)
+            q = Q(subject_identifier=search_term)
         return q
 
     def export(self, queryset=None, start_date=None, end_date=None):
@@ -68,11 +88,9 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                 created__date__gte=start_date,
                 created__date__lte=end_date)
         for obj in queryset:
+            # removed names, because it defies the protocol
             data.append(
                 {'subject_identifier': getattr(obj, 'subject_identifier'),
-                 'first_name': getattr(obj, 'first_name'),
-                 'last_name': getattr(obj, 'last_name'),
-                 'gender': getattr(obj, 'gender'),
                  'earliest_date_due': getattr(obj, 'earliest_date_due'),
                  'latest_date_due': getattr(obj, 'latest_date_due'),
                  'ideal_date_due': getattr(obj, 'ideal_date_due'),
@@ -90,6 +108,8 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
+        appointment_form = AppointmentsWindowForm()
+
         if self.request.GET.get('export') == 'yes':
             queryset = context.get('object_list')  # from ListView
             self.export(queryset=queryset)
@@ -98,14 +118,67 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                 self.request, messages.SUCCESS, msg)
         appointment_downloads = FollowExportFile.objects.filter(
             description='Appointment and windows').order_by('uploaded_at')
-        context.update(appointment_downloads=appointment_downloads)
+        context.update(
+            appointment_form = appointment_form,
+            appointment_downloads=appointment_downloads)
         return context
 
+    def modified_get_queryset(self):
+        """Return the list of items for this view.
+
+        Completely overrides ListView.get_queryset.
+
+        The return value gets set to self.object_list in get()
+        just before rendering to response.
+        """
+        filter_options = self.get_queryset_filter_options(
+            self.request, *self.args, **self.kwargs)
+        exclude_options = self.get_queryset_exclude_options(
+            self.request, *self.args, **self.kwargs)
+        if self.search_term and '|' not in self.search_term:
+            search_terms = self.search_term.split('+')
+            q = None
+            q_objects = []
+            for search_term in search_terms:
+                """
+                Specify fields of interest
+                """
+                q_objects.append(
+                    Q(subject_identifier__icontains=search_term) |
+                    Q(appt_status__icontains=search_term.lower().replace(' ', '_')) |
+                    Q(schedule_name__icontains=search_term) |
+                    Q(visit_code__icontains=search_term))
+
+                q_objects.append(self.extra_search_options(search_term))
+            for q_object in q_objects:
+                if q:
+                    q = q | q_object
+                else:
+                    q = q_object
+            queryset = self.model_cls.objects.filter(
+                q or Q(), **filter_options).exclude(**exclude_options)
+        else:
+            queryset = self.model_cls.objects.filter(
+                **filter_options).exclude(
+                    **exclude_options)
+
+        ordering = self.ordering
+
+        if ordering:
+            if isinstance(ordering, six.string_types):
+                ordering = (ordering,)
+            queryset = queryset.order_by(*ordering)
+        return queryset
+
+
+
     def get_queryset(self):
+        qs = self.modified_get_queryset()
 
-        qs = super().get_queryset()
-
-        if self.request.GET.get('start_date'):
-            qs = qs.filter(appt_datetime__date__gte=self.request.GET.get('start_date'),
-                           appt_datetime__date__lte=self.request.GET.get('end_date'))
+        if self.start_date and not self.end_date:
+            qs = qs.filter(appt_datetime__date__gte=self.start_date)
+        elif not self.start_date and self.end_date:
+            qs = qs.filter(appt_datetime__date__lte=self.end_date)
+        elif self.start_date and self.end_date:
+            qs = qs.filter(appt_datetime__date__range=[self.start_date, self.end_date])
         return qs
