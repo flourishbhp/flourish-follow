@@ -199,7 +199,6 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         if self.start_date and not self.end_date:
             qs = qs.filter(appt_datetime__date__gte=self.start_date)
         elif not self.start_date and self.end_date:
-            import pdb; pdb.set_trace()
             qs = qs.filter(appt_datetime__date__lte=self.end_date)
         elif self.start_date and self.end_date:
             qs = qs.filter(appt_datetime__date__range=[self.start_date, self.end_date])
