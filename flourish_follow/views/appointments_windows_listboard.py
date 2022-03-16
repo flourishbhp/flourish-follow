@@ -1,7 +1,7 @@
-import datetime
-import imp
-import re
 
+import re
+from django.shortcuts import render
+from numpy import object_
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -30,7 +30,6 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     listboard_url = 'flourish_follow_appt_listboard_url'
     listboard_panel_style = 'info'
     listboard_fa_icon = "fa-user-plus"
-
     model = 'edc_appointment.appointment'
     listboard_view_filters = AppointmentListboardViewFilters()
     model_wrapper_cls = FollowAppointmentModelWrapper
@@ -40,13 +39,18 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     paginate_by = 10
     search_form_url = 'flourish_follow_appt_listboard_url'
 
+    def __init__(self, *args, **kwarg):
+        super().__init__(*args, **kwarg)
+        self.start_date = None
+        self.end_date = None
+
     def get_ordering(self):
 
         sort_by = self.request.GET.get('sort_by', None)
 
         if sort_by:
             return None
-        return None
+        return 'timepoint_datetime'
 
     def get_success_url(self):
         return reverse('flourish_follow:flourish_follow_appt_listboard_url')
@@ -60,12 +64,24 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         if kwargs.get('subject_identifier', None):
             options.update(
                 {'subject_identifier': kwargs.get('subject_identifier')})
+
         return options
+
+    def post(self, request, *args, **kwargs):
+
+        self.start_date = request.POST.get('start_date', None)
+
+        self.end_date = request.POST.get('end_date', None)
+
+
+        return super().get(request, *args, **kwargs)
+
+
 
     def extra_search_options(self, search_term):
         q = Q()
         if re.match('^[A-Z]+$', search_term):
-            q = Q(first_name__exact=search_term)
+            q = Q(subject_identifier=search_term)
         return q
 
     def export(self, queryset=None, start_date=None, end_date=None):
@@ -97,6 +113,8 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
+        appointment_form = AppointmentsWindowForm()
+
         if self.request.GET.get('export') == 'yes':
             queryset = context.get('object_list')  # from ListView
             self.export(queryset=queryset)
@@ -105,16 +123,15 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                 self.request, messages.SUCCESS, msg)
         appointment_downloads = FollowExportFile.objects.filter(
             description='Appointment and windows').order_by('uploaded_at')
-        context.update(appointment_downloads=appointment_downloads)
+        context.update(
+            appointment_form = appointment_form,
+            appointment_downloads=appointment_downloads)
         return context
 
 
     def get_queryset(self):
         qs = super().get_queryset()
 
-        start_date = self.request.GET.get('start_date', None)
-        end_date = self.request.GET.get('end_date', None)
-
-        if start_date and end_date:
-            qs = qs.filter(appt_datetime__date__range=[start_date, end_date])
+        if self.start_date and self.end_date:
+            qs = qs.filter(appt_datetime__date__range=[self.start_date, self.end_date])
         return qs
