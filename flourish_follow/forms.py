@@ -1,5 +1,7 @@
+from unicodedata import name
 from django import forms
 from django.apps import apps as django_apps
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from edc_form_validators import FormValidatorMixin
@@ -69,6 +71,7 @@ class AppointmentsWindowForm(forms.Form):
     start_date = forms.DateField(
         required=True, label='Start date',
         widget=forms.TextInput(attrs={'type': 'date'}))
+        
     end_date = forms.DateField(
         required=True, label='End date',
         widget=forms.TextInput(attrs={'type': 'date'}))
@@ -78,7 +81,8 @@ class AppointmentsWindowForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_method = 'POST'
         self.helper.form_id = 'appointment'
-        self.helper.form_action = 'flourish_follow:flourish_follow_appt_listboard_url'
+        self.helper.form_action = settings.DASHBOARD_URL_NAMES.get(
+            'flourish_follow_appt_listboard_url')
         self.helper.form_class = 'form-inline'
         self.helper.field_template = 'bootstrap3/layout/inline_field.html'
         self.helper.layout = Layout(
@@ -86,6 +90,7 @@ class AppointmentsWindowForm(forms.Form):
             'end_date',
             Submit('submit', u'filter report', css_class="btn btn-sm btn-default")
         )
+        
 
 
 class SingleReAssignParticipantForm(forms.Form):
