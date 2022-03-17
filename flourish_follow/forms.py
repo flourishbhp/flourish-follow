@@ -77,7 +77,9 @@ class AppointmentsWindowForm(forms.Form):
         widget=forms.TextInput(attrs={'type': 'date'}))
 
     sort_by = forms.ChoiceField(
+        required=False,
         choices=(
+            (None, 'All'),
             ('appt_status', 'Appt. Status',),
             ('-appt_status', 'Desc. Appt. Status',),
             ('visit_code', 'Visit Code'),
