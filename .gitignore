@@ -18,7 +18,7 @@ tags
 .pydevproject
 .project
 .settings/
-*migrations
+#*migrations
 *crypto_fields
 #tshilo_dikotla/apps/*/migrations/
 db.sqlite3
