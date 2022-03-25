@@ -18,7 +18,7 @@ tags
 .pydevproject
 .project
 .settings/
-*migrations
+#*migrations
 *crypto_fields
 #tshilo_dikotla/apps/*/migrations/
 db.sqlite3
@@ -128,3 +128,8 @@ ENV/
 .mypy_cache/
 
 crypto_fields/
+
+#ide configs
+./.vscode
+**/.idea/**
+**/.vscode/**

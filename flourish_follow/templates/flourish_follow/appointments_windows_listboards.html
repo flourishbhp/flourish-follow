@@ -11,20 +11,22 @@
 	<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
 	<script type="text/javascript">
-	$(document).ready(function() {
-	    $('#item-identifiers').DataTable();
-	} );
-	</script>
+		$(document).ready(function() {
+			$('#item-identifiers').DataTable();
+			  jQuery(function() {
+				jQuery('#users').change(function() {
+					this.form.submit();
+				});
+			});
+		} );
 
 	<script type="text/javascript">
 
-	  jQuery(function() {
-	    jQuery('#users').change(function() {
-	        this.form.submit();
-	    });
-	});
+	
 	</script>
 {% endblock extra-scripts %}
+
+
 
 {% block listboard_panel %}
 {% if results %}
@@ -86,10 +88,11 @@
 	
 	|
 	<a href="{% url 'flourish_follow:flourish_follow_appt_listboard_url' %}?export=yes" class="btn btn-sm btn-info">Export</a>
-	<span class="pull-right">{% csrf_token %}{% crispy form %}</span>
 	
 	&nbsp;&nbsp;
  {% endif %}
+ 	<span class="pull-right" style="#id_sort_by { width: 10vw;}">{% csrf_token %}{% crispy appointment_form %}</span>
+
 {% endblock listboard_panel %}
 {% block listboard_table_header %}
     <!-- begin results header -->
