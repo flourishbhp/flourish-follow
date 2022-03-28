@@ -13,6 +13,7 @@ from edc_dashboard.view_mixins import (
     ListboardFilterViewMixin, SearchFormViewMixin, )
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
+from edc_appointment.choices import NEW_APPT
 
 from .download_report_mixin import DownloadReportMixin
 from .filters import AppointmentListboardViewFilters
@@ -57,6 +58,12 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             options.update(
                 {'subject_identifier': kwargs.get('subject_identifier')})
 
+        if options.get('timepoint_datetime__range', None):
+            options.update(
+                appt_status = NEW_APPT
+            )
+            self.ordering = 'appt_datetime'
+
         return options
 
     def post(self, request, *args, **kwargs):
@@ -66,7 +73,6 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         end_date_post = request.POST.get('end_date', None)
 
         sort_by_post = request.POST.get('sort_by', None)
-
 
         if start_date_post and start_date_post != request.session.get('start_date', None):
             request.session['start_date'] = start_date_post
@@ -96,7 +102,6 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         self.start_date = request.session.get('start_date', None)
         self.end_date = request.session.get('end_date', None)
         self.ordering = request.session.get('sort_by', None)
-
 
         return super().get(request, *args, **kwargs)
 
