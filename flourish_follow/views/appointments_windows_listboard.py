@@ -2,9 +2,13 @@ import six
 import re
 from django.shortcuts import render
 import pandas as pd
+from datetime import timedelta
+from django.db import models
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, F
+from django.db.models.expressions import ExpressionWrapper
+from django.db.models.functions.datetime import TruncDate
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormMixin
@@ -14,6 +18,7 @@ from edc_dashboard.view_mixins import (
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 from edc_appointment.choices import NEW_APPT
+from edc_base.utils import get_utcnow
 
 from .download_report_mixin import DownloadReportMixin
 from .filters import AppointmentListboardViewFilters
@@ -60,7 +65,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
         if options.get('timepoint_datetime__range', None):
             options.update(
-                appt_status = NEW_APPT
+                appt_status=NEW_APPT
             )
             self.ordering = 'appt_datetime'
 
@@ -103,7 +108,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         self.end_date = request.session.get('end_date', None)
         self.ordering = request.session.get('sort_by', None)
 
-        return super().get(request, *args, **kwargs)
+        return super(AppointmentListboardView, self).get(request, *args, **kwargs)
 
     def extra_search_options(self, search_term):
         q = Q()
@@ -199,7 +204,17 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         return queryset
 
     def get_queryset(self):
-        qs = self.modified_get_queryset()
+
+        upper_expression = ExpressionWrapper(
+            TruncDate(F("timepoint_datetime")) + timedelta(days=44), output_field=models.DateField()
+        )
+
+        qs = self.modified_get_queryset().annotate(latest_due_date=upper_expression)
+
+        if self.request.GET.get('f', None) == 'before_due':
+            qs = qs.filter(latest_due_date__range=[get_utcnow(),
+                                                   (get_utcnow() + timedelta(days=15))]
+                           ).order_by('-latest_due_date')
 
         if self.start_date and not self.end_date:
             qs = qs.filter(appt_datetime__date__gte=self.start_date)

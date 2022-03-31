@@ -70,10 +70,7 @@ class AppointmentListboardViewFilters(ListboardViewFilters):
     before_due = ListboardFilter(
         label='15 Days Before Due',
         position=10,
-        lookup={'appt_datetime__range': [
-            get_utcnow(),
-            (get_utcnow() + datetime.timedelta(days=15)), ]
-        }
+        lookup={'appt_status': NEW_APPT}
     )
 
 
