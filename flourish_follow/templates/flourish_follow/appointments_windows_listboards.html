@@ -122,9 +122,9 @@
 {% block listboard_table_columns %}
 	
     <td>{{ result.earliest_date_due }}</td>
-    <td>{{ result.latest_date_due }}</td>
     <td>{{ result.ideal_date_due }}</td>
-    <td>{{result.object.appt_datetime}}</td>
+    <td>{{ result.latest_date_due }}</td>
+<!--    <td>{{ result.object.appt_datetime}}</td>-->
     <td>{{ result.appt_status }}</td>
     <td>{{ result.visit_code  }}</td>
 {% endblock listboard_table_columns %}
