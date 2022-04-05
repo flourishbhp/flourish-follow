@@ -132,6 +132,32 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             appointment_downloads=appointment_downloads)
         return context
 
+    def post(self, request, *args, **kwargs):
+
+        start_date_post = request.POST.get('start_date', None)
+
+        end_date_post = request.POST.get('end_date', None)
+
+        if start_date_post and start_date_post != request.session.get('start_date', None):
+            request.session['start_date'] = start_date_post
+            self.start_date = request.session['start_date']
+            request.session['end_date'] = None
+
+
+        elif end_date_post and end_date_post != request.session.get('end_date', None):
+            request.session['end_date'] = end_date_post
+            self.end_date = request.session['end_date']
+            request.session['start_date'] = None
+
+        elif start_date_post and end_date_post:
+            request.session['start_date'] = start_date_post
+            request.session['end_date'] = start_date_post
+
+            self.start_date = request.session['start_date']
+            self.end_date = request.session['end_date']
+
+        return super().get(request, *args, **kwargs)
+
     def modified_get_queryset(self):
         """Return the list of items for this view.
 
