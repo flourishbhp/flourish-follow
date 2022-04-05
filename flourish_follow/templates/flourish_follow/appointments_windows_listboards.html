@@ -6,125 +6,128 @@
 {% load follow_extras %}
 
 {% block extra-scripts %}
-	{{ block.super }}
-	<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
-	<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$('#item-identifiers').DataTable();
-			  jQuery(function() {
-				jQuery('#users').change(function() {
-					this.form.submit();
-				});
-			});
-		} );
+    {{ block.super }}
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#item-identifiers').DataTable();
+            jQuery(function () {
+                jQuery('#users').change(function () {
+                    this.form.submit();
+                });
+            });
+        });
 
-	<script type="text/javascript">
+        <script type="text/javascript">
 
-	
-	</script>
+
+    </script>
 {% endblock extra-scripts %}
 
 
 
 {% block listboard_panel %}
-{% if results %}
-	<!-- Trigger the modal with a button -->
-	  <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#myModal">show downloads</button>
-	
-	  <!-- Modal -->
-	  <div class="modal fade" id="myModal" role="dialog">
-	    <div class="modal-dialog">
-	    
-	      <!-- Modal content-->
-	      <div class="modal-content">
-	        <div class="modal-header">
-	          <button type="button" class="close" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">Appointment schedule windows downloads</h4>
-	        </div>
-	        <div class="modal-body">
-	          {% if appointment_downloads %}
-				<table id="item-identifiers" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					<thead>
-						<tr>
-							<th>Export identifier</th>
-							<th>Document</th>
-							<th>Datetime generated</th>
-						</tr>
-					</thead>
-					<tfoot>
-						<tr>
-							<th>Export identifier</th>
-							<th>Document</th>
-							<th>Datetime generated</th>
-						</tr>
-					</tfoot>
-					<tbody>
-						{% for download in appointment_downloads %}
-						<tr>
-					 		<td>{{ download.export_identifier }}</td>
-					 		<td>
-					 			{% if download.document.url %}
-					 				<a href={{ download.file_url }}><i class="fa fa-download fa-sm"></i> file download</a>
-					 			{% endif %}
-					 		</td>
-					 		<td>{{ download.uploaded_at }}</td>
-						</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			{% else%}
-				<p>No generated downloads</p>
-			{% endif %}
-	        </div>
-	        <div class="modal-footer">
-	          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        </div>
-	      </div>
-	      
-	    </div>
-	  </div>
-	
-	|
-	<a href="{% url 'flourish_follow:flourish_follow_appt_listboard_url' %}?export=yes" class="btn btn-sm btn-info">Export</a>
-	
-	&nbsp;&nbsp;
- {% endif %}
- 	<span class="pull-right" style="#id_sort_by { width: 10vw;}">{% csrf_token %}{% crispy appointment_form %}</span>
+    {% if results %}
+        <!-- Trigger the modal with a button -->
+        <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#myModal">show downloads
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Appointment schedule windows downloads</h4>
+                    </div>
+                    <div class="modal-body">
+                        {% if appointment_downloads %}
+                            <table id="item-identifiers" class="table table-striped table-bordered" cellspacing="0"
+                                   width="100%">
+                                <thead>
+                                <tr>
+                                    <th>Export identifier</th>
+                                    <th>Document</th>
+                                    <th>Datetime generated</th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                    <th>Export identifier</th>
+                                    <th>Document</th>
+                                    <th>Datetime generated</th>
+                                </tr>
+                                </tfoot>
+                                <tbody>
+                                {% for download in appointment_downloads %}
+                                    <tr>
+                                        <td>{{ download.export_identifier }}</td>
+                                        <td>
+                                            {% if download.document.url %}
+                                                <a href={{ download.file_url }}><i class="fa fa-download fa-sm"></i>
+                                                    file download</a>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ download.uploaded_at }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>No generated downloads</p>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        |
+        <a href="{% url 'flourish_follow:flourish_follow_appt_listboard_url' %}?export=yes" class="btn btn-sm btn-info">Export</a>
+
+        &nbsp;&nbsp;
+    {% endif %}
+    <span class="pull-right" style="#id_sort_by { width: 10vw;}">{% csrf_token %}{% crispy appointment_form %}</span>
 
 {% endblock listboard_panel %}
 {% block listboard_table_header %}
     <!-- begin results header -->
     <th>#</th>
     <th>Subject</th>
-	<th>EARLIEST DATE DUE</th>
-	<th>IDEAL DATE DUE</th>
-	<th>LATEST DATE DUE</th>
-	<th>SCHEDULED DATE</th>
-	<th>Appt Status</th>
-	<th>Visit Code</th>
+    <th>EARLIEST DATE DUE</th>
+    <th>IDEAL DATE DUE</th>
+    <th>LATEST DATE DUE</th>
+    <th>SCHEDULED DATE</th>
+    <th>Appt Status</th>
+    <th>Visit Code</th>
     <!-- end results header -->
 {% endblock listboard_table_header %}
 
-{% block listboard_table_button_column %} 
+{% block listboard_table_button_column %}
     <td>
-    {% dashboard_button result %}
-    {% if result.gender == 'M' %}
-        <i class="fa fa-male fa-lg"></i>
-    {% else %}
-        <i class="fa fa-female fa-lg"></i>
-    {% endif %}
-    {{ result.subject_identifier }}
-	</td>
+        {% dashboard_button result %}
+        {% if result.gender == 'M' %}
+            <i class="fa fa-male fa-lg"></i>
+        {% else %}
+            <i class="fa fa-female fa-lg"></i>
+        {% endif %}
+        {{ result.subject_identifier }}
+    </td>
 {% endblock listboard_table_button_column %}
 
 {% block listboard_table_columns %}
-	
+
     <td>{{ result.earliest_date_due }}</td>
-    <td>{{ result.latest_date_due }}</td>
     <td>{{ result.ideal_date_due }}</td>
-    <td>{{result.object.appt_datetime}}</td>  
+    <td>{{ result.latest_date_due }}</td>
+    <td>{{ result.object.appt_datetime }}</td>
     <td>{{ result.appt_status }}</td>
-    <td>{{ result.visit_code  }}</td>
+    <td>{{ result.visit_code }}</td>
 {% endblock listboard_table_columns %}

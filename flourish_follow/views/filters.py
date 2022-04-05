@@ -11,8 +11,8 @@ from edc_appointment.choices import (
     CANCELLED_APPT
 )
 
-class AppointmentListboardViewFilters(ListboardViewFilters):
 
+class AppointmentListboardViewFilters(ListboardViewFilters):
     # Filters by appointments
     all = ListboardFilter(
         name='all',
@@ -43,7 +43,6 @@ class AppointmentListboardViewFilters(ListboardViewFilters):
         label='Cancelled',
         position=5,
         lookup={'appt_status': CANCELLED_APPT})
-    
 
     # Filter by schedule names
     birth = ListboardFilter(
@@ -71,12 +70,8 @@ class AppointmentListboardViewFilters(ListboardViewFilters):
     before_due = ListboardFilter(
         label='15 Days Before Due',
         position=10,
-        lookup={'timepoint_datetime__range': [
-            (datetime.datetime.now() - datetime.timedelta(days=15)),
-            datetime.datetime.now(), ]
-        }
+        lookup={'appt_status': NEW_APPT}
     )
-
 
 
 class WorkListboardViewFilters(ListboardViewFilters):
