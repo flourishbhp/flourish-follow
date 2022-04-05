@@ -71,42 +71,18 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
         return options
 
-    def post(self, request, *args, **kwargs):
-
-        start_date_post = request.POST.get('start_date', None)
-
-        end_date_post = request.POST.get('end_date', None)
-
-        sort_by_post = request.POST.get('sort_by', None)
-
-        if start_date_post and start_date_post != request.session.get('start_date', None):
-            request.session['start_date'] = start_date_post
-            self.start_date = request.session['start_date']
-            request.session['end_date'] = None
-
-
-        elif end_date_post and end_date_post != request.session.get('end_date', None):
-            request.session['end_date'] = end_date_post
-            self.end_date = request.session['end_date']
-            request.session['start_date'] = None
-
-        elif start_date_post and end_date_post:
-            request.session['start_date'] = start_date_post
-            request.session['end_date'] = start_date_post
-
-            self.start_date = request.session['start_date']
-            self.end_date = request.session['end_date']
-
-        if sort_by_post and sort_by_post != request.POST.get('sort_by', None):
-            request.session['sort_by'] = sort_by_post
-            self.ordering = request.session['sort_by']
-
-        return super().get(request, *args, **kwargs)
-
     def get(self, request, *args, **kwargs):
-        self.start_date = request.session.get('start_date', None)
-        self.end_date = request.session.get('end_date', None)
-        self.ordering = request.session.get('sort_by', None)
+        # self.start_date = request.session.get('start_date', None)
+        # self.end_date = request.session.get('end_date', None)
+        # self.ordering = request.session.get('sort_by', None)
+
+        order = request.GET.get('order_by', None)
+        temp = request.session.get('order_by', None)
+
+        if order and order == temp:
+            self.request.session['order_by'] = f'-{order}'
+        else:
+            self.request.session['order_by'] = order
 
         return super(AppointmentListboardView, self).get(request, *args, **kwargs)
 
@@ -194,13 +170,6 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             queryset = self.model_cls.objects.filter(
                 **filter_options).exclude(
                 **exclude_options)
-
-        ordering = self.ordering
-
-        if ordering:
-            if isinstance(ordering, six.string_types):
-                ordering = (ordering,)
-            queryset = queryset.order_by(*ordering)
         return queryset
 
     def get_queryset(self):
@@ -209,12 +178,25 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             TruncDate(F("timepoint_datetime")) + timedelta(days=44), output_field=models.DateField()
         )
 
-        qs = self.modified_get_queryset().annotate(latest_due_date=upper_expression)
+        lower_expression = ExpressionWrapper(
+            TruncDate(F("timepoint_datetime")) - timedelta(days=44), output_field=models.DateField()
+        )
+
+        qs = self.modified_get_queryset().annotate(
+            latest_due_date=upper_expression,
+            ideal_due_date=F('timepoint_datetime'),
+            earliest_due_date=lower_expression,
+        )
+
+        sort_column = self.request.session.get('order_by', None)
+
+        if sort_column:
+            qs = qs.order_by(sort_column)
 
         if self.request.GET.get('f', None) == 'before_due':
             qs = qs.filter(latest_due_date__range=[get_utcnow(),
                                                    (get_utcnow() + timedelta(days=15))]
-                           ).order_by('-latest_due_date')
+                           )
 
         if self.start_date and not self.end_date:
             qs = qs.filter(appt_datetime__date__gte=self.start_date)
