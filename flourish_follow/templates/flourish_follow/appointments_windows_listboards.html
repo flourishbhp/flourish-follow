@@ -27,7 +27,6 @@
 {% endblock extra-scripts %}
 
 
-
 {% block listboard_panel %}
     {% if results %}
         <!-- Trigger the modal with a button -->
@@ -90,7 +89,8 @@
         </div>
 
         |
-        <a href="{% url 'flourish_follow:flourish_follow_appt_listboard_url' %}?export=yes" class="btn btn-sm btn-info">Export</a>
+        <a href="{% url 'flourish_follow:flourish_follow_appt_listboard_url' %}?export=yes"
+           class="btn btn-sm btn-info">Export</a>
 
         &nbsp;&nbsp;
     {% endif %}
@@ -100,13 +100,13 @@
 {% block listboard_table_header %}
     <!-- begin results header -->
     <th>#</th>
-    <th>Subject</th>
-    <th>EARLIEST DATE DUE</th>
-    <th>IDEAL DATE DUE</th>
-    <th>LATEST DATE DUE</th>
-    <th>SCHEDULED DATE</th>
-    <th>Appt Status</th>
-    <th>Visit Code</th>
+    <th>SUBJECT</th>
+    <th><a href="{{ request.get_full_path }}&order_by=earliest_due_date">EARLIEST DATE DUE</a></th>
+    <th><a href="{{ request.get_full_path }}&order_by=ideal_due_date">IDEAL DATE DUE</a></th>
+    <th><a href="{{ request.get_full_path }}&order_by=latest_due_date">LATEST DATE DUE</a></th>
+    <th><a href="{{ request.get_full_path }}&order_by=ideal_due_date">SCHEDULED DATE</a></th>
+    <th>APPT. STATUS</th>
+    <th>VISIT CODE</th>
     <!-- end results header -->
 {% endblock listboard_table_header %}
 
@@ -128,6 +128,6 @@
     <td>{{ result.ideal_date_due }}</td>
     <td>{{ result.latest_date_due }}</td>
     <td>{{ result.object.appt_datetime }}</td>
-    <td>{{ result.appt_status }}</td>
+    <td>{{ result.appt_status | title }}</td>
     <td>{{ result.visit_code }}</td>
 {% endblock listboard_table_columns %}

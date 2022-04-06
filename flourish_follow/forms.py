@@ -76,21 +76,6 @@ class AppointmentsWindowForm(forms.Form):
         required=False, label='End date',
         widget=forms.TextInput(attrs={'type': 'date'}))
 
-    sort_by = forms.ChoiceField(
-        required=False,
-        choices=(
-            (None, 'All'),
-            ('appt_status', 'Appt. Status',),
-            ('-appt_status', 'Desc. Appt. Status',),
-            ('visit_code', 'Visit Code'),
-            ('-visit_code', 'Desc. Visit Code'),
-            ('appt_datetime', 'Appt. Date'),
-            ('-appt_datetime', 'Desc. Appt. Date'),
-
-        )
-
-    )
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -100,7 +85,6 @@ class AppointmentsWindowForm(forms.Form):
         self.helper.form_class = 'form-inline'
         self.helper.field_template = 'bootstrap3/layout/inline_field.html'
         self.helper.layout = Layout(
-            'sort_by',
             'start_date',
             'end_date',
             Submit('submit', u'filter report', css_class="btn btn-sm btn-default")
