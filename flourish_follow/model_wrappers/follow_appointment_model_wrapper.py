@@ -21,14 +21,20 @@ class FollowAppointmentModelWrapper(ModelWrapper):
     def earliest_date_due(self):
         """Returns the earlist date to see a participant.
         """
-        visit_definition = self.object.visits.get(self.object.visit_code)
-
-        return self.ideal_date_due - visit_definition.rlower
+        try:
+            visit_definition = self.object.visits.get(self.object.visit_code)
+        except:
+            return "Cannot Find Visit"
+        else:
+            return self.ideal_date_due - visit_definition.rlower
 
     @property
     def latest_date_due(self):
         """Returns the last date to see a participant.
         """
-        visit_definition = self.object.visits.get(self.object.visit_code)
-
-        return self.ideal_date_due + visit_definition.rupper
+        try:
+            visit_definition = self.object.visits.get(self.object.visit_code)
+        except:
+            return "Cannot Find Visit"
+        else:
+            return self.ideal_date_due + visit_definition.rlower
