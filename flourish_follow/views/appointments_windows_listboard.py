@@ -1,3 +1,4 @@
+from requests import request
 import six
 import re
 from django.shortcuts import render
@@ -44,6 +45,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     ordering = '-modified'
     paginate_by = 10
     search_form_url = 'flourish_follow_appt_listboard_url'
+    filter = None
 
     def __init__(self, *args, **kwarg):
         super().__init__(*args, **kwarg)
@@ -78,6 +80,8 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
         order = request.GET.get('order_by', None)
         temp = request.session.get('order_by', None)
+
+        self.filter = request.GET.get('f', None)
 
         if order and order == temp:
             self.request.session['order_by'] = f'-{order}'
@@ -129,6 +133,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         appointment_downloads = FollowExportFile.objects.filter(
             description='Appointment and windows').order_by('uploaded_at')
         context.update(
+            filter=self.filter,
             appointment_form=appointment_form,
             appointment_downloads=appointment_downloads)
         return context
@@ -215,9 +220,6 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         )
 
         sort_column = self.request.session.get('order_by', None)
-
-        import pdb
-        pdb.set_trace()
 
         if sort_column:
             qs = qs.order_by(sort_column)

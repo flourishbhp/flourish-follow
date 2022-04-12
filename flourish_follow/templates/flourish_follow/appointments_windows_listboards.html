@@ -117,13 +117,29 @@ flourish_dashboard_extras %} {% load follow_extras %} {% block extra-scripts %}
 <th>#</th>
 <th>SUBJECT</th>
 <th>
-  <a href="{{ request.path }}?order_by=earliest_due_date">EARLIEST DATE DUE</a>
+  <a
+    href="{{ request.path }}?order_by=earliest_due_date{% if filter %}&f={{ filter }}{%endif%}"
+    >EARLIEST DATE DUE</a
+  >
 </th>
-<th><a href="{{ request.path }}?order_by=ideal_due_date">IDEAL DATE DUE</a></th>
 <th>
-  <a href="{{ request.path }}?order_by=latest_due_date">LATEST DATE DUE</a>
+  <a
+    href="{{ request.path }}?order_by=ideal_due_date{% if filter %}&f={{ filter }}{%endif%}"
+    >IDEAL DATE DUE</a
+  >
 </th>
-<th><a href="{{ request.path }}?order_by=ideal_due_date">SCHEDULED DATE</a></th>
+<th>
+  <a
+    href="{{ request.path }}?order_by=latest_due_date{% if filter %}&f={{ filter }}{%endif%}"
+    >LATEST DATE DUE</a
+  >
+</th>
+<th>
+  <a
+    href="{{ request.path }}?order_by=ideal_due_date{% if filter %}&f={{ filter }}{%endif%}"
+    >SCHEDULED DATE</a
+  >
+</th>
 <th>APPT. STATUS</th>
 <th>VISIT CODE</th>
 <!-- end results header -->
