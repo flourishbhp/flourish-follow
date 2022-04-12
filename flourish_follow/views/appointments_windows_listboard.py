@@ -81,7 +81,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
         if order and order == temp:
             self.request.session['order_by'] = f'-{order}'
-        else:
+        elif order:
             self.request.session['order_by'] = order
 
         return super(AppointmentListboardView, self).get(request, *args, **kwargs)
@@ -122,7 +122,8 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             queryset = self.get_queryset()  # from ListView
             self.export(appointment_wrappers=list(
                 FollowAppointmentModelWrapper(model_obj=obj) for obj in self.get_queryset()))
-            msg = (f'File generated successfully.  Go to the download list to download file.')
+            msg = (
+                f'File generated successfully.  Go to the download list to download file.')
             messages.add_message(
                 self.request, messages.SUCCESS, msg)
         appointment_downloads = FollowExportFile.objects.filter(
@@ -142,7 +143,6 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             request.session['start_date'] = start_date_post
             self.start_date = request.session['start_date']
             request.session['end_date'] = None
-
 
         elif end_date_post and end_date_post != request.session.get('end_date', None):
             request.session['end_date'] = end_date_post
@@ -216,6 +216,9 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
         sort_column = self.request.session.get('order_by', None)
 
+        import pdb
+        pdb.set_trace()
+
         if sort_column:
             qs = qs.order_by(sort_column)
 
@@ -229,5 +232,6 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         elif not self.start_date and self.end_date:
             qs = qs.filter(appt_datetime__date__lte=self.end_date)
         elif self.start_date and self.end_date:
-            qs = qs.filter(appt_datetime__date__range=[self.start_date, self.end_date])
+            qs = qs.filter(appt_datetime__date__range=[
+                           self.start_date, self.end_date])
         return qs
