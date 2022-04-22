@@ -137,9 +137,10 @@ flourish_dashboard_extras %} {% load follow_extras %} {% block extra-scripts %}
 <th>
   <a
     href="{{ request.path }}?order_by=ideal_due_date{% if filter %}&f={{ filter }}{%endif%}"
-    >SCHEDULED DATE</a
+    >APPOINTMENT DATE</a
   >
 </th>
+<th>DAYS LEFT</th>
 <th>APPT. STATUS</th>
 <th>VISIT CODE</th>
 <!-- end results header -->
@@ -157,6 +158,7 @@ flourish_dashboard_extras %} {% load follow_extras %} {% block extra-scripts %}
 <td>{{ result.ideal_date_due }}</td>
 <td>{{ result.latest_date_due }}</td>
 <td>{{ result.object.appt_datetime }}</td>
+<td style="text-align: center">{{ result.days_count_down }}</td>
 <td>{{ result.appt_status | title }}</td>
 <td>{{ result.visit_code }}</td>
 {% endblock listboard_table_columns %}
