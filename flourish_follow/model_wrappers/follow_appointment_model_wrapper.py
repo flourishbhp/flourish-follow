@@ -25,7 +25,7 @@ class FollowAppointmentModelWrapper(ModelWrapper):
         try:
             visit_definition = self.object.visits.get(self.object.visit_code)
         except:
-            return "Cannot Find Visit"
+            return "N/A"
         else:
             return self.ideal_date_due - visit_definition.rlower
 
@@ -36,13 +36,18 @@ class FollowAppointmentModelWrapper(ModelWrapper):
         try:
             visit_definition = self.object.visits.get(self.object.visit_code)
         except:
-            return "Cannot Find Visit"
+            return "N/A"
         else:
             return self.ideal_date_due + visit_definition.rlower
     
     @property
     def days_count_down(self):
         if self.latest_date_due and self.ideal_date_due:
-            return (timezone.now() - self.latest_date_due).days
+            try:
+                days = (self.latest_date_due - timezone.now()).days
+            except:
+                return 'N/A'
+            else:
+                return days
         else:
             return "N/A"
