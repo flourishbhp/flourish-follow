@@ -43,6 +43,6 @@ class FollowAppointmentModelWrapper(ModelWrapper):
     @property
     def days_count_down(self):
         if self.latest_date_due and self.ideal_date_due:
-            return (timezone.now() - self.latest_date_due).days
+            return (self.latest_date_due - timezone.now()).days
         else:
             return "N/A"

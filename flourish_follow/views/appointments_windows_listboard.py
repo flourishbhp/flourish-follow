@@ -3,12 +3,12 @@ import six
 import re
 from django.shortcuts import render
 import pandas as pd
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.db import models
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F
-from django.db.models.expressions import ExpressionWrapper
+from django.db.models.expressions import ExpressionWrapper, OuterRef
 from django.db.models.functions.datetime import TruncDate
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
@@ -81,7 +81,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         order = request.GET.get('order_by', None)
         temp = request.session.get('order_by', None)
 
-        self.filter = request.GET.get('f', None)
+        self.filter = request.GET.get('f', '')
 
         if order and order == temp:
             self.request.session['order_by'] = f'-{order}'
@@ -206,18 +206,21 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     def get_queryset(self):
 
         upper_expression = ExpressionWrapper(
-            TruncDate(F("timepoint_datetime")) + timedelta(days=44), output_field=models.DateField()
+            TruncDate(F("ideal_due_date")) + timedelta(days=44), output_field=models.DateField()
         )
 
         lower_expression = ExpressionWrapper(
-            TruncDate(F("timepoint_datetime")) - timedelta(days=44), output_field=models.DateField()
+            TruncDate(F("ideal_due_date")) - timedelta(days=44), output_field=models.DateField()
         )
 
         qs = self.modified_get_queryset().annotate(
-            latest_due_date=upper_expression,
             ideal_due_date=F('timepoint_datetime'),
-            earliest_due_date=lower_expression,
+            latest_due_date=ExpressionWrapper(
+                F('timepoint_datetime') + timedelta(days=44), output_field=models.DateTimeField()
+            ),
         )
+        
+
 
         sort_column = self.request.session.get('order_by', None)
 
@@ -225,9 +228,9 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             qs = qs.order_by(sort_column)
 
         if self.request.GET.get('f', None) == 'before_due':
-            qs = qs.filter(latest_due_date__range=[get_utcnow(),
-                                                   (get_utcnow() + timedelta(days=15))]
-                           )
+            today = datetime.today()
+            day15 = today + timedelta(days=15)
+            qs = qs.filter(latest_due_date__range=[today.isoformat(), day15.isoformat()])
 
         if self.start_date and not self.end_date:
             qs = qs.filter(appt_datetime__date__gte=self.start_date)
