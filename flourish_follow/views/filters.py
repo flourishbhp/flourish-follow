@@ -73,6 +73,12 @@ class AppointmentListboardViewFilters(ListboardViewFilters):
         lookup={'appt_status': NEW_APPT}
     )
 
+    past_due = ListboardFilter(
+        label='Past due date',
+        position=10,
+        lookup={'appt_status': NEW_APPT}
+    )
+
 
 class WorkListboardViewFilters(ListboardViewFilters):
     all = ListboardFilter(

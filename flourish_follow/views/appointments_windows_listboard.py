@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F
 from django.db.models.expressions import ExpressionWrapper, OuterRef
 from django.db.models.functions.datetime import TruncDate
+from django.db.models.functions import Now
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormMixin
@@ -222,6 +223,10 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
             day15 = today + timedelta(days=15)
             qs = qs.filter(latest_due_date__range=[
                            today.isoformat(), day15.isoformat()])
+
+        elif self.request.GET.get('f', None) == 'past_due':
+            today = datetime.today() - timedelta(days=1)
+            qs = qs.filter(latest_due_date__lte = today)
 
         if self.start_date and not self.end_date:
             qs = qs.filter(appt_datetime__date__gte=self.start_date)
