@@ -25,7 +25,7 @@ class FollowAppointmentModelWrapper(ModelWrapper):
         try:
             visit_definition = self.object.visits.get(self.object.visit_code)
         except:
-            return "Cannot Find Visit"
+            return "N/A"
         else:
             return self.ideal_date_due - visit_definition.rlower
 
@@ -36,7 +36,7 @@ class FollowAppointmentModelWrapper(ModelWrapper):
         try:
             visit_definition = self.object.visits.get(self.object.visit_code)
         except:
-            return "Cannot Find Visit"
+            return "N/A"
         else:
             return self.ideal_date_due + visit_definition.rlower
     
