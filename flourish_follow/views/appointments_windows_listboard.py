@@ -205,22 +205,12 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
     def get_queryset(self):
 
-        upper_expression = ExpressionWrapper(
-            TruncDate(F("ideal_due_date")) + timedelta(days=44), output_field=models.DateField()
-        )
-
-        lower_expression = ExpressionWrapper(
-            TruncDate(F("ideal_due_date")) - timedelta(days=44), output_field=models.DateField()
-        )
-
         qs = self.modified_get_queryset().annotate(
             ideal_due_date=F('timepoint_datetime'),
             latest_due_date=ExpressionWrapper(
                 F('timepoint_datetime') + timedelta(days=44), output_field=models.DateTimeField()
             ),
         )
-        
-
 
         sort_column = self.request.session.get('order_by', None)
 
@@ -230,7 +220,8 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         if self.request.GET.get('f', None) == 'before_due':
             today = datetime.today()
             day15 = today + timedelta(days=15)
-            qs = qs.filter(latest_due_date__range=[today.isoformat(), day15.isoformat()])
+            qs = qs.filter(latest_due_date__range=[
+                           today.isoformat(), day15.isoformat()])
 
         if self.start_date and not self.end_date:
             qs = qs.filter(appt_datetime__date__gte=self.start_date)
