@@ -70,7 +70,8 @@ class AppointmentListboardViewFilters(ListboardViewFilters):
     before_due = ListboardFilter(
         label='15 Days Before Due',
         position=10,
-        lookup={'appt_status': NEW_APPT}
+        lookup={'appt_status': NEW_APPT,
+                'schedule_name__icontains': 'quart'}
     )
 
     past_due = ListboardFilter(
