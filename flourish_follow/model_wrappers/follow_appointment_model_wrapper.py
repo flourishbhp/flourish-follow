@@ -2,7 +2,8 @@ from django.conf import settings
 from edc_model_wrapper import ModelWrapper
 from django.apps import apps as django_apps
 from .consent_model_wrapper_mixin import ConsentModelWrapperMixin
-
+from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 
 class FollowAppointmentModelWrapper(ModelWrapper):
     model = 'edc_appointment.appointment'
@@ -24,7 +25,7 @@ class FollowAppointmentModelWrapper(ModelWrapper):
         try:
             visit_definition = self.object.visits.get(self.object.visit_code)
         except:
-            return "Cannot Find Visit"
+            return "N/A"
         else:
             return self.ideal_date_due - visit_definition.rlower
 
@@ -35,6 +36,18 @@ class FollowAppointmentModelWrapper(ModelWrapper):
         try:
             visit_definition = self.object.visits.get(self.object.visit_code)
         except:
-            return "Cannot Find Visit"
+            return "N/A"
         else:
             return self.ideal_date_due + visit_definition.rlower
+    
+    @property
+    def days_count_down(self):
+        if self.latest_date_due and self.ideal_date_due:
+            try:
+                days = (self.latest_date_due - timezone.now()).days
+            except:
+                return 'N/A'
+            else:
+                return days
+        else:
+            return "N/A"
