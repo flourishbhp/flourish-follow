@@ -66,4 +66,4 @@ class Booking(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
     class Meta:
         app_label = 'flourish_follow'
         verbose_name = 'Booking'
-        unique_together = ('first_name', 'last_name')
+        unique_together = ('study_maternal_identifier', 'first_name', 'last_name')
