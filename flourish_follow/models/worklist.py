@@ -62,6 +62,8 @@ class WorkList(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
 
     consented = models.BooleanField(default=False)
 
+    re_randomised = models.BooleanField(default=False)
+
     objects = WorklistManager()
 
     def __str__(self):
