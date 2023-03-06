@@ -96,7 +96,7 @@ flourish_dashboard_extras %} {% load follow_extras %} {% block extra-scripts %}
 
 |
 <a
-  href="{% url 'flourish_follow:flourish_follow_appt_listboard_url' %}?export=yes"
+  href="{% url 'flourish_follow:flourish_follow_appt_listboard_url' %}?export=yes{% if filter %}&f={{ filter }}{%endif%}"
   class="btn btn-sm btn-info"
   >Export</a
 >

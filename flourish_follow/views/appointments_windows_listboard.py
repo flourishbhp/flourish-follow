@@ -1,16 +1,13 @@
 from requests import request
-import six
 import re
-from django.shortcuts import render
 import pandas as pd
+from dateutil import parser
 from datetime import datetime, timedelta
 from django.db import models
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F
-from django.db.models.expressions import ExpressionWrapper, OuterRef
-from django.db.models.functions.datetime import TruncDate
-from django.db.models.functions import Now
+from django.db.models.expressions import ExpressionWrapper
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormMixin
@@ -20,14 +17,12 @@ from edc_dashboard.view_mixins import (
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 from edc_appointment.choices import NEW_APPT
-from edc_base.utils import get_utcnow
 
 from .download_report_mixin import DownloadReportMixin
 from .filters import AppointmentListboardViewFilters
 from ..forms import AppointmentsWindowForm
 from ..model_wrappers import FollowAppointmentModelWrapper
 from ..models import FollowExportFile
-from django.utils.text import slugify
 
 
 class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
@@ -104,19 +99,33 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
         for obj in appointment_wrappers:
             # removed names, because it defies the protocol
+            earliest_date_due = getattr(obj, 'earliest_date_due')
+            latest_date_due = getattr(obj, 'latest_date_due')
+            ideal_date_due = getattr(obj, 'ideal_date_due')
+            appt_datetime = getattr(obj, 'appt_datetime')
+            if isinstance(earliest_date_due, datetime):
+                earliest_date_due = earliest_date_due.date()
+            if isinstance(latest_date_due, datetime):
+                latest_date_due = latest_date_due.date()
+            if isinstance(ideal_date_due, datetime):
+                ideal_date_due = ideal_date_due.date()
             data.append(
                 {'subject_identifier': getattr(obj, 'subject_identifier'),
-                 'earliest_date_due': getattr(obj, 'earliest_date_due'),
-                 'latest_date_due': getattr(obj, 'latest_date_due'),
-                 'ideal_date_due': getattr(obj, 'ideal_date_due'),
-                 'appt_datetime': getattr(obj, 'appt_datetime')})
+                 'earliest_date_due': earliest_date_due,
+                 'latest_date_due': latest_date_due,
+                 'ideal_date_due': ideal_date_due,
+                 'appt_datetime': parser.parse(appt_datetime).date(),
+                 'days_count_down': getattr(obj, 'days_count_down'),
+                 'appt_status': getattr(obj, 'appt_status'),
+                 'visit_code': getattr(obj, 'visit_code')})
         df = pd.DataFrame(data)
         self.download_data(
             description='Appointment and windows',
             start_date=start_date,
             end_date=end_date,
             report_type='appointments_window_periods',
-            df=df)
+            df=df,
+            export_type='xlsx')
 
     def get_context_data(self, **kwargs):
 
@@ -226,7 +235,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
         elif self.request.GET.get('f', None) == 'past_due':
             today = datetime.today() - timedelta(days=1)
-            qs = qs.filter(latest_due_date__lte = today)
+            qs = qs.filter(latest_due_date__lte=today)
 
         if self.start_date and not self.end_date:
             qs = qs.filter(appt_datetime__date__gte=self.start_date)

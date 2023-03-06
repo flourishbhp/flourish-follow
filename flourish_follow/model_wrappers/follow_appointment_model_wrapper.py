@@ -5,6 +5,7 @@ from .consent_model_wrapper_mixin import ConsentModelWrapperMixin
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
+
 class FollowAppointmentModelWrapper(ModelWrapper):
     model = 'edc_appointment.appointment'
     querystring_attrs = ['subject_identifier']
@@ -39,7 +40,7 @@ class FollowAppointmentModelWrapper(ModelWrapper):
             return "N/A"
         else:
             return self.ideal_date_due + visit_definition.rlower
-    
+
     @property
     def days_count_down(self):
         if self.latest_date_due and self.ideal_date_due:
