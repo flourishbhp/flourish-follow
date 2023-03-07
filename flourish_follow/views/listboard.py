@@ -72,7 +72,12 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
     def get_participants(self, participants, ratio=None, prev_study=None):
 
-        available_participants = self.td_continued_contact() or self.available_participants(prev_study)
+        available_participants = self.available_participants(prev_study)
+        td_continued = self.td_continued_contact()
+
+        if td_continued:
+            available_participants = td_continued
+            ratio = None
 
         if not available_participants:
             available_participants = self.available_participants()
