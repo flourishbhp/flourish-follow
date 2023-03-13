@@ -153,7 +153,7 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
             is_called=False,
             consented=False,
             date_assigned=None,
-            assigned=False,
+            assigned=None,
             re_randomised=True).values_list(
                     'study_maternal_identifier', flat=True)
 
