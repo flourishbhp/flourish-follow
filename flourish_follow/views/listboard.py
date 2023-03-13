@@ -72,7 +72,12 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
 
     def get_participants(self, participants, ratio=None, prev_study=None):
 
-        available_participants = self.available_participants(prev_study=prev_study)
+        available_participants = self.available_participants(prev_study)
+        td_continued = self.td_continued_contact()
+
+        if td_continued:
+            available_participants = td_continued
+            ratio = None
 
         if not available_participants:
             available_participants = self.available_participants()
@@ -134,6 +139,25 @@ class ListboardView(NavbarViewMixin, EdcBaseViewMixin,
         final_list = list(set(identifiers) - set(self.over_age_limit))
 
         return final_list
+
+    def td_continued_contact(self):
+        sidx = ['085-40990064-5', '085-40990312-1', '085-40990216-3', '085-40990375-1',
+                '085-40990188-3', '085-40990122-0', '085-40990112-4', '085-40990325-0',
+                '085-40990272-3', '085-40990202-3', '085-40990518-4', '085-40990255-0',
+                '085-40990190-5', '085-40990085-5', '085-40990253-5', '085-40990384-3',
+                '085-40990048-3', '085-40990240-6', '085-40990217-4', '085-40990327-2',
+                '085-40990012-2']
+
+        td_continued = WorkList.objects.filter(
+            study_maternal_identifier__in=sidx,
+            is_called=False,
+            consented=False,
+            date_assigned=None,
+            assigned=None,
+            re_randomised=True).values_list(
+                    'study_maternal_identifier', flat=True)
+
+        return list(set(td_continued)) if td_continued else None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
