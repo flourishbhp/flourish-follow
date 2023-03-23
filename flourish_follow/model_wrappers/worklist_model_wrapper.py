@@ -91,6 +91,15 @@ class WorkListModelWrapper(ModelWrapper):
         return wrapped_entries
 
     @property
+    def is_recalled(self):
+        if self.object.re_randomised:
+            log_entries = LogEntry.objects.filter(
+                log__call__subject_identifier=self.object.subject_identifier,
+                call_datetime__date__gte=self.object.rerandomised_date)
+            return log_entries.exists()
+        return False
+
+    @property
     def home_visit_log_entries(self):
         in_person_log = getattr(self.object, 'inpersonlog')
         wrapped_entries = []
