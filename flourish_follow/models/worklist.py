@@ -64,6 +64,8 @@ class WorkList(SiteModelMixin, SearchSlugModelMixin, BaseUuidModel):
 
     re_randomised = models.BooleanField(default=False)
 
+    rerandomised_date = models.DateField(null=True)
+
     objects = WorklistManager()
 
     def __str__(self):
