@@ -1,8 +1,6 @@
 from django.conf import settings
 from edc_model_wrapper import ModelWrapper
 from django.apps import apps as django_apps
-from .consent_model_wrapper_mixin import ConsentModelWrapperMixin
-from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 
@@ -12,6 +10,12 @@ class FollowAppointmentModelWrapper(ModelWrapper):
     next_url_attrs = ['study_maternal_identifier']
     next_url_name = settings.DASHBOARD_URL_NAMES.get(
         'flourish_follow_appt_listboard_url')
+
+    offstudy_model = 'flourish_prn.caregiveroffstudy'
+
+    @property
+    def offstudy_model_cls(self):
+        return django_apps.get_model(self.offstudy_model)
 
     @property
     def ideal_date_due(self):
@@ -52,3 +56,9 @@ class FollowAppointmentModelWrapper(ModelWrapper):
                 return days
         else:
             return "N/A"
+
+    @property
+    def study_status(self):
+        is_offstudy = self.offstudy_model_cls.objects.filter(
+            subject_identifier=getattr(self.object, 'subject_identifier', None)).exists()
+        return 'off_study' if is_offstudy else 'on_study'

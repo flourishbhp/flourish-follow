@@ -1,4 +1,3 @@
-from requests import request
 import re
 import pandas as pd
 from dateutil import parser
@@ -117,7 +116,8 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                  'appt_datetime': parser.parse(appt_datetime).date(),
                  'days_count_down': getattr(obj, 'days_count_down'),
                  'appt_status': getattr(obj, 'appt_status'),
-                 'visit_code': getattr(obj, 'visit_code')})
+                 'visit_code': getattr(obj, 'visit_code'),
+                 'study_status': getattr(obj, 'study_status', '')})
         df = pd.DataFrame(data)
         self.download_data(
             description='Appointment and windows',
