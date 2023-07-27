@@ -1,4 +1,3 @@
-from binascii import Incomplete
 from edc_dashboard.listboard_filter import ListboardFilter, ListboardViewFilters
 from datetime import timedelta
 import datetime
