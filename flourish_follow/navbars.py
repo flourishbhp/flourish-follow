@@ -7,7 +7,7 @@ no_url_namespace = True if settings.APP_NAME == 'flourish_follow' else False
 
 flourish_follow.append_item(
     NavbarItem(name='assignments',
-               label='Assignements',
+               label='Assignments',
                fa_icon='fa-cogs',
                url_name='flourish_follow:home_url'))
 

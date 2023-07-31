@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from edc_constants.constants import YES, NONE
+from edc_constants.constants import YES
 
 from ..models.worklist import WorkList
 from .home_visit_models import InPersonLog, InPersonContactAttempt

@@ -20,17 +20,17 @@ class WorkListModelWrapper(ModelWrapper):
 
     @property
     def subject_locator(self):
-        SubjectLocator = django_apps.get_model(
+        subject_locator = django_apps.get_model(
             'flourish_caregiver.caregiverlocator')
         if self.object.subject_identifier:
             try:
-                locator = SubjectLocator.objects.get(
+                locator = subject_locator.objects.get(
                     subject_identifier=self.object.subject_identifier)
-            except SubjectLocator.DoesNotExist:
+            except subject_locator.DoesNotExist:
                 try:
-                    locator = SubjectLocator.objects.get(
+                    locator = subject_locator.objects.get(
                         study_maternal_identifier=self.object.study_maternal_identifier)
-                except SubjectLocator.DoesNotExist:
+                except subject_locator.DoesNotExist:
                     return None
                 else:
                     return locator
