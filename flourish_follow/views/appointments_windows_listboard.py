@@ -22,6 +22,7 @@ from .filters import AppointmentListboardViewFilters
 from ..forms import AppointmentsWindowForm
 from ..model_wrappers import FollowAppointmentModelWrapper
 from ..models import FollowExportFile
+from ..utils import follow_utils
 
 
 class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
@@ -244,4 +245,7 @@ class AppointmentListboardView(NavbarViewMixin, EdcBaseViewMixin,
         elif self.start_date and self.end_date:
             qs = qs.filter(appt_datetime__date__range=[
                            self.start_date, self.end_date])
+
+        # Exclude all offstudy participants from the qs
+        qs = qs.exclude(subject_identifier__in=follow_utils.caregivers_offstudy())
         return qs
