@@ -4,10 +4,11 @@ from edc_dashboard import UrlConfig
 from .admin_site import flourish_follow_admin
 from .views import (
     AppointmentListboardView, BookingListboardView,
-    BookListboardView, ListboardView, HomeView)
+    BookListboardView, CohortSwitchListboardView, ListboardView, HomeView)
 
 app_name = 'flourish_follow'
 
+participant_identifier = '[A-Z]{1,2}142\-[0-9A-Z\-]+'
 subject_identifier = '066\-[0-9\-]+'
 screening_identifier = '[A-Z0-9]{8}'
 subject_cell = '7[0-9]{7}'
@@ -46,7 +47,15 @@ flourish_follow_book_listboard_url_config = UrlConfig(
     identifier_label='subject_cell',
     identifier_pattern=subject_cell)
 
+cohort_switch_listboard_url_config = UrlConfig(
+    url_name='cohort_switch_listboard_url',
+    view_class=CohortSwitchListboardView,
+    label='cohort_switch_listboard',
+    identifier_label='participant_identifier',
+    identifier_pattern=participant_identifier)
+
 urlpatterns += flourish_follow_listboard_url_config.listboard_urls
 urlpatterns += flourish_follow_appt_listboard_url_config.listboard_urls
 urlpatterns += flourish_follow_booking_listboard_url_config.listboard_urls
 urlpatterns += flourish_follow_book_listboard_url_config.listboard_urls
+urlpatterns += cohort_switch_listboard_url_config.listboard_urls
