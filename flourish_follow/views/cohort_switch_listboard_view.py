@@ -5,7 +5,6 @@ from edc_dashboard.view_mixins import ListboardFilterViewMixin, SearchFormViewMi
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
-# from ..filters import ListboardViewFilters
 from ..model_wrappers import CaregiverCohortModelWrapper
 from .cohort_switch_view_mixin import CohortCHEUSwitchViewMixin
 
@@ -19,7 +18,6 @@ class CohortSwitchListboardView(CohortCHEUSwitchViewMixin, NavbarViewMixin,
 
     model = 'flourish_caregiver.cohort'
     model_wrapper_cls = CaregiverCohortModelWrapper
-    # listboard_view_filters = ListboardViewFilters()
     navbar_name = 'flourish_follow'
     navbar_selected_item = 'cohort_switch'
     search_form_url = 'cohort_switch_listboard_url'
@@ -31,7 +29,4 @@ class CohortSwitchListboardView(CohortCHEUSwitchViewMixin, NavbarViewMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # if self.request.GET.get('switch_cohort', False):
-        #     subject_identifier = self.request.GET.get('sidx', None)
-        #     self.switch_to_cohort_c(subject_identifier)
         return context
