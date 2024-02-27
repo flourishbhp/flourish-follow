@@ -4,14 +4,14 @@
 
 	{% if not add_button|default:False %}
 		<div class="btn-group">
-		  <a title="Add {{ title|lower }}" type="button" class="btn {% if contact_obj %}btn-default disabled{% else %}btn-warning{% endif %} btn-sm dropdown-toggle"
+		  <a title="Add {{ title|lower }}" type="button" class="btn {% if contact_obj %}btn-success disabled{% else %}btn-warning{% endif %} btn-sm dropdown-toggle"
 		    href="{{ contact_obj.href }}">
 		      <i class="fa fa-plus"></i>
 		  </a>
 		</div>
 	{% else %}
 		<div class="btn-group">
-		  <a title="Add {{ title|lower }}" type="button" class="btn btn-default disabled btn-sm dropdown-toggle"
+		  <a title="Add {{ title|lower }}" type="button" class="btn btn-success disabled btn-sm dropdown-toggle"
 		    href="">
 		      <i class="fa fa-plus"></i>
 		  </a>
@@ -25,10 +25,10 @@
 	      <span class="caret"></span></button>
 	      <ul class="dropdown-menu" role="menu">
 	        <li class="dropdown-header">{{ title|default:"Contacts" }}</li>
-	        {% for obj in contact_objects reversed %}
+	        {% for obj in contact_objects %}
 	          <li>
 				  <a href="{{ obj.get_absolute_url }}?next={{ obj.next_url }}&{{ obj.querystring }}">
-					  	{{ obj.contact_datetime }}
+					  {{ obj.object.contact_datetime }}
 	              </a></li>
 	        {% endfor %}
 	      </ul>

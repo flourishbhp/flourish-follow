@@ -10,9 +10,8 @@ def has_group(user, group_name):
 
 
 @register.inclusion_tag('flourish_follow/buttons/dashboard_button.html')
-def dashboard_button(model_wrapper):
-    subject_dashboard_url = settings.DASHBOARD_URL_NAMES.get(
-        'subject_dashboard_url')
+def dashboard_button(model_wrapper, url_name):
+    subject_dashboard_url = settings.DASHBOARD_URL_NAMES.get(url_name)
     return dict(
         subject_dashboard_url=subject_dashboard_url,
         subject_identifier=model_wrapper.subject_identifier)

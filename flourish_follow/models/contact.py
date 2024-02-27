@@ -1,4 +1,6 @@
+import pytz
 from django.db import models
+from edc_base.model_validators.date import date_is_future
 from edc_constants.choices import YES_NO
 
 from flourish_caregiver.models.model_mixins import CaregiverContactFieldsMixin
@@ -14,6 +16,7 @@ class Contact(CaregiverContactFieldsMixin):
 
     appt_date = models.DateField(
         verbose_name='Appointment Date',
+        validators=[date_is_future, ],
         blank=True,
         null=True)
 

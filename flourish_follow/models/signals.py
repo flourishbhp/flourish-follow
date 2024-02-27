@@ -121,5 +121,9 @@ def fu_contact_on_post_save(sender, instance, raw, created, **kwargs):
     participant_note_cls = django_apps.get_model('flourish_calendar.participantnote')
 
     if not raw and created:
-        obj, created = participant_note_cls.objects.update_or_create(
-            subject_identifier=instance.subject_identifier)
+        if getattr(instance, 'appt_date', None):
+            participant_note_cls.objects.update_or_create(
+                subject_identifier=instance.subject_identifier,
+                title='Follow Up Schedule',
+                description='Enrolling participant from cohort C sec to primary aims.',
+                defaults={'date': instance.appt_date, })

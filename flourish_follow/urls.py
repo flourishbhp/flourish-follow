@@ -1,10 +1,11 @@
-from django.urls import path
+from django.urls import path, re_path
 from django.views.generic.base import RedirectView
 from edc_dashboard import UrlConfig
 from .admin_site import flourish_follow_admin
 from .views import (
     AppointmentListboardView, BookingListboardView,
     BookListboardView, CohortSwitchListboardView, ListboardView, HomeView)
+from .views.cohort_switch_view_mixin import switch_cohort_redirect
 
 app_name = 'flourish_follow'
 
@@ -17,6 +18,9 @@ urlpatterns = [
     path('admin/', flourish_follow_admin.urls),
     path('home', HomeView.as_view(), name='home_url'),
     path('', RedirectView.as_view(url='admin/'), name='admin_url'),
+    re_path(r'^switch_cohort_redirect/'
+         f'(?P<subject_identifier>{participant_identifier})/',
+         switch_cohort_redirect, name='sc_redirect')
 ]
 
 flourish_follow_listboard_url_config = UrlConfig(

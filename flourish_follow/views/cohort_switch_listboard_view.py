@@ -31,4 +31,7 @@ class CohortSwitchListboardView(CohortCHEUSwitchViewMixin, NavbarViewMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # if self.request.GET.get('switch_cohort', False):
+        #     subject_identifier = self.request.GET.get('sidx', None)
+        #     self.switch_to_cohort_c(subject_identifier)
         return context
