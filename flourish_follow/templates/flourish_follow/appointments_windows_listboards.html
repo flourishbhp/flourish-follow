@@ -1,6 +1,10 @@
-{% extends "edc_dashboard/listboard.html" %} {% load admin_urls %} {% load
-edc_base_extras %} {% load crispy_forms_tags %} {% load
-flourish_dashboard_extras %} {% load follow_extras %} {% block extra-scripts %}
+{% extends "edc_dashboard/listboard.html" %}
+{% load admin_urls %}
+{% load edc_base_extras %}
+{% load crispy_forms_tags %}
+{% load flourish_dashboard_extras %}
+{% load flourish_follow_extras %}
+{% block extra-scripts %}
 {{ block.super }}
 <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
@@ -112,53 +116,58 @@ flourish_dashboard_extras %} {% load follow_extras %} {% block extra-scripts %}
   >{% csrf_token %}{% crispy appointment_form %}</span
 >
 
-{% endblock listboard_panel %} {% block listboard_table_header %}
-<!-- begin results header -->
-<th>#</th>
-<th>SUBJECT</th>
-<th>
-  <a
-    href="{{ request.path }}?order_by=earliest_due_date{% if filter %}&f={{ filter }}{%endif%}"
-    >EARLIEST DATE DUE</a
-  >
-</th>
-<th>
-  <a
-    href="{{ request.path }}?order_by=ideal_due_date{% if filter %}&f={{ filter }}{%endif%}"
-    >IDEAL DATE DUE</a
-  >
-</th>
-<th>
-  <a
-    href="{{ request.path }}?order_by=latest_due_date{% if filter %}&f={{ filter }}{%endif%}"
-    >LATEST DATE DUE</a
-  >
-</th>
-<th>
-  <a
-    href="{{ request.path }}?order_by=ideal_due_date{% if filter %}&f={{ filter }}{%endif%}"
-    >APPOINTMENT DATE</a
-  >
-</th>
-<th>DAYS LEFT</th>
-<th>APPT. STATUS</th>
-<th>VISIT CODE</th>
-<!-- end results header -->
-{% endblock listboard_table_header %} {% block listboard_table_button_column %}
-<td>
-  {% dashboard_button result %} {% if result.gender == 'M' %}
-  <i class="fa fa-male fa-lg"></i>
-  {% else %}
-  <i class="fa fa-female fa-lg"></i>
-  {% endif %} {{ result.subject_identifier }}
-</td>
-{% endblock listboard_table_button_column %} {% block listboard_table_columns %}
+{% endblock listboard_panel %}
 
-<td>{{ result.earliest_date_due }}</td>
-<td>{{ result.ideal_date_due }}</td>
-<td>{{ result.latest_date_due }}</td>
-<td>{{ result.object.appt_datetime }}</td>
-<td style="text-align: center">{{ result.days_count_down }}</td>
-<td>{{ result.appt_status | title }}</td>
-<td>{{ result.visit_code }}</td>
+{% block listboard_table_header %}
+	<!-- begin results header -->
+	<th>#</th>
+	<th>SUBJECT</th>
+	<th>
+	  <a
+	    href="{{ request.path }}?order_by=earliest_due_date{% if filter %}&f={{ filter }}{%endif%}"
+	    >EARLIEST DATE DUE</a
+	  >
+	</th>
+	<th>
+	  <a
+	    href="{{ request.path }}?order_by=ideal_due_date{% if filter %}&f={{ filter }}{%endif%}"
+	    >IDEAL DATE DUE</a
+	  >
+	</th>
+	<th>
+	  <a
+	    href="{{ request.path }}?order_by=latest_due_date{% if filter %}&f={{ filter }}{%endif%}"
+	    >LATEST DATE DUE</a
+	  >
+	</th>
+	<th>
+	  <a
+	    href="{{ request.path }}?order_by=ideal_due_date{% if filter %}&f={{ filter }}{%endif%}"
+	    >APPOINTMENT DATE</a
+	  >
+	</th>
+	<th>DAYS LEFT</th>
+	<th>APPT. STATUS</th>
+	<th>VISIT CODE</th>
+	<!-- end results header -->
+{% endblock listboard_table_header %}
+
+{% block listboard_table_button_column %}
+	<td>
+	  {% dashboard_button result 'subject_dashboard_url' %} {% if result.gender == 'M' %}
+	  <i class="fa fa-male fa-lg"></i>
+	  {% else %}
+	  <i class="fa fa-female fa-lg"></i>
+	  {% endif %} {{ result.subject_identifier }}
+	</td>
+{% endblock listboard_table_button_column %}
+
+{% block listboard_table_columns %}
+	<td>{{ result.earliest_date_due }}</td>
+	<td>{{ result.ideal_date_due }}</td>
+	<td>{{ result.latest_date_due }}</td>
+	<td>{{ result.object.appt_datetime }}</td>
+	<td style="text-align: center">{{ result.days_count_down }}</td>
+	<td>{{ result.appt_status | title }}</td>
+	<td>{{ result.visit_code }}</td>
 {% endblock listboard_table_columns %}
