@@ -58,7 +58,6 @@ class ContactAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'contact_success',
                 'appt_scheduled',
                 'appt_date',
-                'continue_contact',
                 'final_contact',
             )},
         ), audit_fieldset_tuple)
@@ -66,13 +65,12 @@ class ContactAdmin(ModelAdminMixin, admin.ModelAdmin):
     list_display = ['subject_identifier', 'contact_type',
                     'contact_datetime']
 
-    list_filter = ['contact_type', 'contact_success', 'continue_contact']
+    list_filter = ['contact_type', 'contact_success', 'final_contact']
 
     radio_fields = {
         'contact_type': admin.VERTICAL,
         'contact_success': admin.VERTICAL,
         'appt_scheduled': admin.VERTICAL,
-        'continue_contact': admin.VERTICAL,
         'final_contact': admin.VERTICAL, }
 
 @admin.register(Booking, site=flourish_follow_admin)

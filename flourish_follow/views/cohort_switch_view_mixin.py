@@ -4,7 +4,7 @@ from django.db.models import OuterRef, Exists, Q
 from django.shortcuts import redirect
 from django.urls import reverse
 from edc_base.utils import get_utcnow
-from edc_constants.constants import MALE, FEMALE, YES
+from edc_constants.constants import MALE, FEMALE, YES, NO
 
 from flourish_caregiver.helper_classes import SequentialCohortEnrollment
 
@@ -87,7 +87,7 @@ class CohortCHEUSwitchViewMixin:
             but did not agree to being scheduled for a FU appointment.
         """
         no_contact = self.contact_cls.objects.filter(
-            final_contact=YES).values_list(
+            appt_scheduled=NO).values_list(
                 'subject_identifier', flat=True)
         return list(set(no_contact))
 

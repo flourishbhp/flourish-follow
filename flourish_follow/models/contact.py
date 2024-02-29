@@ -1,10 +1,9 @@
-import pytz
 from django.db import models
 from edc_base.model_validators.date import date_is_future
 from edc_constants.choices import YES_NO
 
 from flourish_caregiver.models.model_mixins import CaregiverContactFieldsMixin
-from ..choices import YES_NO_ST_NA, MAY_CALL
+from ..choices import YES_NO_ST_NA
 
 
 class Contact(CaregiverContactFieldsMixin):
@@ -19,11 +18,6 @@ class Contact(CaregiverContactFieldsMixin):
         validators=[date_is_future, ],
         blank=True,
         null=True)
-
-    continue_contact = models.CharField(
-        verbose_name='May we continue to contact the participant',
-        choices=MAY_CALL,
-        max_length=25)
 
     final_contact = models.CharField(
         verbose_name=('Is this the final contact attempt and no other calls '
