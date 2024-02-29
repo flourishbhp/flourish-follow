@@ -11,7 +11,9 @@
         function confirm_cohort_switch(subject_identifier) {
 			let confirmAction = confirm("Are you sure you want to enroll participant in the primary aims?");
             if (confirmAction) {
-                window.location.href = "{% url 'flourish_follow:sc_redirect' subject_identifier='D142-1' %}".replace('D142-1', subject_identifier);
+                window.open(
+					"{% url 'flourish_follow:sc_redirect' subject_identifier='D142-1' %}".replace('D142-1', subject_identifier),
+					"_blank");
             } else {
                 alert("Action cancelled");
             }
