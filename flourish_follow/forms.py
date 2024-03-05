@@ -1,18 +1,16 @@
-from unicodedata import name
 from django import forms
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from edc_form_validators import FormValidatorMixin
-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
-
-
 from edc_base.sites import SiteModelFormMixin
+from edc_form_validators import FormValidatorMixin
 
-from .models import Booking, WorkList, LogEntry, InPersonContactAttempt
-from .form_validations import LogEntryFormValidator, HomeVisitFormValidator
+
+from .models import Booking, WorkList, LogEntry, InPersonContactAttempt, Contact
+from .form_validations import (FUContactFormValidator, LogEntryFormValidator,
+                               HomeVisitFormValidator)
 
 
 class WorkListForm(SiteModelFormMixin, forms.ModelForm):
@@ -26,6 +24,19 @@ class BookingForm(SiteModelFormMixin, forms.ModelForm):
 
     class Meta:
         model = Booking
+        fields = '__all__'
+
+
+class ContactForm(FormValidatorMixin, forms.ModelForm):
+
+    form_validator_cls = FUContactFormValidator
+
+    subject_identifier = forms.CharField(
+        label='Subject Identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
+    class Meta:
+        model = Contact
         fields = '__all__'
         
 
