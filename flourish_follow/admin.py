@@ -21,9 +21,9 @@ from edc_model_admin.changelist_buttons import ModelAdminChangelistModelButtonMi
 from .exportaction_mixin import ExportActionMixin
 from .admin_site import flourish_follow_admin
 from .forms import (
-    BookingForm, WorkListForm, LogEntryForm, InPersonContactAttemptForm)
+    BookingForm, ContactForm, WorkListForm, LogEntryForm, InPersonContactAttemptForm)
 from .models import (
-    Booking, Call, WorkList, Log, LogEntry, InPersonContactAttempt,
+    Booking, Call, Contact, WorkList, Log, LogEntry, InPersonContactAttempt,
     InPersonLog)
 
 
@@ -40,6 +40,38 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
     date_hierarchy = 'modified'
     empty_value_display = '-'
 
+
+@admin.register(Contact, site=flourish_follow_admin)
+class ContactAdmin(ModelAdminMixin, admin.ModelAdmin):
+
+    form = ContactForm
+
+    search_fields = ('subject_identifier', )
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                'subject_identifier',
+                'report_datetime',
+                'contact_type',
+                'contact_datetime',
+                'contact_success',
+                'appt_scheduled',
+                'appt_date',
+                'final_contact',
+            )},
+        ), audit_fieldset_tuple)
+
+    list_display = ['subject_identifier', 'contact_type',
+                    'contact_datetime']
+
+    list_filter = ['contact_type', 'contact_success', 'final_contact']
+
+    radio_fields = {
+        'contact_type': admin.VERTICAL,
+        'contact_success': admin.VERTICAL,
+        'appt_scheduled': admin.VERTICAL,
+        'final_contact': admin.VERTICAL, }
 
 @admin.register(Booking, site=flourish_follow_admin)
 class BookingAdmin(ModelAdminMixin, admin.ModelAdmin):

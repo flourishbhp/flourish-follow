@@ -138,6 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DASHBOARD_URL_NAMES = {
     'flourish_follow_listboard_url': 'flourish_follow:flourish_follow_listboard_url',
+    'cohort_switch_listboard_url': 'flourish_follow:cohort_switch_listboard_url'
 
 }
 
@@ -145,6 +146,7 @@ DASHBOARD_BASE_TEMPLATES = {
     'listboard_base_template': 'flourish/base.html',
     'dashboard_base_template': 'flourish/base.html',
     'flourish_follow_listboard_template': 'flourish_follow/follow_listboard.html',
+    'cohort_switch_listboard_template': 'flourish_follow/cohort_switch_listboard.html'
     }
 
 # Internationalization

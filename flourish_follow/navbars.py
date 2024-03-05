@@ -46,4 +46,13 @@ flourish_follow.append_item(
         url_name=settings.DASHBOARD_URL_NAMES[
             'flourish_follow_book_listboard_url']))
 
+flourish_follow.append_item(
+    NavbarItem(
+        name='cohort_switch',
+        title='cohort_switch',
+        label='Cohort Switch',
+        fa_icon='fa-random',
+        url_name=settings.DASHBOARD_URL_NAMES[
+            'cohort_switch_listboard_url']))
+
 site_navbars.register(flourish_follow)

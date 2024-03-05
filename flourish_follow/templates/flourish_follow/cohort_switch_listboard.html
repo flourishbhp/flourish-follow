@@ -1,0 +1,88 @@
+{% extends "edc_dashboard/listboard.html" %}
+{% load admin_urls %}
+{% load edc_base_extras %}
+{% load flourish_follow_extras %}
+{% load static %}
+
+
+{% block extra-scripts %}
+	{{ block.super }}
+    <script>
+        function confirm_cohort_switch(subject_identifier) {
+			let confirmAction = confirm("Are you sure you want to enroll participant in the primary aims?");
+            if (confirmAction) {
+                window.open(
+					"{% url 'flourish_follow:sc_redirect' subject_identifier='D142-1' %}".replace('D142-1', subject_identifier),
+					"_blank");
+            } else {
+                alert("Action cancelled");
+            }
+            
+        }
+    </script>
+{% endblock extra-scripts %}
+
+{% block listboard_table_header %}
+	<th>#</th>
+	<th>Contact Outcome(s)</th>
+	<th>Participant Identifier</th>
+	<th>Current Cohort</th>
+	<th>Exposure Status</th>
+	<th>Gender</th>
+	<th>BMI</th>
+	<th>Age</th>
+	<th>Contact Details</th>
+	<th>Last Contact Date</th>
+{% endblock listboard_table_header %}
+
+{% block listboard_table_button_column %}
+	<td>
+		{% caregiver_contact_log result %}
+		{% if result.successful_contact %}
+			{% if result.name == 'cohort_c' %}
+				{% dashboard_button result 'child_dashboard_url' %}
+			{% else %}
+	            <button class="btn btn-sm btn-info" onclick="confirm_cohort_switch('{{result.subject_identifier}}')">
+	                Switch Cohort
+	            </button>
+	        {% endif %}
+        {% endif %}
+	</td>
+{% endblock listboard_table_button_column %}
+
+{% block listboard_table_columns %}
+	<!--  begin columns  -->
+	<td>
+		<span class="">
+			{% if result.object.caregiver_child_consent.gender == 'M' %}
+				<i class="fa fa-male fa-lg"></i>
+        	{% else %}
+        		<i class="fa fa-female fa-lg"></i>
+        	{% endif %}
+        </span>
+        &nbsp;&nbsp;
+	    {{ result.subject_identifier }}
+	</td>
+	<td>
+		{{ result.name }}
+	</td>
+	<td>
+		{{ result.exposure_status }}
+	</td>
+	<td>
+		{{ result.object.child_gender }}
+	</td>
+	<td>
+		{{ result.object.child_bmi|floatformat:2 }}
+	</td>
+	<td>
+		{{ result.object.child_age|floatformat:2 }}
+	</td>
+	<td>
+		{{ result.contacts }}
+	</td>
+	<td>
+		{{ result.latest_caregiver_contact.contact_datetime|default:"--" }}
+	</td>
+	<!--  end columns  -->
+{% endblock listboard_table_columns %}

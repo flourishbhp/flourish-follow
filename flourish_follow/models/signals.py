@@ -10,6 +10,7 @@ from ..models.worklist import WorkList
 from .home_visit_models import InPersonLog, InPersonContactAttempt
 from .call_models import LogEntry
 from .booking import Booking
+from .contact import Contact
 
 
 @receiver(post_save, weak=False, sender=LogEntry,
@@ -113,3 +114,16 @@ def in_person_contact_attempt_on_post_save(sender, instance, using, raw, **kwarg
                 work_list.visited = True
                 work_list.user_modified = instance.user_modified
                 work_list.save()
+
+
+@receiver(post_save, weak=False, sender=Contact, dispatch_uid='fu_contact_on_post_save')
+def fu_contact_on_post_save(sender, instance, raw, created, **kwargs):
+    participant_note_cls = django_apps.get_model('flourish_calendar.participantnote')
+
+    if not raw and created:
+        if getattr(instance, 'appt_date', None):
+            participant_note_cls.objects.update_or_create(
+                subject_identifier=instance.subject_identifier,
+                title='Follow Up Schedule',
+                description='Enrolling participant from cohort C sec to primary aims.',
+                defaults={'date': instance.appt_date, })
