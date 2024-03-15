@@ -8,16 +8,16 @@
 {% block extra-scripts %}
 	{{ block.super }}
     <script>
-        function confirm_cohort_switch(subject_identifier) {
-			let confirmAction = confirm("Are you sure you want to enroll participant in the primary aims?");
+        function confirm_sq_fu_enrollment(subject_identifier, name, enrol) {
+			let confirmAction = confirm('Are you sure you want to enroll participant in the FU schedule?');
             if (confirmAction) {
                 window.open(
-					"{% url 'flourish_follow:sc_redirect' subject_identifier='D142-1' %}".replace('D142-1', subject_identifier),
+					"{% url 'flourish_follow:cohort_fu_redirect' subject_identifier='D142-1' cohort_name='cohort_x' enrol_cohort='x' %}".replace(
+						'D142-1', subject_identifier).replace('cohort_x', name).replace('x', enrol === 'yes' ? 1 : 0),
 					"_blank");
             } else {
-                alert("Action cancelled");
+                alert('Action cancelled');
             }
-            
         }
     </script>
 {% endblock extra-scripts %}
@@ -39,13 +39,18 @@
 	<td>
 		{% caregiver_contact_log result %}
 		{% if result.successful_contact %}
-			{% if result.name == 'cohort_c' %}
+			{% if result.has_fu_appts %}
 				{% dashboard_button result 'child_dashboard_url' %}
-			{% else %}
-	            <button class="btn btn-sm btn-info" onclick="confirm_cohort_switch('{{result.subject_identifier}}')">
-	                Switch Cohort
+			{% elif result.is_past_scheduled_dt %}
+	            <button class="btn btn-sm btn-info"
+	            		onclick="confirm_sq_fu_enrollment('{{result.subject_identifier}}', '{{result.name}}', '{{result.enrollment_cohort|yesno}}')">
+					{% if result.name == 'cohort_c_sec' %}
+	                	Switch Cohort
+	                {% else %}
+	                	Follow Up Enrol
+	                {% endif %}
 	            </button>
-	        {% endif %}
+		    {% endif %}
         {% endif %}
 	</td>
 {% endblock listboard_table_button_column %}

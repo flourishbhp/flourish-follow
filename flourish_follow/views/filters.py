@@ -136,3 +136,27 @@ class ScreeningListboardViewFilters(ListboardViewFilters):
         label='Cancelled',
         position=6,
         lookup={'appt_status': 'cancelled'})
+
+
+class CohortSwitchListboardFilters(ListboardViewFilters):
+
+    clear = ListboardFilter(
+        name='cohort_switch',
+        label='Cohort Switch',
+        lookup={})
+
+    cohort_a = ListboardFilter(
+        label='Cohort A',
+        position=1,
+        lookup={'name': 'cohort_a'})
+
+    cohort_b = ListboardFilter(
+        label='Cohort B',
+        position=2,
+        lookup={'name': 'cohort_b'})
+
+    cohort_c = ListboardFilter(
+        label='Cohort C',
+        position=3,
+        lookup={'name': 'cohort_c'})
+

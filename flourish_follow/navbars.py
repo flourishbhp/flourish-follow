@@ -50,7 +50,7 @@ flourish_follow.append_item(
     NavbarItem(
         name='cohort_switch',
         title='cohort_switch',
-        label='Cohort Switch',
+        label='FU Schedules',
         fa_icon='fa-random',
         url_name=settings.DASHBOARD_URL_NAMES[
             'cohort_switch_listboard_url']))
