@@ -4,10 +4,12 @@ from flourish_dashboard.model_wrappers.caregiver_locator_model_wrapper_mixin imp
     CaregiverLocatorModelWrapperMixin)
 
 from .caregiver_contact_model_wrapper_mixin import CaregiverContactModelWrapperMixin
+from .cohort_schedules_model_wrapper_mixin import CohortSchedulesModelWrapperMixin
 
 
 class CaregiverCohortModelWrapper(CaregiverLocatorModelWrapperMixin,
                                   CaregiverContactModelWrapperMixin,
+                                  CohortSchedulesModelWrapperMixin,
                                   ModelWrapper):
 
     model = 'flourish_caregiver.cohort'
@@ -17,12 +19,5 @@ class CaregiverCohortModelWrapper(CaregiverLocatorModelWrapperMixin,
     querystring_attrs = ['subject_identifier']
 
     @property
-    def contacts(self):
-        if self.locator_model_obj:
-            contacts = [
-                self.locator_model_obj.subject_cell or '',
-                self.locator_model_obj.subject_cell_alt or '',
-                self.locator_model_obj.subject_phone or '',
-                self.locator_model_obj.subject_phone_alt or '']
-            return ', '.join(list(filter(None, contacts)))
-        return None
+    def subject_identifier(self):
+        return self.object.subject_identifier

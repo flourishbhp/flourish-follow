@@ -7,6 +7,7 @@ from edc_navbar import NavbarViewMixin
 
 from ..model_wrappers import CaregiverCohortModelWrapper
 from .cohort_switch_view_mixin import CohortCHEUSwitchViewMixin
+from .filters import CohortSwitchListboardFilters
 
 
 class CohortSwitchListboardView(CohortCHEUSwitchViewMixin, NavbarViewMixin,
@@ -17,6 +18,7 @@ class CohortSwitchListboardView(CohortCHEUSwitchViewMixin, NavbarViewMixin,
     listboard_url = 'cohort_switch_listboard_url'
 
     model = 'flourish_caregiver.cohort'
+    listboard_view_filters = CohortSwitchListboardFilters()
     model_wrapper_cls = CaregiverCohortModelWrapper
     navbar_name = 'flourish_follow'
     navbar_selected_item = 'cohort_switch'
@@ -30,3 +32,10 @@ class CohortSwitchListboardView(CohortCHEUSwitchViewMixin, NavbarViewMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+    def get_queryset_filter_options(self, request, *args, **kwargs):
+        options = super().get_queryset_filter_options(request, *args, **kwargs)
+        if kwargs.get('subject_identifier'):
+            options.update(
+                {'subject_identifier': kwargs.get('subject_identifier')})
+        return options
