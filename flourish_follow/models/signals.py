@@ -1,3 +1,4 @@
+from cacheops import invalidate_obj
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
@@ -120,10 +121,12 @@ def in_person_contact_attempt_on_post_save(sender, instance, using, raw, **kwarg
 def fu_contact_on_post_save(sender, instance, raw, created, **kwargs):
     participant_note_cls = django_apps.get_model('flourish_calendar.participantnote')
 
-    if not raw and created:
+    if not raw:
         if getattr(instance, 'appt_date', None):
-            participant_note_cls.objects.update_or_create(
+            obj, _created = participant_note_cls.objects.update_or_create(
                 subject_identifier=instance.subject_identifier,
                 title='Follow Up Schedule',
-                description='Enrolling participant from cohort C sec to primary aims.',
-                defaults={'date': instance.appt_date, })
+                defaults={'date': instance.appt_date,
+                          'description': 'Flourish follow contact FU scheduling.',})
+            if not _created:
+                invalidate_obj(obj)

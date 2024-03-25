@@ -1,62 +1,29 @@
-import datetime
-import uuid
-import xlwt
-
 from django.apps import apps as django_apps
 from django.db.models import ManyToManyField, ForeignKey, OneToOneField
-from django.http import HttpResponse
-from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
+from flourish_export.admin_export_helper import AdminExportHelper
 
-class ExportActionMixin:
+
+class ExportActionMixin(AdminExportHelper):
 
     def export_as_csv(self, request, queryset):
-
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
-            self.get_export_filename())
-
-        wb = xlwt.Workbook(encoding='utf-8', style_compression=2)
-        ws = wb.add_sheet('%s')
-
-        row_num = 0
-
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-        font_style.num_format_str = 'YYYY/MM/DD h:mm:ss'
-
-        field_names = [field.name for field in self.get_fields]
-
-        for col_num in range(len(field_names)):
-            ws.write(row_num, col_num, field_names[col_num], font_style)
-
+        records = []
         for obj in queryset:
-            data = []
-            for field in self.get_fields:
+            data = obj.__dict__.copy()
+
+            for field in self.get_model_fields:
                 if isinstance(field, ManyToManyField):
-                    key_manager = getattr(obj, field.name)
-                    field_value = ', '.join([obj.name for obj in key_manager.all()])
-                    data.append(field_value)
+                    data.update(self.m2m_data_dict(obj, field))
                     continue
                 if isinstance(field, (ForeignKey, OneToOneField, )):
-                    field_value = getattr(obj, field.name)
-                    data.append(field_value.id)
                     continue
-                field_value = getattr(obj, field.name, '')
-                data.append(field_value)
-
-            row_num += 1
-            for col_num in range(len(data)):
-                if isinstance(data[col_num], uuid.UUID):
-                    ws.write(row_num, col_num, str(data[col_num]))
-                elif isinstance(data[col_num], datetime.datetime):
-                    data[col_num] = timezone.make_naive(data[col_num])
-                    ws.write(row_num, col_num, data[col_num],
-                             xlwt.easyxf(num_format_str='YYYY/MM/DD h:mm:ss'))
-                else:
-                    ws.write(row_num, col_num, data[col_num])
-        wb.save(response)
+            subject_identifier = data.get('subject_identifier', None)
+            data.update({'cohort_name': self.cohort_name(subject_identifier)})
+            data = self.remove_exclude_fields(data)
+            data = self.fix_date_formats(data)
+            records.append(data)
+        response = self.write_to_csv(records)
         return response
 
     export_as_csv.short_description = _(
@@ -64,22 +31,14 @@ class ExportActionMixin:
 
     actions = [export_as_csv]
 
-    def get_export_filename(self):
-        date_str = datetime.datetime.now().strftime('%Y-%m-%d')
-        filename = "%s-%s" % (self.model.__name__, date_str)
-        return filename
-
-    def previous_bhp_study(self, study_maternal_identifier=None):
-        dataset_cls = django_apps.get_model('flourish_caregiver.maternaldataset')
-        if study_maternal_identifier:
-            try:
-                dataset_obj = dataset_cls.objects.get(
-                    study_maternal_identifier=study_maternal_identifier)
-            except dataset_cls.DoesNotExist:
-                return None
-            else:
-                return dataset_obj.protocol
-
     @property
-    def get_fields(self):
-        return self.model._meta.get_fields()
+    def cohort_model_cls(self):
+        return django_apps.get_model('flourish_caregiver.cohort')
+
+
+    def cohort_name(self, subject_identifier):
+        cohort = self.cohort_model_cls.objects.filter(
+            subject_identifier=subject_identifier, current_cohort=True)
+        if cohort.exists():
+            return cohort[0].name
+        

@@ -1,4 +1,5 @@
 from django.apps import apps as django_apps
+from edc_base.utils import get_utcnow
 from edc_constants.constants import YES
 
 from .caregiver_contact_model_wrapper import ContactModelWrapper
@@ -68,3 +69,8 @@ class CaregiverContactModelWrapperMixin:
             contact_success=YES,
             appt_scheduled=YES,
             appt_date__isnull=False, ).exists()
+
+    @property
+    def is_past_scheduled_dt(self):
+        appt_dt = getattr(self.latest_caregiver_contact, 'appt_date', None)
+        return appt_dt <= get_utcnow().date() if appt_dt else False

@@ -73,6 +73,21 @@ class ContactAdmin(ModelAdminMixin, admin.ModelAdmin):
         'appt_scheduled': admin.VERTICAL,
         'final_contact': admin.VERTICAL, }
 
+    def get_next_redirect_url(self, request=None):
+        url_name = request.GET.dict().get(
+            self.next_querystring_attr).split(',')[0]
+        options = self.get_next_options(request=request)
+        cohort_name = options.pop('cohort_name', None)
+        try:
+            redirect_url = reverse(url_name, kwargs=options)
+        except NoReverseMatch as e:
+            msg = f'{e}. Got url_name={url_name}, kwargs={options}.'
+            try:
+                redirect_url = reverse(url_name)
+            except NoReverseMatch:
+                raise ModelAdminNextUrlRedirectError(msg)
+        return f'{redirect_url}?f={cohort_name}' if cohort_name and 'sec' not in cohort_name else redirect_url
+
 @admin.register(Booking, site=flourish_follow_admin)
 class BookingAdmin(ModelAdminMixin, admin.ModelAdmin):
 
