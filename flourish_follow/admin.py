@@ -41,10 +41,7 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
     empty_value_display = '-'
 
 
-@admin.register(Contact, site=flourish_follow_admin)
-class ContactAdmin(ModelAdminMixin, admin.ModelAdmin):
-
-    form = ContactForm
+class ContactAdminMixin(ModelAdminMixin):
 
     search_fields = ('subject_identifier', )
 
@@ -87,6 +84,13 @@ class ContactAdmin(ModelAdminMixin, admin.ModelAdmin):
             except NoReverseMatch:
                 raise ModelAdminNextUrlRedirectError(msg)
         return f'{redirect_url}?f={cohort_name}' if cohort_name and 'sec' not in cohort_name else redirect_url
+
+
+@admin.register(Contact, site=flourish_follow_admin)
+class ContactAdmin(ContactAdminMixin, admin.ModelAdmin):
+
+    form = ContactForm
+
 
 @admin.register(Booking, site=flourish_follow_admin)
 class BookingAdmin(ModelAdminMixin, admin.ModelAdmin):

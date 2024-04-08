@@ -1,4 +1,5 @@
 from .caregiver_cohort_model_wrapper import CaregiverCohortModelWrapper
+from .caregiver_contact_model_wrapper_mixin import CaregiverContactModelWrapperMixin
 from .in_person_contact_attempt_model_wrapper import InPersonContactAttemptModelWrapper
 from .worklist_model_wrapper import WorkListModelWrapper
 from .follow_appointment_model_wrapper import FollowAppointmentModelWrapper
