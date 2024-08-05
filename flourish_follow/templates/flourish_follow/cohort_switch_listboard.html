@@ -4,9 +4,15 @@
 {% load flourish_follow_extras %}
 {% load static %}
 
+{% block extra-css %}
+	<style>
+		.pointer {cursor: pointer;}
+	</style>
+{% endblock extra-css %}
 
 {% block extra-scripts %}
 	{{ block.super }}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tinysort/3.2.5/tinysort.min.js"></script>
     <script>
         function confirm_sq_fu_enrollment(subject_identifier, name, enrol) {
 			let confirmAction = confirm('Are you sure you want to enroll participant in the FU schedule?');
@@ -34,12 +40,12 @@
 	<th>Contact Outcome(s)</th>
 	<th>Participant Identifier</th>
 	<th>Current Cohort</th>
-	<th>Exposure Status</th>
-	<th>Gender</th>
-	<th>BMI</th>
-	<th>Age</th>
+	<th class="pointer" data-sort="exposure" data-order="asc">Exposure Status</th>
+	<th class="pointer" data-sort="gender" data-order="asc">Gender</th>
+	<th class="pointer" data-sort="bmi" data-order="asc">BMI</th>
+	<th class="pointer" data-sort="age" data-order="asc">Age</th>
 	<th>Contact Details</th>
-	<th>Last Contact Date</th>
+	<th class="pointer" data-sort="contact-dt" data-order="asc">Last Contact Date</th>
 {% endblock listboard_table_header %}
 
 {% block listboard_table_button_column %}
@@ -78,23 +84,47 @@
 	<td>
 		{{ result.name }}
 	</td>
-	<td>
+	<td class="exposure">
 		{{ result.exposure_status }}
 	</td>
-	<td>
+	<td class="gender">
 		{{ result.object.child_gender }}
 	</td>
-	<td>
+	<td class="bmi">
 		{{ result.object.child_bmi|floatformat:2 }}
 	</td>
-	<td>
+	<td class="age">
 		{{ result.object.child_age|floatformat:2 }}
 	</td>
 	<td>
 		{{ result.contacts }}
 	</td>
-	<td>
+	<td class="contact-dt">
 		{{ result.latest_caregiver_contact.contact_datetime|default:"--" }}
 	</td>
 	<!--  end columns  -->
 {% endblock listboard_table_columns %}
+
+{% block extra-scripts-bottom %}
+	{{ block.super }}
+	<script>
+	    $(document).ready(function() {
+	        $('th').click(function() {
+	            var $this = $(this);
+	            var sortAttr = $this.data('sort');
+	            var currentOrder = $this.data('order');
+	
+	            // Toggle the order
+	            var newOrder = (currentOrder === 'asc') ? 'desc' : 'asc';
+	            $this.data('order', newOrder);
+	
+	            // Sort the table
+	            tinysort('tbody>tr', {
+	                selector: '.' + sortAttr,
+	                order: newOrder
+	            });
+	        });
+	    });
+	</script>
+
+{% endblock %}
