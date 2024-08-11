@@ -12,7 +12,7 @@
 
 {% block extra-scripts %}
 	{{ block.super }}
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/tinysort/3.2.5/tinysort.min.js"></script>
+	<script src="{% static 'flourish_follow/js/tinysort.min.js' %}"></script>
     <script>
         function confirm_sq_fu_enrollment(subject_identifier, name, enrol) {
 			let confirmAction = confirm('Are you sure you want to enroll participant in the FU schedule?');
