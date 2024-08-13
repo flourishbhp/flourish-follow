@@ -149,13 +149,15 @@ class CohortSwitchListboardFilters(ListboardViewFilters):
         label='Cohort A',
         position=1,
         lookup={'name': 'cohort_a',
-                'enrollment_cohort': True, })
+                'enrollment_cohort': True,
+                'current_cohort': True, })
 
     cohort_b = ListboardFilter(
         label='Cohort B',
         position=2,
         lookup={'name': 'cohort_b',
-                'enrollment_cohort': True, })
+                'enrollment_cohort': True,
+                'current_cohort': True, })
 
     cohort_b_sq = ListboardFilter(
         label='Cohort B SQ',
@@ -168,7 +170,8 @@ class CohortSwitchListboardFilters(ListboardViewFilters):
         label='Cohort C',
         position=4,
         lookup={'name': 'cohort_c',
-                'enrollment_cohort': True, })
+                'enrollment_cohort': True,
+                'current_cohort': True, })
 
     cohort_c_sq = ListboardFilter(
         label='Cohort C SQ',
