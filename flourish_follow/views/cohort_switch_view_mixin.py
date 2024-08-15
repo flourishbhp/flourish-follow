@@ -1,6 +1,7 @@
+import pytz
 from django.apps import apps as django_apps
 from django.db import transaction
-from django.db.models import Case, Exists, IntegerField, OuterRef, Q, Subquery, Value, When
+from django.db.models import Exists, IntegerField, OuterRef, Q, Subquery
 from django.shortcuts import redirect
 from django.urls import reverse
 from edc_base.utils import get_utcnow
@@ -9,6 +10,8 @@ from edc_constants.constants import MALE, FEMALE, YES, NO
 from flourish_caregiver.helper_classes import SequentialCohortEnrollment
 from django.db.models.expressions import ExpressionWrapper
 from django.db.models.functions import Now
+
+tz = pytz.timezone('Africa/Gaborone')
 
 
 class SqCohortEnrollment(SequentialCohortEnrollment):
@@ -65,6 +68,7 @@ class SqCohortEnrollment(SequentialCohortEnrollment):
             subject_identifier=self.child_subject_identifier)
         for cohort in cohorts:
             cohort.save()
+
 
 class CohortCHEUSwitchViewMixin:
 
@@ -133,6 +137,11 @@ class CohortCHEUSwitchViewMixin:
                 'subject_identifier', flat=True)
         return list(set(fu_pids))
 
+    def get_init_contact_datetime(self, subject_identifier):
+        contact = self.contact_cls.objects.filter(
+            subject_identifier=subject_identifier).earliest('contact_datetime')
+        return getattr(contact, 'contact_datetime', get_utcnow()).date()
+
     @property
     def categories_filter(self):
         """ Participant's to be moved from secondary to primary aims:
@@ -146,13 +155,19 @@ class CohortCHEUSwitchViewMixin:
             {'limit': 2, 'bmi_range': (0, 14.9), 'age_range': (9.5, 14), 'gender': MALE},
             {'limit': 5, 'bmi_range': (15, 17.9), 'age_range': (14, 17), 'gender': MALE},
             {'limit': 1, 'bmi_range': (18, float('inf')), 'age_range': (9.5, 14), 'gender': FEMALE},
-            {'limit': 5, 'bmi_range': (18, float('inf')), 'age_range': (9.5, 14), 'gender': MALE},
+            {'limit': (5 + 2), 'bmi_range': (18, float('inf')), 'age_range': (9.5, 14), 'gender': MALE},
             {'limit': 6, 'bmi_range': (18, float('inf')), 'age_range': (14, 17), 'gender': MALE}]
 
     def filter_condition(self, obj, category):
         """ Apply matrix category filter to the queryset.
         """
-        child_age, child_bmi, child_gender = obj.child_age, obj.child_bmi, obj.child_gender
+        child_age = obj.child_age
+        child_bmi = obj.child_bmi
+        if obj.name == 'cohort_c':
+            reference_dt = self.get_init_contact_datetime(obj.subject_identifier)
+            child_age = obj.child_age_at_date(reference_dt)
+            child_bmi = obj.child_bmi_at_date(reference_dt)
+        child_gender = obj.child_gender
         if not all([child_age, child_bmi, child_gender, ]):
             return False
         return (child_age >= category['age_range'][0] and
@@ -194,7 +209,7 @@ class CohortCHEUSwitchViewMixin:
             cohort if they haven't done their FU yet.
             3. For cohort_a participants' returns only participants eligible for FUs i.e.
             18months or older (1.5 in years).
-            @return: filtered queryset objects 
+            @return: filtered queryset objects
         """
         filtered_list = []
         queryset = super().get_queryset()
@@ -204,53 +219,79 @@ class CohortCHEUSwitchViewMixin:
         exclude_pids = self.child_offstudy_pids
 
         cohort_name = filter_options.get('name', '')
+
         if cohort_name:
-            
             exclude_pids.extend(self.fu_appt_done)
-            queryset = queryset.filter(
-                name=cohort_name, current_cohort=True,).exclude(
-                    subject_identifier__in=exclude_pids)
+            queryset = queryset.exclude(subject_identifier__in=exclude_pids)
 
             queryset = queryset.exclude(
                 subject_identifier__in=self.child_age_lt_18months(queryset))
-            
+            enrollment_cohort = filter_options.get('enrollment_cohort', True)
+            current_cohort = filter_options.get('current_cohort', False)
+
+            if current_cohort and not enrollment_cohort:
+                self.eligibility_filter(cohort_name, queryset, filtered_list)
         else:
+            final_queryset = []
+            exclude_pids.extend(self.no_contact_pids)
+            queryset = queryset.exclude(
+                subject_identifier__in=exclude_pids)
+
+            # Get all successfully contacted and switched PIDs first
+            subquery = self.model_cls.objects.filter(
+                subject_identifier=OuterRef('subject_identifier'),
+                name='cohort_c_sec').values('subject_identifier')
+
+            queryset1 = queryset.annotate(
+                has_c_sec=Exists(subquery)).filter(
+                    name='cohort_c', current_cohort=True, has_c_sec=True,
+                    exposure_status='EXPOSED', subject_identifier__in=self.successful_pids)
+
+            final_queryset.extend(queryset1)
+
             # Filter queryset for participants currently in cohort C sec,
             # and don't have a previous cohort C instance.
             subquery = self.model_cls.objects.filter(
                 subject_identifier=OuterRef('subject_identifier'),
                 name='cohort_c').values('subject_identifier')
-    
-            exclude_pids.extend(self.no_contact_pids)
-            queryset = queryset.exclude(
-                Q(subject_identifier__in=exclude_pids))
-    
+
             # Removes participants on above described condition, unless participant
             # is already contacted and switched cohorts.
-            queryset = queryset.annotate(
+            queryset2 = queryset.annotate(
                 has_cohort_c=Exists(subquery)).filter(
-                    (Q(name='cohort_c_sec', current_cohort=True) & ~Q(has_cohort_c=True)) | Q(
-                        subject_identifier__in=self.successful_pids, current_cohort=True),
-                    exposure_status='EXPOSED',)
-    
-    
-            for category in self.categories_filter:
-                result = []
-                _count = 0
-                for obj in queryset:
-                    if not self.is_eligible(obj):
-                        continue
-                    if _count >= category['limit']:
-                        break
-                    elif self.filter_condition(obj, category):
-                        result.append(obj.id)
-                        _count += 1
-                filtered_list.extend(result)
-    
+                    Q(name='cohort_c_sec', current_cohort=True) & ~Q(has_cohort_c=True),
+                    exposure_status='EXPOSED', )
+
+            final_queryset.extend(queryset2)
+
+            self.categorize_instances(final_queryset, filtered_list)
+
+        if filtered_list:
             queryset = queryset.filter(id__in=filtered_list)
+
         queryset = self.order_queryset(queryset)
         return queryset
 
+    def eligibility_filter(self, cohort_name, queryset, filtered_list):
+        cohort_ages = {'cohort_b': 7,
+                       'cohort_c': 12}
+        for obj in queryset:
+            if obj.child_age >= cohort_ages.get(cohort_name):
+                filtered_list.append(obj.id)
+
+    def categorize_instances(self, queryset, filtered_list):
+        for category in self.categories_filter:
+            result = []
+            _count = 0
+            for obj in queryset:
+                if not self.is_eligible(obj):
+                    continue
+                if _count >= category['limit']:
+                    break
+                elif self.filter_condition(obj, category):
+                    result.append(obj.id)
+                    _count += 1
+            filtered_list.extend(result)
 
     def order_queryset(self, queryset):
         """ Order queryset objects by age and if already on FU i.e. push
@@ -259,25 +300,14 @@ class CohortCHEUSwitchViewMixin:
         # Order queryset by age
         dob_subquery = self.child_dummy_consent_model_cls.objects.filter(
             subject_identifier=OuterRef('subject_identifier')).values('dob')[:1]
+
         age_expression = ExpressionWrapper(
             Now() - Subquery(dob_subquery),
             output_field=IntegerField())
 
-        # Subquery to check if participant is enrolled on FU schedule
-        has_fu_subquery = self.subject_schedule_history_cls.objects.filter(
-            subject_identifier=OuterRef('subject_identifier'),
-            schedule_name__icontains='fu').values('subject_identifier')
-
-        # Case statement to assign an integer value based on the existence of a FU
-        order_by_fu = Case(
-            When(subject_identifier__in=has_fu_subquery, then=Value(1)),
-            default=Value(0),
-            output_field=IntegerField())
-
         queryset = queryset.annotate(
-            age=age_expression,
-            has_fu=order_by_fu, ).order_by('has_fu', '-age')
-            
+            age=age_expression, ).order_by('-age')
+
         return queryset
 
 
