@@ -6,12 +6,14 @@ from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
 from ..model_wrappers import CaregiverCohortModelWrapper
+from .export_view_mixin import ExportViewMixin
 from .cohort_switch_view_mixin import CohortCHEUSwitchViewMixin
 from .filters import CohortSwitchListboardFilters
 
 
-class CohortSwitchListboardView(CohortCHEUSwitchViewMixin, NavbarViewMixin,
-                                EdcBaseViewMixin, ListboardFilterViewMixin,
+class CohortSwitchListboardView(ExportViewMixin, CohortCHEUSwitchViewMixin,
+                                NavbarViewMixin, EdcBaseViewMixin,
+                                ListboardFilterViewMixin,
                                 SearchFormViewMixin, ListboardView):
 
     listboard_template = 'cohort_switch_listboard_template'
