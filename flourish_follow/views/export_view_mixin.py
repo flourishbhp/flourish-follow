@@ -51,6 +51,7 @@ class ExportViewMixin(ContextMixin):
 
     @property
     def filename(self):
+        cohort_name = 'cohort_c_sec'
         if self.querystring:
             cohort_name = self.querystring.split('=', 1)[1]
         file_name = f'{cohort_name}_schedule_{get_utcnow().date().strftime("%Y_%m_%d")}'
