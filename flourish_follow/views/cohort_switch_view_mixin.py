@@ -274,7 +274,7 @@ class CohortCHEUSwitchViewMixin:
 
     def eligibility_filter(self, cohort_name, queryset, filtered_list):
         cohort_ages = {'cohort_b': 7,
-                       'cohort_c': 12}
+                       'cohort_c': 10}
         for obj in queryset:
             if obj.child_age >= cohort_ages.get(cohort_name):
                 filtered_list.append(obj.id)
