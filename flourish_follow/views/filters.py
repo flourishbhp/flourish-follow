@@ -179,3 +179,8 @@ class CohortSwitchListboardFilters(ListboardViewFilters):
         lookup={'name': 'cohort_c',
                 'enrollment_cohort': False,
                 'current_cohort': True, })
+
+    pre_flourish = ListboardFilter(
+        label='Pre-Flourish',
+        position=5,
+        lookup={'current_cohort': True, })
