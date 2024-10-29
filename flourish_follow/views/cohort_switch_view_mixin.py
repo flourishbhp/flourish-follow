@@ -8,6 +8,7 @@ from edc_base.utils import get_utcnow
 from edc_constants.constants import MALE, FEMALE, YES, NO
 
 from flourish_caregiver.helper_classes import SequentialCohortEnrollment
+from flourish_caregiver.helper_classes.utils import pf_identifier_check
 from django.db.models.expressions import ExpressionWrapper
 from django.db.models.functions import Now
 
@@ -216,9 +217,11 @@ class CohortCHEUSwitchViewMixin:
 
         filter_options = self.get_queryset_filter_options(
             self.request, *self.args, **self.kwargs)
+
         exclude_pids = self.child_offstudy_pids
 
         cohort_name = filter_options.get('name', '')
+        prev_study = self.request.GET.get('f', None)
 
         if cohort_name:
             exclude_pids.extend(self.fu_appt_done)
@@ -231,6 +234,8 @@ class CohortCHEUSwitchViewMixin:
 
             if current_cohort and not enrollment_cohort:
                 self.eligibility_filter(cohort_name, queryset, filtered_list)
+        elif prev_study == 'pre_flourish':
+            self.pre_flourish_filters(queryset, filtered_list)
         else:
             final_queryset = []
             exclude_pids.extend(self.no_contact_pids)
@@ -277,6 +282,23 @@ class CohortCHEUSwitchViewMixin:
                        'cohort_c': 10}
         for obj in queryset:
             if obj.child_age >= cohort_ages.get(cohort_name):
+                filtered_list.append(obj.id)
+
+    def pre_flourish_filters(self, queryset, filtered_list):
+        """ Get only a list of PIDs enrolled from pre-flourish, have been
+            on the enrolment schedule for 1 month or more and do not have
+            a FU schedule.
+        """
+        for obj in queryset:
+            is_pf = pf_identifier_check(
+                obj.caregiver_child_consent.study_child_identifier or '')
+            schedule_obj = getattr(obj, 'get_latest_schedule_obj', None)
+            is_fu = 'fu' in getattr(schedule_obj, 'schedule_name', '')
+            enrol_dt = obj.caregiver_child_consent.consent_datetime.replace(
+                microsecond=0)
+            date_diff = (get_utcnow() - enrol_dt).days / 30
+
+            if is_pf and not is_fu and date_diff >= 1:
                 filtered_list.append(obj.id)
 
     def categorize_instances(self, queryset, filtered_list):
