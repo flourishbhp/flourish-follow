@@ -21,7 +21,7 @@ class ExportViewMixin(ContextMixin):
         return response
 
     def export_csv(self, data=[]):
-        export_data = data or [self.format_data(obj) for obj in self.get_queryset()]
+        export_data = data or [self.format_data(obj) for obj in self.object_list]
 
         df = pd.DataFrame(export_data)
 
@@ -32,22 +32,39 @@ class ExportViewMixin(ContextMixin):
         return response
 
     def format_data(self, obj):
-        data = obj.__dict__.copy()
-        for field in self.exclude_fields:
-            try:
-                del data[field]
-            except KeyError:
-                continue
+        data = {}
+        wrapped_obj = self.model_wrapper_cls(obj)
+
+        for field in self.export_fields:
+            field_value = self.get_field_value(field, wrapped_obj)
+            if field_value == '':
+                field_value = self.get_field_value(
+                    field, wrapped_obj.object)
+
+            data.update({f'{field}': field_value})
+
         for key, value in data.items():
             if isinstance(value, datetime):
                 data[key] = value.strftime('%d-%m-%Y %H:%M')
-            if key == 'age':
+            if key in ['child_age', 'child_bmi']:
                 data[key] = round(obj.child_age, 2)
         return data
 
+    def get_field_value(self, field, obj):
+        try:
+            return getattr(obj, field, '')
+        except AttributeError:
+            return None
+
     @property
     def exclude_fields(self):
-        return ['site_id', '_state', 'created', 'modified', 'revision', 'id']
+        return ['site_id', '_state', 'created', 'modified', 'revision', 'id',
+                'hostname_created', 'hostname_modified', 'device_created',
+                'device_modified', 'slug']
+
+    @property
+    def export_fields(self):
+        return []
 
     @property
     def filename(self):
