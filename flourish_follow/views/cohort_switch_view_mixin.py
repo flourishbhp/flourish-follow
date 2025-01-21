@@ -51,7 +51,6 @@ class SqCohortEnrollment(SequentialCohortEnrollment):
     def enrol_for_fu_schedule(self):
         """ Calls the `put_onschedule` method to enrol participant on FU schedule.
         """
-
         cohort_obj = self.create_cohort_instance()
         if cohort_obj:
             try:
