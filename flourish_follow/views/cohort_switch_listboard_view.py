@@ -41,3 +41,9 @@ class CohortSwitchListboardView(ExportViewMixin, CohortCHEUSwitchViewMixin,
             options.update(
                 {'subject_identifier': kwargs.get('subject_identifier')})
         return options
+
+    @property
+    def export_fields(self):
+        return ['subject_identifier', 'name', 'exposure_status',
+                'child_gender', 'child_bmi', 'child_age',
+                'successful_contact', 'has_fu_appts', ]
