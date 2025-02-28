@@ -156,6 +156,7 @@ class CohortSwitchListboardFilters(ListboardViewFilters):
         label='Cohort B',
         position=2,
         lookup={'name': 'cohort_b',
+                'exposure_status': 'EXPOSED',
                 'enrollment_cohort': True,
                 'current_cohort': True, })
 
@@ -163,6 +164,7 @@ class CohortSwitchListboardFilters(ListboardViewFilters):
         label='Cohort B SQ',
         position=3,
         lookup={'name': 'cohort_b',
+                'exposure_status': 'EXPOSED',
                 'enrollment_cohort': False,
                 'current_cohort': True, })
 
@@ -181,6 +183,7 @@ class CohortSwitchListboardFilters(ListboardViewFilters):
                 'current_cohort': True, })
 
     pre_flourish = ListboardFilter(
+        name='pre_flourish',
         label='Pre-Flourish',
-        position=5,
+        position=6,
         lookup={'current_cohort': True, })

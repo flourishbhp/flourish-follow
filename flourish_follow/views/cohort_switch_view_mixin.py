@@ -301,7 +301,10 @@ class CohortCHEUSwitchViewMixin:
         """ Get only a list of PIDs enrolled from pre-flourish, have been
             on the enrolment schedule for 1 month or more and do not have
             a FU schedule.
+            Manually exclude cohort B: HUU.
         """
+        queryset = queryset.exclude(
+            name='cohort_b', exposure_status='UNEXPOSED')
         for obj in queryset:
             is_pf = pf_identifier_check(
                 obj.caregiver_child_consent.study_child_identifier or '')
