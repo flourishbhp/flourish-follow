@@ -77,6 +77,7 @@ class CohortCHEUSwitchViewMixin:
     child_visit_model = 'flourish_child.childvisit'
     child_dummy_consent_model = 'flourish_child.childdummysubjectconsent'
     subject_schedule_history_model = 'edc_visit_schedule.subjectschedulehistory'
+    cohort_schedules_model = 'flourish_caregiver.cohortschedules'
 
     @property
     def child_dummy_consent_model_cls(self):
@@ -107,6 +108,19 @@ class CohortCHEUSwitchViewMixin:
     @property
     def child_visit_cls(self):
         return django_apps.get_model(self.child_visit_model)
+
+    @property
+    def cohort_schedules_model_cls(self):
+        return django_apps.get_model(self.cohort_schedules_model)
+
+    def get_fu_schedule_names(self, cohort_name):
+        """Return child FU schedule_names for a specific cohort
+        """
+        return self.cohort_schedules_model_cls.objects.filter(
+            cohort_name=cohort_name,
+            schedule_type__in=['followup', 'sq_followup', ],
+            child_count__isnull=True).values_list(
+                'schedule_name', flat=True)
 
     @property
     def no_contact_pids(self):
@@ -287,7 +301,10 @@ class CohortCHEUSwitchViewMixin:
         """ Get only a list of PIDs enrolled from pre-flourish, have been
             on the enrolment schedule for 1 month or more and do not have
             a FU schedule.
+            Manually exclude cohort B: HUU.
         """
+        queryset = queryset.exclude(
+            name='cohort_b', exposure_status='UNEXPOSED')
         for obj in queryset:
             is_pf = pf_identifier_check(
                 obj.caregiver_child_consent.study_child_identifier or '')
