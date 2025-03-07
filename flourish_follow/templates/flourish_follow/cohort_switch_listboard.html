@@ -68,6 +68,18 @@
 	</td>
 {% endblock listboard_table_button_column %}
 
+{% block listboard_table_body %}
+	{% if not results %}
+		<tr>
+			<td colspan="100" style="padding-top:20px">
+				<p style="text-align:center;color:red"><b>Cohort FU enrolment(s) limit reached.</b></p>
+			</td>
+		</tr>
+	{% else %}
+		{{ block.super }}
+	{% endif %}
+{% endblock %}
+
 {% block listboard_table_columns %}
 	<!--  begin columns  -->
 	<td>
