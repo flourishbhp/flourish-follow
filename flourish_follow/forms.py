@@ -38,7 +38,7 @@ class ContactForm(FormValidatorMixin, forms.ModelForm):
     class Meta:
         model = Contact
         fields = '__all__'
-        
+
 
 class AppointmentRegistrationForm(forms.Form):
 
