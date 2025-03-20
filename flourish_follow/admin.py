@@ -1,3 +1,4 @@
+import datetime
 from django.apps import apps as django_apps
 from django.contrib import admin
 from django.conf import settings
@@ -5,10 +6,12 @@ from django.conf import settings
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
+from django.utils.translation import gettext_lazy as _
 
 from edc_model_admin.model_admin_next_url_redirect_mixin import ModelAdminNextUrlRedirectError
 from edc_constants.constants import NOT_APPLICABLE
 from edc_base.sites.admin import ModelAdminSiteMixin
+from edc_base.utils import get_utcnow
 from edc_model_admin import (
     ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
     ModelAdminFormAutoNumberMixin, ModelAdminAuditFieldsMixin,
@@ -25,6 +28,54 @@ from .forms import (
 from .models import (
     Booking, Call, Contact, WorkList, Log, LogEntry, InPersonContactAttempt,
     InPersonLog)
+
+
+class CustomDateFilter(admin.SimpleListFilter):
+    title = _('Recall Date Filter')
+    parameter_name = 'recall_date'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('today', _('Today')),
+            ('this_week', _('This week')),
+            ('past_7_days', _('Past 7 days')),
+            ('this_month', _('This month')),
+            ('this_year', _('This year')),
+        ]
+
+    def queryset(self, request, queryset):
+        today = get_utcnow().date()
+        start_of_week = today - datetime.timedelta(days=today.weekday())
+        end_of_week = start_of_week + datetime.timedelta(days=6)
+
+        selected_value = self.value()
+
+        if selected_value == 'this_week':
+            return queryset.filter(
+                recall_date__range=[start_of_week, end_of_week])
+        elif selected_value == 'today':
+            return queryset.filter(recall_date=today)
+        elif selected_value == 'past_7_days':
+            past_7_days = today - datetime.timedelta(days=7)
+            return queryset.filter(recall_date__gte=past_7_days)
+        elif selected_value == 'this_month':
+            return queryset.filter(
+                recall_date__month=today.month,
+                recall_date__year=today.year)
+        elif selected_value == 'this_year':
+            return queryset.filter(
+                    recall_date__year=today.year)
+        elif selected_value and selected_value.startswith('custom_'):
+            try:
+                custom_start = datetime.datetime.strptime(
+                    request.GET.get('week_start', ''), '%Y-%m-%d').date()
+                custom_end = custom_start + datetime.timedelta(days=6)
+                return queryset.filter(
+                    date_field__date__range=[custom_start, custom_end])
+            except ValueError:
+                return queryset
+
+        return queryset
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
@@ -53,16 +104,20 @@ class ContactAdminMixin(ModelAdminMixin):
                 'contact_type',
                 'contact_datetime',
                 'contact_success',
+                'recall_date',
                 'appt_scheduled',
                 'appt_date',
                 'final_contact',
+                'comments'
             )},
-        ), audit_fieldset_tuple)
+         ),
+        audit_fieldset_tuple)
 
-    list_display = ['subject_identifier', 'contact_type',
-                    'contact_datetime']
+    list_display = ['subject_identifier', 'contact_datetime',
+                    'contact_type', 'recall_date', ]
 
-    list_filter = ['contact_type', 'contact_success', 'final_contact']
+    list_filter = ['contact_type', 'contact_success', CustomDateFilter,
+                   'final_contact', ]
 
     radio_fields = {
         'contact_type': admin.VERTICAL,
