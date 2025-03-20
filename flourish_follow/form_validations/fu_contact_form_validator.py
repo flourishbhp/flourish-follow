@@ -22,6 +22,10 @@ class FUContactFormValidator(FormValidator):
         final_contact = cleaned_data.get('final_contact', None)
         contact_success = cleaned_data.get('contact_success', None)
 
+        self.required_if_true(
+            contact_success == NO and final_contact == NO,
+            field_required='recall_date',)
+
         if appt_dt and final_contact == NO:
             raise forms.ValidationError(
                 {'final_contact':

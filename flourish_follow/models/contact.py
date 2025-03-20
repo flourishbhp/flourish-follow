@@ -25,6 +25,16 @@ class Contact(CaregiverContactFieldsMixin):
         choices=YES_NO,
         max_length=3)
 
+    recall_date = models.DateField(
+        verbose_name='Recall Date',
+        validators=[date_is_future, ],
+        blank=True,
+        null=True)
+
+    comments = models.TextField(
+        verbose_name='Any additional comments',
+        max_length=250)
+
     class Meta:
         app_label = 'flourish_follow'
         unique_together = ('subject_identifier', 'contact_datetime')
