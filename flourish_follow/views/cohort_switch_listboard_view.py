@@ -5,13 +5,15 @@ from edc_dashboard.view_mixins import ListboardFilterViewMixin, SearchFormViewMi
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
+from ..helper_classes.cohort_limits import CohortLimitsMixin
 from ..model_wrappers import CaregiverCohortModelWrapper
 from .export_view_mixin import ExportViewMixin
 from .cohort_switch_view_mixin import CohortCHEUSwitchViewMixin
 from .filters import CohortSwitchListboardFilters
 
 
-class CohortSwitchListboardView(ExportViewMixin, CohortCHEUSwitchViewMixin,
+class CohortSwitchListboardView(ExportViewMixin, CohortLimitsMixin,
+                                CohortCHEUSwitchViewMixin,
                                 NavbarViewMixin, EdcBaseViewMixin,
                                 ListboardFilterViewMixin,
                                 SearchFormViewMixin, ListboardView):
@@ -33,6 +35,13 @@ class CohortSwitchListboardView(ExportViewMixin, CohortCHEUSwitchViewMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        cohort_b_heu, cohort_b_huu = self.cohort_b_current_counts()
+        cohort_c_heu, cohort_c_huu = self.cohort_c_current_counts()
+        context.update(
+            {'cohort_b_heu': cohort_b_heu,
+             'cohort_b_huu': cohort_b_huu,
+             'cohort_c_heu': cohort_c_heu,
+             'cohort_c_huu': cohort_c_huu})
         return context
 
     def get_queryset_filter_options(self, request, *args, **kwargs):
@@ -67,30 +76,13 @@ class CohortSwitchListboardView(ExportViewMixin, CohortCHEUSwitchViewMixin,
         if cohort_name:
             self.check_limits_reached(cohort_name, exclude_status)
         elif prev_study == 'pre_flourish':
-            cohort_names = ['cohort_b', 'cohort_c']
+            # Cohort B HUU is already being excluded. All PF participants
+            # Are HUU.
+            cohort_names = ['cohort_c', ]
             for cohort_name in cohort_names:
                 self.check_limits_reached(cohort_name, exclude_status)
+
         return {'exposure_status__in': exclude_status}
-
-    def check_limits_reached(self, cohort_name, exclude_status):
-        cohort_limits = {'cohort_b': [('EXPOSED', 200), ],
-                         'cohort_c': [('EXPOSED', 100), ('UNEXPOSED', 200)]}
-        limits = cohort_limits.get(cohort_name, [])
-        schedule_names = self.get_fu_schedule_names(cohort_name)
-        child_idx = self.subject_schedule_history_cls.objects.exclude(
-            subject_identifier__in=self.child_offstudy_pids).filter(
-            schedule_name__in=schedule_names).values_list(
-                'subject_identifier', flat=True)
-
-        for limit in limits:
-            exposure_status, _count = limit
-            limit_childidx = self.model_cls.objects.filter(
-                subject_identifier__in=child_idx,
-                exposure_status=exposure_status).values_list(
-                    'subject_identifier', flat=True)
-            limit_childidx = set(limit_childidx)
-            if len(limit_childidx) >= _count:
-                exclude_status.append(exposure_status)
 
     @property
     def export_fields(self):
