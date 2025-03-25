@@ -38,7 +38,7 @@ def send_daily_cohort_limit_updates():
 
     if neuro_heu >= 185 and neuro_heu <= 200:
         message += f'<li> Neurobehavioral HEU: {neuro_heu}</li>'
-    if neuro_huu >= 85 and neuro_huu <= 102:
+    if neuro_huu >= 85 and neuro_huu <= 100:
         message += f'<li> Neurobehavioral HUU: {neuro_huu}</li>'
     if cardio_heu >= 85 and cardio_heu <= 100:
         message += f'<li> Cohort C HEU: {cardio_heu}</li>'
