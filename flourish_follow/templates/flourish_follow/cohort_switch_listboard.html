@@ -57,14 +57,18 @@
 		  		<tbody>
 		  			<tr>
 		  				{%if cohort_b_heu >= 200 %}
-		  					<td style=color:red;>
+		  					<td style=color:red;><i class="fa fa-exclamation-triangle"></i>
 		  				{% else %}
 		  					<td>
 		  				{% endif %}
-		  					HEU: {{cohort_b_heu}} / 200
+	  						HEU: {{cohort_b_heu}} / 200
+							<br/>
+	  						{% for crf, counts in neuro_breakdown.items %}
+	  							{{crf}}: {{counts.0}}
+	  						{% endfor %}
 		  				</td>
 		  				{%if cohort_c_heu >= 100 %}
-		  					<td style=color:red;>
+		  					<td style=color:red;><i class="fa fa-exclamation-triangle"></i>
 		  				{% else %}
 		  					<td>
 		  				{% endif %}
@@ -76,7 +80,12 @@
 		  				{% else %}
 		  					<td>
 		  				{% endif %}
-		  					HUU: {{cohort_b_huu}} / 100</td>
+		  					HUU: {{cohort_b_huu}} / 100
+		  					<br/>
+	  						{% for crf, counts in neuro_breakdown.items %}
+	  							{{crf}}: {{counts.1}}
+	  						{% endfor %}
+	  					</td>
 		  				{%if cohort_c_huu >= 200 %}
 		  					<td style=color:red;><i class="fa fa-exclamation-triangle"></i>
 		  				{% else %}

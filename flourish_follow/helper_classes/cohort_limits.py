@@ -30,7 +30,7 @@ class CohortLimitsMixin:
             child_count__isnull=True).values_list(
                 'schedule_name', flat=True)
 
-    def cohort_b_current_counts(self):
+    def cohort_b_current_counts(self, per_crf_counts={}):
         """ This uses the neuro-behavioural assessments to determine current
             completed counts. i.e. PennCNB, CBCL, or Brief2-Parent report
             limits: {'EXPOSED': 200, 'UNEXPOSED': 100}
@@ -44,6 +44,7 @@ class CohortLimitsMixin:
                 qs.exclude(completed=NO)
             childidx = qs.values_list(
                 'child_visit__subject_identifier', flat=True)
+            per_crf_counts.update({f'{crf}': set(childidx)})
             pidx_completed.update(childidx)
 
         return self.get_exposure_counts(pidx_completed)
@@ -61,6 +62,13 @@ class CohortLimitsMixin:
         childidx = set(childidx)
 
         return self.get_exposure_counts(childidx)
+
+    def get_neuro_crf_breakdown(self, neuro_crf_childidx={}):
+        breakdown = {}
+        for crf, childidx in neuro_crf_childidx.items():
+            heu_count, huu_count = self.get_exposure_counts(childidx)
+            breakdown[crf] = (heu_count, huu_count)
+        return breakdown
 
     def get_exposure_counts(self, childidx):
         """ Get counts for each exposure status for child PIDs provided.

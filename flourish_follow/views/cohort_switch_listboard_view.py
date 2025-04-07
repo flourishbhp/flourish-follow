@@ -35,11 +35,16 @@ class CohortSwitchListboardView(ExportViewMixin, CohortLimitsMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cohort_b_heu, cohort_b_huu = self.cohort_b_current_counts()
+        neuro_crf_counts = {}
+        cohort_b_heu, cohort_b_huu = self.cohort_b_current_counts(
+            per_crf_counts=neuro_crf_counts)
+        neuro_breakdown = self.get_neuro_crf_breakdown(neuro_crf_counts)
         cohort_c_heu, cohort_c_huu = self.cohort_c_current_counts()
+
         context.update(
             {'cohort_b_heu': cohort_b_heu,
              'cohort_b_huu': cohort_b_huu,
+             'neuro_breakdown': neuro_breakdown,
              'cohort_c_heu': cohort_c_heu,
              'cohort_c_huu': cohort_c_huu})
         return context
