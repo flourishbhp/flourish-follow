@@ -21,8 +21,10 @@ def dashboard_button(model_wrapper, url_name):
 def caregiver_contact_log(model_wrapper):
     title = 'Contact outcomes'
 
+    show_add_button = (model_wrapper.successful_contact and
+                       model_wrapper.has_fu_appts)
     return dict(
-        add_button=model_wrapper.successful_contact,
+        add_button=show_add_button,
         contact_obj=model_wrapper.caregiver_contact,
         contact_objects=model_wrapper.caregiver_contacts,
         title=title)

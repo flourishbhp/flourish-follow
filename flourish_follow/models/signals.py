@@ -1,4 +1,5 @@
 from cacheops import invalidate_obj
+from datetime import time
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
@@ -120,6 +121,7 @@ def in_person_contact_attempt_on_post_save(sender, instance, using, raw, **kwarg
 @receiver(post_save, weak=False, sender=Contact, dispatch_uid='fu_contact_on_post_save')
 def fu_contact_on_post_save(sender, instance, raw, created, **kwargs):
     participant_note_cls = django_apps.get_model('flourish_calendar.participantnote')
+    reminder_model_cls = django_apps.get_model('flourish_calendar.reminder')
 
     if not raw:
         if getattr(instance, 'appt_date', None):
@@ -130,3 +132,20 @@ def fu_contact_on_post_save(sender, instance, raw, created, **kwargs):
                           'description': 'Flourish follow contact FU scheduling.',})
             if not _created:
                 invalidate_obj(obj)
+        elif getattr(instance, 'recall_date', None):
+            title = f'Recall {instance.subject_identifier} for FU booking'
+            qs_attrs = dict(
+                title=title,
+                color='yellow',
+                repeat='once')
+            try:
+                obj = reminder_model_cls.objects.get(**qs_attrs)
+            except reminder_model_cls.DoesNotExist:
+                qs_attrs.update(
+                    start_date=instance.recall_date,
+                    remainder_time=time(10, 0))
+                reminder = reminder_model_cls(**qs_attrs)
+                reminder_model_cls.objects.bulk_create([reminder])
+            else:
+                obj.start_date = instance.recall_date
+                obj.save_base(raw=True)

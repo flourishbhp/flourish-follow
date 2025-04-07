@@ -7,6 +7,23 @@
 {% block extra-css %}
 	<style>
 		.pointer {cursor: pointer;}
+		#cohort_counts {
+			table-layout: fixed;
+			border-collapse: separate;
+			border-spacing: 0;
+			width: 100%;
+		    border-radius: 8px;
+		    overflow: hidden;
+		}
+		#cohort_counts th, #cohort_counts td {
+			word-wrap: break-word;
+			padding: 0.5rem;
+			text-align: center;
+			border: 1px solid #dee2e6;
+		}
+		#cohort_counts th {
+			background-color: #f8f9fa;
+		}
 	</style>
 {% endblock extra-css %}
 
@@ -27,6 +44,59 @@
         }
     </script>
 {% endblock extra-scripts %}
+
+{% block extra_content %}
+	
+	  		<table class="table table-sm table-bordered text-center w-100" id="cohort_counts">
+	  			<thead>
+		  			<tr>
+		  				<th>Cohort B </th>
+		  				<th>Cohort C </th>
+		  			</tr>
+		  		</thead>
+		  		<tbody>
+		  			<tr>
+		  				{%if cohort_b_heu >= 200 %}
+		  					<td style=color:red;><i class="fa fa-exclamation-triangle"></i>
+		  				{% else %}
+		  					<td>
+		  				{% endif %}
+	  						HEU: {{cohort_b_heu}} / 200
+							<br/>
+	  						{% for crf, counts in neuro_breakdown.items %}
+	  							{{crf}}: {{counts.0}}
+	  						{% endfor %}
+		  				</td>
+		  				{%if cohort_c_heu >= 100 %}
+		  					<td style=color:red;><i class="fa fa-exclamation-triangle"></i>
+		  				{% else %}
+		  					<td>
+		  				{% endif %}
+		  					HEU: {{cohort_c_heu}} / 100</td>
+		  			</tr>
+		  			<tr>
+		  				{%if cohort_b_huu >= 100 %}
+		  					<td style=color:red;><i class="fa fa-exclamation-triangle"></i>
+		  				{% else %}
+		  					<td>
+		  				{% endif %}
+		  					HUU: {{cohort_b_huu}} / 100
+		  					<br/>
+	  						{% for crf, counts in neuro_breakdown.items %}
+	  							{{crf}}: {{counts.1}}
+	  						{% endfor %}
+	  					</td>
+		  				{%if cohort_c_huu >= 200 %}
+		  					<td style=color:red;><i class="fa fa-exclamation-triangle"></i>
+		  				{% else %}
+		  					<td>
+		  				{% endif %}
+		  					HUU: {{cohort_c_huu}} / 200</td>
+		  			</tr>
+		  		</tbody>
+	  		</table>
+
+{% endblock extra_content %}
 
 {% block listboard_panel %}
 	{{ block.super }}
@@ -72,7 +142,7 @@
 	{% if not results %}
 		<tr>
 			<td colspan="100" style="padding-top:20px">
-				<p style="text-align:center;color:red"><b>Cohort FU enrolment(s) limit reached.</b></p>
+				<p style="text-align:center;color:red"><b>No results found.</b></p>
 			</td>
 		</tr>
 	{% else %}
