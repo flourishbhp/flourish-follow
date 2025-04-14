@@ -41,7 +41,7 @@ class CohortLimitsMixin:
             model_cls = django_apps.get_model(f'flourish_child.{crf}')
             qs = model_cls.objects.all()
             if crf == 'childpenncnb':
-                qs.exclude(completed=NO)
+                qs = qs.exclude(completed=NO)
             childidx = qs.values_list(
                 'child_visit__subject_identifier', flat=True)
             per_crf_counts.update({f'{crf}': set(childidx)})
