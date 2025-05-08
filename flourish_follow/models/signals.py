@@ -148,5 +148,6 @@ def fu_contact_on_post_save(sender, instance, raw, created, **kwargs):
                 reminder = reminder_model_cls(**qs_attrs)
                 reminder_model_cls.objects.bulk_create([reminder])
             else:
+                obj.datetime = datetime.combine(instance.recall_date, time(10, 0))
                 obj.start_date = instance.recall_date
                 obj.save_base(raw=True)
