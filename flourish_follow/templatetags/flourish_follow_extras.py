@@ -22,7 +22,7 @@ def caregiver_contact_log(model_wrapper):
     title = 'Contact outcomes'
 
     show_add_button = (model_wrapper.successful_contact and
-                       model_wrapper.has_fu_appts)
+                       getattr(model_wrapper, 'has_fu_appts', None))
     return dict(
         add_button=show_add_button,
         contact_obj=model_wrapper.caregiver_contact,
