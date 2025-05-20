@@ -1,5 +1,5 @@
 from cacheops import invalidate_obj
-from datetime import time
+from datetime import time, datetime
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
@@ -143,9 +143,11 @@ def fu_contact_on_post_save(sender, instance, raw, created, **kwargs):
             except reminder_model_cls.DoesNotExist:
                 qs_attrs.update(
                     start_date=instance.recall_date,
+                    datetime=datetime.combine(instance.recall_date, time(10, 0)),
                     remainder_time=time(10, 0))
                 reminder = reminder_model_cls(**qs_attrs)
                 reminder_model_cls.objects.bulk_create([reminder])
             else:
+                obj.datetime = datetime.combine(instance.recall_date, time(10, 0))
                 obj.start_date = instance.recall_date
                 obj.save_base(raw=True)
