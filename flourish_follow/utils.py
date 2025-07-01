@@ -44,17 +44,17 @@ def send_daily_cohort_limit_updates():
         heu_breakdown += f'<li>{crf}: {counts[0]}</li>'
         huu_breakdown += f'<li>{crf}: {counts[1]}</li>'
 
-    if neuro_heu >= 185 and neuro_heu <= 200:
+    if neuro_heu >= 185 and neuro_heu < 200:
         message += (f'<li> Neurobehavioral HEU: {neuro_heu} / 200'
                     f'<ul>{heu_breakdown}</ul>'
                     '</li>')
-    if neuro_huu >= 85 and neuro_huu <= 100:
+    if neuro_huu >= 85 and neuro_huu < 100:
         message += (f'<li> Neurobehavioral HUU: {neuro_huu} / 100'
                     f'<ul>{huu_breakdown}</ul>'
                     '</li>')
-    if cardio_heu >= 85 and cardio_heu <= 100:
+    if cardio_heu >= 85 and cardio_heu < 100:
         message += f'<li> Cohort C HEU: {cardio_heu} / 100</li>'
-    if cardio_huu >= 185 and cardio_huu <= 200:
+    if cardio_huu >= 185 and cardio_huu < 200:
         message += f'<li> Cohort C HUU: {cardio_huu} / 200</li>'
 
     if message:
